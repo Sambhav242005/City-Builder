@@ -131,6 +131,7 @@ const MAP_MAX_SCALE = 2.2;
 const MAP_ZOOM_STEP = 1.16;
 // Matches the dimensions of city-map-reference.png.
 const MAP_REFERENCE_ASPECT_RATIO = 882 / 766;
+const MAP_REFERENCE_ASPECT_RATIO_CSS = MAP_REFERENCE_ASPECT_RATIO.toString();
 const MAP_LAND_OVERLAY_OPACITY = 0.12;
 const MAP_TEXTURE_OVERLAY_OPACITY = 0.06;
 const MAP_STAGE_MAX_WIDTH = 1180;
@@ -1333,7 +1334,7 @@ function CityMapBoard({
   const stageStyle = {
     width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
     transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-    "--map-aspect-ratio": `${MAP_REFERENCE_ASPECT_RATIO}`
+    "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO_CSS
   } satisfies CSSProperties & { "--map-aspect-ratio": string };
 
   return (
@@ -1443,9 +1444,7 @@ function TopDownSvgMap({
         height={plan.height}
         aria-hidden="true"
         style={{ pointerEvents: "none" }}
-      >
-        <title>Reference city map</title>
-      </image>
+      />
       <rect
         className="top-map-land"
         x="0"
