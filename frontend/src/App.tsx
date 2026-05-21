@@ -1440,6 +1440,7 @@ function TopDownSvgMap({
         y="0"
         width={plan.width}
         height={plan.height}
+        aria-hidden="true"
         pointerEvents="none"
       />
       <rect
@@ -1449,7 +1450,7 @@ function TopDownSvgMap({
         width={plan.width}
         height={plan.height}
         rx="18"
-        style={{ cursor: "pointer", opacity: 0 }}
+        style={{ cursor: "pointer", opacity: 0.12 }}
         onClick={() => onSelectZone("Available Land")}
       />
       <rect
@@ -1460,7 +1461,7 @@ function TopDownSvgMap({
         height={plan.height}
         fill="url(#topMapGrass)"
         rx="18"
-        style={{ cursor: "pointer", opacity: 0 }}
+        style={{ cursor: "pointer", opacity: 0.06 }}
         onClick={() => onSelectZone("Available Land")}
       />
 
