@@ -254,7 +254,7 @@ function App() {
   const [data, setData] = useState<StateResponse | null>(null);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const cityMapImageUrl = "https://github.com/user-attachments/assets/214e2a1c-3659-46e5-b902-33b9d92d74b3";
+  const cityMapImageUrl = import.meta.env.VITE_CITY_MAP_IMAGE_URL ?? "https://github.com/user-attachments/assets/214e2a1c-3659-46e5-b902-33b9d92d74b3";
 
   useEffect(() => {
     fetchState()
@@ -469,7 +469,7 @@ function App() {
 
         <section className="map-column">
           <Panel title="City Map" flush>
-            <div className="city-map city-map-static">
+            <div className="city-map-static">
               <img
                 className="city-map-static-image"
                 src={cityMapImageUrl}
