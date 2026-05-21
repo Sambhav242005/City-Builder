@@ -254,19 +254,7 @@ function App() {
   const [data, setData] = useState<StateResponse | null>(null);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedZone, setSelectedZone] = useState("Farm");
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
-  const [showOverlay, setShowOverlay] = useState(true);
-
-  const selectedBuilding = useMemo(() => {
-    if (!selectedBuildingId || !data) return null;
-    return data.cityMap.buildings.find((b) => b.id === selectedBuildingId) || null;
-  }, [selectedBuildingId, data]);
-
-  const tileCounts = useMemo(() => {
-    if (!data) return EMPTY_TILE_COUNTS;
-    return countMapTiles(data.cityMap.tiles);
-  }, [data]);
+  const cityMapImageUrl = import.meta.env.VITE_CITY_MAP_IMAGE_URL ?? "https://github.com/user-attachments/assets/214e2a1c-3659-46e5-b902-33b9d92d74b3";
 
   useEffect(() => {
     fetchState()
@@ -294,15 +282,6 @@ function App() {
     return () => socket.close();
   }, [running]);
 
-  useEffect(() => {
-    if (!data || !selectedBuildingId) {
-      return;
-    }
-
-    if (!data.cityMap.buildings.some((building) => building.id === selectedBuildingId)) {
-      setSelectedBuildingId(null);
-    }
-  }, [data, selectedBuildingId]);
 
   const state = data?.state;
   const recommendation = data?.recommendation;
@@ -375,15 +354,6 @@ function App() {
     setData(payload);
   }
 
-  function handleSelectZone(zone: string) {
-    setSelectedZone(zone);
-    setSelectedBuildingId(null);
-  }
-
-  function handleSelectBuilding(building: MapBuilding) {
-    setSelectedBuildingId(building.id);
-    setSelectedZone(TILE_ZONE_LABELS[building.kind]);
-  }
 
   return (
     <main className="app-shell">
@@ -499,57 +469,13 @@ function App() {
 
         <section className="map-column">
           <Panel title="City Map" flush>
-            <div className="city-map">
-              <CityMapBoard
-                layout={data.cityMap}
-                state={state}
-                selectedZone={selectedZone}
-                selectedBuildingId={selectedBuildingId}
-                onSelectZone={handleSelectZone}
-                onSelectBuilding={handleSelectBuilding}
-                showOverlay={showOverlay}
-                setShowOverlay={setShowOverlay}
+            <div className="city-map-static">
+              <img
+                className="city-map-static-image"
+                src={cityMapImageUrl}
+                alt="City map overview"
+                loading="lazy"
               />
-              {showOverlay && (
-                <>
-                  <div className="legend-card" aria-label="Map Legend">
-                    {CITY_MAP_LEGEND.map((item) => {
-                      const count = item.kinds.reduce((acc, k) => acc + (tileCounts[k] || 0), 0);
-                      return (
-                        <button
-                          key={item.label}
-                          className="legend-item"
-                          style={{
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                            padding: 0,
-                            textAlign: "left"
-                          }}
-                          onClick={() => handleSelectZone(item.label)}
-                        >
-                          <b style={{ backgroundColor: item.color }}>{item.icon}</b>
-                          <span>{item.label}</span>
-                          <em>{count}</em>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <div className="map-status-card" aria-label="Map Status">
-                    <span>Stability</span>
-                    <strong style={{ color: state.happiness > 0.8 ? "#7ce459" : state.happiness > 0.55 ? "#ffc84d" : "#ff6060" }}>
-                      {state.happiness > 0.8 ? "THRIVING" : state.happiness > 0.55 ? "STABLE" : "STRESSED"}
-                    </strong>
-                    <em>{formatNumber(state.land_used)} / {formatNumber(state.land_total)} Land</em>
-                  </div>
-                  <MapInspector
-                    label={selectedBuilding ? selectedBuilding.label : selectedZone}
-                    zoneData={selectedBuilding ? getBuildingData(selectedBuilding) : getZoneData(selectedZone, state)}
-                    building={selectedBuilding}
-                  />
-                </>
-              )}
-              <div className="map-shade" />
             </div>
           </Panel>
         </section>
