@@ -1330,6 +1330,12 @@ function CityMapBoard({
     onSelectBuilding(building);
   }
 
+  const stageStyle = {
+    width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
+    transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+    "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO
+  } satisfies CSSProperties & { "--map-aspect-ratio": number };
+
   return (
     <div
       ref={viewportRef}
@@ -1371,13 +1377,7 @@ function CityMapBoard({
 
       <div
         className="top-map-stage"
-        style={
-          {
-            width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
-            transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-            "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO
-          } as CSSProperties
-        }
+        style={stageStyle}
       >
         <TopDownSvgMap
           plan={plan}
@@ -1442,7 +1442,7 @@ function TopDownSvgMap({
         width={plan.width}
         height={plan.height}
         aria-hidden="true"
-        pointerEvents="none"
+        style={{ pointerEvents: "none" }}
       />
       <rect
         className="top-map-land"
