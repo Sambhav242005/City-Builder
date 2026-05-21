@@ -4,6 +4,7 @@ import random
 
 from .city_map import build_city_map
 from .models import (
+    ActionName,
     CityEvent,
     DecisionImpact,
     DecisionMetricSnapshot,
@@ -15,6 +16,7 @@ from .models import (
     TickSnapshot,
     WorldState,
 )
+from .q_agent import QLearningAgent, compute_reward, encode_state
 from .simulation import (
     BUILD_FUNCTIONS,
     BUILDING_COSTS,
@@ -33,8 +35,9 @@ class CitySimulationService:
         self.params = params or Params()
         self.rng = random.Random(seed)
         self.state = WorldState()
+        self.q_agent = QLearningAgent()
         self.recommendation, self.decision_system = recommend_with_policy(
-            self.state, [], self.params
+            self.state, [], self.params, q_agent=self.q_agent
         )
         self.events: list[CityEvent] = [
             CityEvent(tick=0, message="Simulation initialized.", severity="info")
@@ -42,6 +45,7 @@ class CitySimulationService:
         self.history: list[TickSnapshot] = []
         self.decision_scorecard: list[MayorDecisionScorecardEntry] = []
         self._decision_sequence = 0
+        self._last_state_key = encode_state(self.state, self.params)
         self._record_snapshot()
 
     def snapshot(self) -> StateResponse:
@@ -71,9 +75,49 @@ class CitySimulationService:
         return self.snapshot()
 
     def tick(self) -> StateResponse:
+        state_before = self.state
+        state_key_before = self._last_state_key
+        action_taken = self.recommendation.action
+
         result = step(self.state, self.rng, self.params)
         self.state = result.state
         self.events.extend(result.events)
+
+        self._apply_action(action_taken)
+
+        new_state_key = encode_state(self.state, self.params)
+        reward_result = compute_reward(state_before, self.state, self.params)
+        self.q_agent.learn(state_key_before, action_taken, reward_result["total"], new_state_key)
+        self._last_state_key = new_state_key
+
+        terminal = self.state.population <= 0 or self.state.land_used >= self.state.land_total
+        if terminal and self.state.tick > 10:
+            self.events.append(
+                CityEvent(
+                    tick=self.state.tick,
+                    message=f"Terminal state reached. Resetting simulation for next training episode. "
+                    f"Q-table has {len(self.q_agent.q_table)} states, epsilon={self.q_agent.epsilon:.3f}.",
+                    severity="danger",
+                )
+            )
+            self.state = WorldState()
+            self._last_state_key = encode_state(self.state, self.params)
+            self._refresh_policy_recommendation()
+            self._record_snapshot()
+            self.q_agent.save()
+            return self.snapshot()
+
+        if self.q_agent.training_enabled:
+            self.events.append(
+                CityEvent(
+                    tick=self.state.tick,
+                    message=f"Q-Learning: reward={reward_result['total']:.3f}, "
+                    f"exploration={self.q_agent.epsilon:.2%}, "
+                    f"states_visited={len(self.q_agent.q_table)}.",
+                    severity="info",
+                )
+            )
+
         self._resolve_pending_decision_impacts()
         self._refresh_policy_recommendation()
 
@@ -87,6 +131,7 @@ class CitySimulationService:
             )
 
         self._record_snapshot()
+        self.q_agent.save()
         return self.snapshot()
 
     def approve_government_action(self) -> StateResponse:
@@ -259,8 +304,29 @@ class CitySimulationService:
 
     def _refresh_policy_recommendation(self) -> None:
         self.recommendation, self.decision_system = recommend_with_policy(
-            self.state, self.history, self.params
+            self.state, self.history, self.params, q_agent=self.q_agent
         )
+
+    def _apply_action(self, action: ActionName) -> None:
+        if action == "do_nothing":
+            return
+        if action in ACTION_TO_BUILDING:
+            building_type = ACTION_TO_BUILDING[action]
+            build_fn = BUILD_FUNCTIONS.get(building_type)
+            cost = BUILDING_COSTS.get(building_type, 0)
+            if build_fn is None or self.state.treasury < cost:
+                return
+            before = self.state
+            self.state = build_fn(self.state, self.params)
+            if self.state != before:
+                self.state = self.state.model_copy(
+                    update={"treasury": self.state.treasury - cost}
+                )
+                self.state = update_supply(self.state, self.params)
+        elif action == "subsidize":
+            cost = subsidy_cost(self.state, self.params)
+            if self.state.treasury >= cost:
+                self.state = subsidize(self.state, self.params)
 
     def _approve_build_action(self, action: str) -> None:
         building_type = ACTION_TO_BUILDING[action]  # type: ignore[index]

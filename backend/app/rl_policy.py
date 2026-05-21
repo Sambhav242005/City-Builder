@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from .models import (
     ActionName,
@@ -34,6 +35,10 @@ from .simulation import (
     update_price,
     update_supply,
 )
+
+from .q_agent import encode_state, QLearningAgent, reward_components
+
+POLICY_VERSION_QL = "q-learning-city-v1"
 
 
 POLICY_VERSION = "city-evolution-optimizer-v1"
@@ -120,6 +125,7 @@ def recommend_with_policy(
     state: WorldState,
     history: list[TickSnapshot],
     params: Params,
+    q_agent: QLearningAgent | None = None,
 ) -> tuple[GovernmentRecommendation, DecisionSystemStatus]:
     legal = legal_actions(state, params)
     if not legal:
@@ -144,6 +150,9 @@ def recommend_with_policy(
                 reason=fallback.reason,
             ),
         )
+
+    if q_agent is not None:
+        return _recommend_with_q_agent(state, history, legal, params, q_agent)
 
     evaluations = [
         evaluate_action(state, action, history, params)
@@ -205,6 +214,102 @@ def recommend_with_policy(
                 expectedPriceDelta=round(best.projected_state.price - state.price, 2),
                 reason=optimizer.reason,
             ),
+        ),
+    )
+
+
+def _recommend_with_q_agent(
+    state: WorldState,
+    history: list[TickSnapshot],
+    legal: list[ActionName],
+    params: Params,
+    agent: QLearningAgent,
+) -> tuple[GovernmentRecommendation, DecisionSystemStatus]:
+    state_key = encode_state(state, params)
+    chosen_action = agent.choose_action(state_key, legal)
+    q_values = agent.get_q_values(state_key)
+
+    ranked = sorted(
+        [(a, q_values[agent.action_index(a)]) for a in legal],
+        key=lambda x: x[1],
+        reverse=True,
+    )
+
+    best_action, best_q = ranked[0]
+    second_best_q = ranked[1][1] if len(ranked) > 1 else best_q - 1
+    margin = best_q - second_best_q
+    confidence = clamp(0.55 + margin * 0.25 + max(margin, 0) * 0.20, 0.05, 0.97)
+
+    projected = project_action(state, best_action, params)
+    projected = update_happiness(update_price(update_supply(update_demand(projected), params), params))
+    signals = reward_components(projected, params)
+
+    risks = []
+    reason = (
+        f"Q-learning agent selected {best_action.replace('_', ' ')} "
+        f"(Q={best_q:.3f}, margin={margin:.3f}, "
+        f"exploration={agent.epsilon:.2f})."
+    )
+    if agent.epsilon > 0.3:
+        risks.append("exploring")
+    if projected.population < 30:
+        risks.append("population_collapse_risk")
+    infra = (state.roads + state.power_plants * 2) / max(state.factories + state.housing + state.markets, 1)
+    if state.treasury > 500_000 and infra < 1.0:
+        risks.append("idle_treasury")
+
+    optimizer = OptimizerInspection(
+        verdict="right" if confidence >= 0.7 else "watch",
+        reason=reason,
+        riskFlags=risks,
+        suggestedAction=best_action,
+        overrideApplied=False,
+        originalAction=best_action,
+        finalAction=best_action,
+        fitnessDelta=round(margin, 4),
+    )
+
+    candidates: list[CandidateActionTrace] = []
+    for i, (action, q_val) in enumerate(ranked):
+        proj = project_action(state, action, params)
+        proj = update_happiness(update_price(update_supply(update_demand(proj), params), params))
+        candidates.append(
+            CandidateActionTrace(
+                action=action,
+                rank=i + 1,
+                selected=action == best_action,
+                policyScore=round(q_val, 4),
+                optimizerScore=round(q_val, 4),
+                expectedHappinessDelta=round(proj.happiness - state.happiness, 4),
+                expectedFoodSupplyDelta=round(proj.food_supply - state.food_supply, 2),
+                expectedPriceDelta=round(proj.price - state.price, 2),
+                rewardSignals={k: round(v, 4) for k, v in reward_components(proj, params).items()},
+                riskFlags=risks if action == best_action else [],
+            )
+        )
+
+    rec = recommendation_for(best_action, state, projected, signals, risks, optimizer)
+
+    return rec, DecisionSystemStatus(
+        source="evolution_optimizer",
+        policyVersion=POLICY_VERSION_QL,
+        confidence=round(confidence, 3),
+        valueEstimate=round(best_q, 4),
+        legalActions=legal,
+        riskFlags=risks,
+        rewardSignals={k: round(v, 4) for k, v in signals.items()},
+        optimizer=optimizer,
+        input_summary=decision_input_summary(state, history),
+        nodes=policy_node_trace(state, history, params),
+        candidates=candidates,
+        output_summary=DecisionOutputSummary(
+            action=best_action,
+            confidence=round(confidence, 3),
+            valueEstimate=round(best_q, 4),
+            expectedHappinessDelta=round(projected.happiness - state.happiness, 4),
+            expectedFoodSupplyDelta=round(projected.food_supply - state.food_supply, 2),
+            expectedPriceDelta=round(projected.price - state.price, 2),
+            reason=optimizer.reason,
         ),
     )
 
