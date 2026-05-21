@@ -131,7 +131,8 @@ const MAP_MAX_SCALE = 2.2;
 const MAP_ZOOM_STEP = 1.16;
 // Matches the dimensions of city-map-reference.png.
 const MAP_REFERENCE_ASPECT_RATIO = 882 / 766;
-const MAP_STAGE_ASPECT_RATIO = MAP_REFERENCE_ASPECT_RATIO;
+const MAP_LAND_OVERLAY_OPACITY = 0.12;
+const MAP_TEXTURE_OVERLAY_OPACITY = 0.06;
 const MAP_STAGE_MAX_WIDTH = 1180;
 const MAP_STAGE_PADDING = 32;
 
@@ -1205,7 +1206,7 @@ function CityMapBoard({
     }
 
     const widthBound = Math.max(220, viewportSize.width - MAP_STAGE_PADDING * 2);
-    const heightBound = Math.max(220, (viewportSize.height - MAP_STAGE_PADDING * 2) * MAP_STAGE_ASPECT_RATIO);
+    const heightBound = Math.max(220, (viewportSize.height - MAP_STAGE_PADDING * 2) * MAP_REFERENCE_ASPECT_RATIO);
     return Math.min(MAP_STAGE_MAX_WIDTH, widthBound, heightBound);
   }, [viewportSize]);
 
@@ -1374,7 +1375,7 @@ function CityMapBoard({
           {
             width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
             transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-            "--map-aspect-ratio": MAP_STAGE_ASPECT_RATIO
+            "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO
           } as CSSProperties
         }
       >
@@ -1450,7 +1451,7 @@ function TopDownSvgMap({
         width={plan.width}
         height={plan.height}
         rx="18"
-        style={{ cursor: "pointer", opacity: 0.12 }}
+        style={{ cursor: "pointer", opacity: MAP_LAND_OVERLAY_OPACITY }}
         onClick={() => onSelectZone("Available Land")}
       />
       <rect
@@ -1461,7 +1462,7 @@ function TopDownSvgMap({
         height={plan.height}
         fill="url(#topMapGrass)"
         rx="18"
-        style={{ cursor: "pointer", opacity: 0.06 }}
+        style={{ cursor: "pointer", opacity: MAP_TEXTURE_OVERLAY_OPACITY }}
         onClick={() => onSelectZone("Available Land")}
       />
 
@@ -1697,7 +1698,7 @@ function TopDownBuildingShape({
 function buildTopDownMapPlan(layout: CityMapLayout, state: WorldState): TopDownPlan {
   const expansion = Math.max(0, Math.min(4, Math.floor((state.land_used - 58) / 10)));
   const width = 980 + expansion * 210;
-  const height = Math.round(width / MAP_STAGE_ASPECT_RATIO);
+  const height = Math.round(width / MAP_REFERENCE_ASPECT_RATIO);
   const margin = 76;
   const roads = topRoads(width, height, expansion);
   const paths = topPaths(width, height);
