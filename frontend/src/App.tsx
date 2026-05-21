@@ -3,6 +3,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type WheelEvent as ReactWheelEvent
@@ -128,9 +129,9 @@ const ACTION_BUILDING_TYPES: Partial<Record<ActionName, BuildingType>> = {
 const MAP_MIN_SCALE = 0.78;
 const MAP_MAX_SCALE = 2.2;
 const MAP_ZOOM_STEP = 1.16;
-const MAP_REFERENCE_WIDTH = 882;
-const MAP_REFERENCE_HEIGHT = 766;
-const MAP_STAGE_ASPECT_RATIO = MAP_REFERENCE_WIDTH / MAP_REFERENCE_HEIGHT;
+// Matches the dimensions of city-map-reference.png.
+const MAP_REFERENCE_ASPECT_RATIO = 882 / 766;
+const MAP_STAGE_ASPECT_RATIO = MAP_REFERENCE_ASPECT_RATIO;
 const MAP_STAGE_MAX_WIDTH = 1180;
 const MAP_STAGE_PADDING = 32;
 
@@ -1369,10 +1370,13 @@ function CityMapBoard({
 
       <div
         className="top-map-stage"
-        style={{
-          width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
-          transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`
-        }}
+        style={
+          {
+            width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
+            transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+            "--map-aspect-ratio": MAP_STAGE_ASPECT_RATIO
+          } as CSSProperties
+        }
       >
         <TopDownSvgMap
           plan={plan}
