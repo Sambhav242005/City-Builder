@@ -430,6 +430,7 @@ def update_market_economy(
     new_treasury = state.treasury + tax_collected
 
     # 6. Citizen satisfaction and shortage warnings
+    population = state.population
     if state.markets == 0:
         events.append(
             CityEvent(
@@ -439,10 +440,13 @@ def update_market_economy(
             )
         )
     elif food_sold_locally < local_food_demand:
+        starvation_pct = (local_food_demand - food_sold_locally) / local_food_demand
+        population_loss = max(1, int(population * starvation_pct * 0.15))
+        population = max(0, population - population_loss)
         events.append(
             CityEvent(
                 tick=state.tick,
-                message=f"Food shortage! Sold only {food_sold_locally:.0f}/{local_food_demand:.0f} food. Citizens are starving!",
+                message=f"Food shortage! Sold only {food_sold_locally:.0f}/{local_food_demand:.0f} food. {population_loss} citizens starved!",
                 severity="danger",
             )
         )
@@ -476,6 +480,7 @@ def update_market_economy(
             "treasury": round(new_treasury, 2),
             "food_supply": round(actual_supplied_food, 2),
             "food_demand": round(local_food_demand, 2),
+            "population": population,
         }
     )
 
