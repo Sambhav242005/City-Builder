@@ -1333,8 +1333,8 @@ function CityMapBoard({
   const stageStyle = {
     width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
     transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-    "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO
-  } satisfies CSSProperties & { "--map-aspect-ratio": number };
+    "--map-aspect-ratio": `${MAP_REFERENCE_ASPECT_RATIO}`
+  } satisfies CSSProperties & { "--map-aspect-ratio": string };
 
   return (
     <div
@@ -1443,7 +1443,9 @@ function TopDownSvgMap({
         height={plan.height}
         aria-hidden="true"
         style={{ pointerEvents: "none" }}
-      />
+      >
+        <title>Reference city map</title>
+      </image>
       <rect
         className="top-map-land"
         x="0"
