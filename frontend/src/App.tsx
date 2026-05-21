@@ -3,6 +3,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type WheelEvent as ReactWheelEvent
@@ -59,6 +60,7 @@ import {
   reset,
   tick
 } from "./api";
+import cityMapReference from "./assets/city-map-reference.png";
 
 import type {
   ActionName,
@@ -127,7 +129,11 @@ const ACTION_BUILDING_TYPES: Partial<Record<ActionName, BuildingType>> = {
 const MAP_MIN_SCALE = 0.78;
 const MAP_MAX_SCALE = 2.2;
 const MAP_ZOOM_STEP = 1.16;
-const MAP_STAGE_ASPECT_RATIO = 1.42;
+// Matches the dimensions of city-map-reference.png.
+const MAP_REFERENCE_ASPECT_RATIO = 882 / 766;
+const MAP_REFERENCE_ASPECT_RATIO_CSS = MAP_REFERENCE_ASPECT_RATIO.toString();
+const MAP_LAND_OVERLAY_OPACITY = 0.12;
+const MAP_TEXTURE_OVERLAY_OPACITY = 0.06;
 const MAP_STAGE_MAX_WIDTH = 1180;
 const MAP_STAGE_PADDING = 32;
 
@@ -1201,7 +1207,7 @@ function CityMapBoard({
     }
 
     const widthBound = Math.max(220, viewportSize.width - MAP_STAGE_PADDING * 2);
-    const heightBound = Math.max(220, (viewportSize.height - MAP_STAGE_PADDING * 2) * MAP_STAGE_ASPECT_RATIO);
+    const heightBound = Math.max(220, (viewportSize.height - MAP_STAGE_PADDING * 2) * MAP_REFERENCE_ASPECT_RATIO);
     return Math.min(MAP_STAGE_MAX_WIDTH, widthBound, heightBound);
   }, [viewportSize]);
 
@@ -1325,6 +1331,12 @@ function CityMapBoard({
     onSelectBuilding(building);
   }
 
+  const stageStyle = {
+    width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
+    transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+    "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO_CSS
+  } satisfies CSSProperties & { "--map-aspect-ratio": string };
+
   return (
     <div
       ref={viewportRef}
@@ -1366,10 +1378,7 @@ function CityMapBoard({
 
       <div
         className="top-map-stage"
-        style={{
-          width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
-          transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`
-        }}
+        style={stageStyle}
       >
         <TopDownSvgMap
           plan={plan}
@@ -1426,8 +1435,37 @@ function TopDownSvgMap({
         </pattern>
       </defs>
 
-      <rect className="top-map-land" x="0" y="0" width={plan.width} height={plan.height} rx="18" style={{ cursor: "pointer" }} onClick={() => onSelectZone("Available Land")} />
-      <rect className="top-map-texture" x="0" y="0" width={plan.width} height={plan.height} fill="url(#topMapGrass)" rx="18" style={{ cursor: "pointer" }} onClick={() => onSelectZone("Available Land")} />
+      <image
+        className="top-map-image"
+        href={cityMapReference}
+        x="0"
+        y="0"
+        width={plan.width}
+        height={plan.height}
+        aria-hidden="true"
+        style={{ pointerEvents: "none" }}
+      />
+      <rect
+        className="top-map-land"
+        x="0"
+        y="0"
+        width={plan.width}
+        height={plan.height}
+        rx="18"
+        style={{ cursor: "pointer", opacity: MAP_LAND_OVERLAY_OPACITY }}
+        onClick={() => onSelectZone("Available Land")}
+      />
+      <rect
+        className="top-map-texture"
+        x="0"
+        y="0"
+        width={plan.width}
+        height={plan.height}
+        fill="url(#topMapGrass)"
+        rx="18"
+        style={{ cursor: "pointer", opacity: MAP_TEXTURE_OVERLAY_OPACITY }}
+        onClick={() => onSelectZone("Available Land")}
+      />
 
       {plan.paths.map((path) => (
         <path className="top-footpath" key={path.id} d={path.d} strokeWidth={path.width} />
@@ -1661,7 +1699,7 @@ function TopDownBuildingShape({
 function buildTopDownMapPlan(layout: CityMapLayout, state: WorldState): TopDownPlan {
   const expansion = Math.max(0, Math.min(4, Math.floor((state.land_used - 58) / 10)));
   const width = 980 + expansion * 210;
-  const height = 700 + expansion * 145;
+  const height = Math.round(width / MAP_REFERENCE_ASPECT_RATIO);
   const margin = 76;
   const roads = topRoads(width, height, expansion);
   const paths = topPaths(width, height);
