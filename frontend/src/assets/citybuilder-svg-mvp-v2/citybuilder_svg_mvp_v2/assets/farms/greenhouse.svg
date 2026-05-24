@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Greenhouse">
+  <defs>
+    <filter id="greenhouse-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#greenhouse-shadow)">
+    <rect x="37" y="56" width="86" height="56" rx="10" fill="#a5e8f2" opacity=".68" stroke="#d9ffff" stroke-width="4"/><path d="M39,84 H121 M59,58 V110 M80,57 V112 M101,58 V110 M44 68 C58 62 69 62 80 68 M80 68 C92 62 105 62 117 68" stroke="#ffffff" stroke-width="3" opacity=".8"/><path d="M48 98 q10 -14 22 0 M78 98 q10 -14 22 0 M100,113 C112,106 125,105 136,110" stroke="#4cae3a" stroke-width="4" fill="none"/>
+  </g>
+</svg>

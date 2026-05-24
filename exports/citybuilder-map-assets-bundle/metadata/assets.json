@@ -1,0 +1,4987 @@
+{
+  "version": "1.0",
+  "generatedFrom": {
+    "catalog": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/metadata/asset_catalog.json",
+    "sourcePackVersion": "2.2"
+  },
+  "tileSize": [
+    128,
+    128
+  ],
+  "sourceTileViewBox": [
+    24,
+    24,
+    112,
+    112
+  ],
+  "directions": {
+    "top": "north",
+    "right": "east",
+    "bottom": "south",
+    "left": "west"
+  },
+  "rules": {
+    "matching": "Compare an asset edge socket with the opposite edge socket of the neighbor.",
+    "road": "A road edge only attaches to another road edge.",
+    "coast": "A coast edge can attach to water, sand, or coast.",
+    "land": "Grass, dirt, sand, farm, park, and paved edges can sit next to each other.",
+    "transparent": "Sprite and overlay assets do not drive tile adjacency; place them on top of base tiles."
+  },
+  "assets": [
+    {
+      "id": "grass_tile_a",
+      "title": "Grass Tile A",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/grass_tile_a.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/grass_tile_a.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/grass_tile_a.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/grass_tile_a.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "grass"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_basic_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/grass_tile_a.png"
+      }
+    },
+    {
+      "id": "grass_tile_b",
+      "title": "Grass Tile B",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/grass_tile_b.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/grass_tile_b.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/grass_tile_b.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/grass_tile_b.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "grass"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_basic_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/grass_tile_b.png"
+      }
+    },
+    {
+      "id": "dirt_tile",
+      "title": "Dirt Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/dirt_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/dirt_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/dirt_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/dirt_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "dirt",
+        "right": "dirt",
+        "bottom": "dirt",
+        "left": "dirt"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_basic_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/dirt_tile.png"
+      }
+    },
+    {
+      "id": "empty_lot_tile",
+      "title": "Empty Lot Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/empty_lot_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/empty_lot_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/empty_lot_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/empty_lot_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "grass"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_misc_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/empty_lot_tile.png"
+      }
+    },
+    {
+      "id": "sand_tile",
+      "title": "Sand Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/sand_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/sand_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/sand_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/sand_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "sand",
+        "right": "sand",
+        "bottom": "sand",
+        "left": "sand"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_basic_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/sand_tile.png"
+      }
+    },
+    {
+      "id": "farm_ground_tile",
+      "title": "Farm Ground Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/farm_ground_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/farm_ground_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/farm_ground_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/farm_ground_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_misc_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/farm_ground_tile.png"
+      }
+    },
+    {
+      "id": "park_ground_tile",
+      "title": "Park Ground Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/park_ground_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/park_ground_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/park_ground_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/park_ground_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "park",
+        "right": "park",
+        "bottom": "park",
+        "left": "park"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_misc_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/park_ground_tile.png"
+      }
+    },
+    {
+      "id": "water_tile",
+      "title": "Water Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/water_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/water_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/water_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/water_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "water",
+        "right": "water",
+        "bottom": "water",
+        "left": "water"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "water_tile",
+          "road_bridge"
+        ],
+        "right": [
+          "water_tile",
+          "coast_inlet_tile"
+        ],
+        "bottom": [
+          "water_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "road_bridge"
+        ],
+        "left": [
+          "water_tile",
+          "coast_edge_corner",
+          "coast_inlet_tile"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/water_coast_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/water_tile.png"
+      }
+    },
+    {
+      "id": "coast_edge_north",
+      "title": "Coast Edge North",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/coast_edge_north.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/coast_edge_north.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/coast_edge_north.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/coast_edge_north.svg"
+      },
+      "edgeSockets": {
+        "top": "water",
+        "right": "sand",
+        "bottom": "sand",
+        "left": "sand"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "water_tile",
+          "road_bridge"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/water_coast_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/coast_edge_north.png"
+      }
+    },
+    {
+      "id": "coast_edge_corner",
+      "title": "Coast Edge Corner",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/coast_edge_corner.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/coast_edge_corner.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/coast_edge_corner.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/coast_edge_corner.svg"
+      },
+      "edgeSockets": {
+        "top": "water",
+        "right": "water",
+        "bottom": "sand",
+        "left": "sand"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "water_tile",
+          "road_bridge"
+        ],
+        "right": [
+          "water_tile",
+          "coast_inlet_tile"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/water_coast_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/coast_edge_corner.png"
+      }
+    },
+    {
+      "id": "coast_inlet_tile",
+      "title": "Coast Inlet Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/coast_inlet_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/coast_inlet_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/coast_inlet_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/coast_inlet_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "water",
+        "right": "coast",
+        "bottom": "sand",
+        "left": "coast"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "water_tile",
+          "road_bridge"
+        ],
+        "right": [
+          "sand_tile",
+          "water_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "sand_tile",
+          "water_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/water_coast_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/coast_inlet_tile.png"
+      }
+    },
+    {
+      "id": "pond_tile",
+      "title": "Pond Tile",
+      "category": "terrain",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/terrain/pond_tile.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/pond_tile.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/terrain/pond_tile.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/terrain/pond_tile.svg"
+      },
+      "edgeSockets": {
+        "top": "park",
+        "right": "park",
+        "bottom": "park",
+        "left": "park"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/terrain_misc_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/terrain/pond_tile.png"
+      }
+    },
+    {
+      "id": "road_straight",
+      "title": "Straight Road",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_straight.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_straight.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_straight.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_straight.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": true,
+        "bottom": false,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_basic_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_straight.png"
+      }
+    },
+    {
+      "id": "road_vertical",
+      "title": "Vertical Road",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_vertical.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_vertical.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_vertical.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_vertical.svg"
+      },
+      "edgeSockets": {
+        "top": "road",
+        "right": "grass",
+        "bottom": "road",
+        "left": "grass"
+      },
+      "roadConnections": {
+        "top": true,
+        "right": false,
+        "bottom": true,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "road_vertical",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "road_vertical",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_basic_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_vertical.png"
+      }
+    },
+    {
+      "id": "road_corner",
+      "title": "Corner Road",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_corner.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_corner.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_corner.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_corner.svg"
+      },
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "grass",
+        "left": "grass"
+      },
+      "roadConnections": {
+        "top": true,
+        "right": true,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "road_vertical",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_basic_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_corner.png"
+      }
+    },
+    {
+      "id": "road_t_junction",
+      "title": "T-Junction",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_t_junction.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_t_junction.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_t_junction.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_t_junction.svg"
+      },
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": true,
+        "right": true,
+        "bottom": false,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "road_vertical",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_basic_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_t_junction.png"
+      }
+    },
+    {
+      "id": "road_cross",
+      "title": "Crossroad",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_cross.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_cross.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_cross.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_cross.svg"
+      },
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "road",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": true,
+        "right": true,
+        "bottom": true,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "road_vertical",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "road_vertical",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_more_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_cross.png"
+      }
+    },
+    {
+      "id": "road_dead_end",
+      "title": "Dead End",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_dead_end.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_dead_end.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_dead_end.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_dead_end.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_more_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_dead_end.png"
+      }
+    },
+    {
+      "id": "road_avenue",
+      "title": "Avenue Tile",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_avenue.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_avenue.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_avenue.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_avenue.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": true,
+        "bottom": false,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_more_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_avenue.png"
+      }
+    },
+    {
+      "id": "road_bridge",
+      "title": "Bridge Road",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_bridge.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_bridge.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_bridge.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_bridge.svg"
+      },
+      "edgeSockets": {
+        "top": "water",
+        "right": "road",
+        "bottom": "water",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": true,
+        "bottom": false,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "water_tile",
+          "road_bridge"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "water_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "road_bridge"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/roads_more_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_bridge.png"
+      }
+    },
+    {
+      "id": "road_roundabout",
+      "title": "Roundabout Tile",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/road_roundabout.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_roundabout.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/road_roundabout.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/road_roundabout.svg"
+      },
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "road",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": true,
+        "right": true,
+        "bottom": true,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "road_vertical",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "road_vertical",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_roundabout"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_transport_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/road_roundabout.png"
+      }
+    },
+    {
+      "id": "sidewalk_plaza",
+      "title": "Sidewalk Plaza",
+      "category": "civic",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/civic/sidewalk_plaza.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/civic/sidewalk_plaza.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/civic/sidewalk_plaza.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/civic/sidewalk_plaza.svg"
+      },
+      "edgeSockets": {
+        "top": "paved",
+        "right": "paved",
+        "bottom": "paved",
+        "left": "paved"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_transport_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/civic/sidewalk_plaza.png"
+      }
+    },
+    {
+      "id": "rail_crossing",
+      "title": "Rail Crossing",
+      "category": "road",
+      "connectivityRole": "road_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/roads/rail_crossing.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/rail_crossing.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/roads/rail_crossing.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/roads/rail_crossing.svg"
+      },
+      "edgeSockets": {
+        "top": "grass",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": true,
+        "bottom": false,
+        "left": true
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "road_straight",
+          "road_t_junction",
+          "road_cross",
+          "road_dead_end",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_cross",
+          "road_avenue",
+          "road_bridge",
+          "road_roundabout",
+          "rail_crossing"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_transport_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/roads/rail_crossing.png"
+      },
+      "generatedSource": {
+        "script": "scripts/generate_citybuilder_straight_rail_assets.py",
+        "processing": "straight_rail_crossing_composite",
+        "base": "assets_png_128/roads/road_straight.png",
+        "output": "assets_png_128/roads/rail_crossing.png"
+      }
+    },
+    {
+      "id": "road_preview_overlay",
+      "title": "Road Preview Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/road_preview_overlay.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/road_preview_overlay.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/road_preview_overlay.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/road_preview_overlay.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/overlay_controls_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/road_preview_overlay.png"
+      }
+    },
+    {
+      "id": "rail_straight_overlay",
+      "title": "Straight Rail Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/rail_straight_overlay.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/rail_straight_overlay.png"
+      },
+      "sourceSvg": null,
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "generatedSource": {
+        "script": "scripts/generate_citybuilder_straight_rail_assets.py",
+        "processing": "transparent_straight_rail_overlay",
+        "output": "assets_png_128/overlays/rail_straight_overlay.png"
+      }
+    },
+    {
+      "id": "cottage_house",
+      "title": "Cottage House",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/cottage_house.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/cottage_house.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/cottage_house.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/cottage_house.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/residential_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/cottage_house.png"
+      }
+    },
+    {
+      "id": "suburban_house",
+      "title": "Suburban House",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/suburban_house.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/suburban_house.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/suburban_house.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/suburban_house.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/residential_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/suburban_house.png"
+      }
+    },
+    {
+      "id": "townhouse",
+      "title": "Townhouse",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/townhouse.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/townhouse.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/townhouse.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/townhouse.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/residential_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/townhouse.png"
+      }
+    },
+    {
+      "id": "apartment_block",
+      "title": "Apartment Block",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/apartment_block.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/apartment_block.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/apartment_block.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/apartment_block.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/residential_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/apartment_block.png"
+      }
+    },
+    {
+      "id": "corner_shop",
+      "title": "Corner Shop",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/corner_shop.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/corner_shop.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/corner_shop.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/corner_shop.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/commercial_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/corner_shop.png"
+      }
+    },
+    {
+      "id": "grocery_store",
+      "title": "Grocery Store",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/grocery_store.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/grocery_store.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/grocery_store.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/grocery_store.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/commercial_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/grocery_store.png"
+      }
+    },
+    {
+      "id": "cafe",
+      "title": "Cafe",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/cafe.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/cafe.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/cafe.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/cafe.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/commercial_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/cafe.png"
+      }
+    },
+    {
+      "id": "office_building",
+      "title": "Office Building",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/office_building.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/office_building.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/office_building.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/office_building.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/commercial_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/office_building.png"
+      }
+    },
+    {
+      "id": "small_market",
+      "title": "Small Market",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/small_market.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/small_market.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/small_market.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/small_market.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/small_market.png"
+      }
+    },
+    {
+      "id": "clinic",
+      "title": "Clinic",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/clinic.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/clinic.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/clinic.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/clinic.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/clinic.png"
+      }
+    },
+    {
+      "id": "school",
+      "title": "School",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/school.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/school.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/school.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/school.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/school.png"
+      }
+    },
+    {
+      "id": "police_station",
+      "title": "Police Station",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/police_station.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/police_station.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/police_station.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/police_station.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/civic_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/police_station.png"
+      }
+    },
+    {
+      "id": "factory",
+      "title": "Factory",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/factory.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/factory.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/factory.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/factory.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/industrial_utility_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/factory.png"
+      }
+    },
+    {
+      "id": "warehouse",
+      "title": "Warehouse",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/warehouse.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/warehouse.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/warehouse.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/warehouse.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/industrial_utility_buildings_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/warehouse.png"
+      }
+    },
+    {
+      "id": "power_plant",
+      "title": "Power Plant",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/power_plant.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/power_plant.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/power_plant.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/power_plant.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/industrial_utility_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/power_plant.png"
+      }
+    },
+    {
+      "id": "water_plant",
+      "title": "Water Plant",
+      "category": "building",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/buildings/water_plant.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/water_plant.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/buildings/water_plant.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/buildings/water_plant.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/industrial_utility_buildings_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/buildings/water_plant.png"
+      }
+    },
+    {
+      "id": "farm_barn",
+      "title": "Farm Barn",
+      "category": "farm",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/farms/farm_barn.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/farm_barn.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/farms/farm_barn.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/farms/farm_barn.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_nature_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/farms/farm_barn.png"
+      }
+    },
+    {
+      "id": "greenhouse",
+      "title": "Greenhouse",
+      "category": "farm",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/farms/greenhouse.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/greenhouse.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/farms/greenhouse.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/farms/greenhouse.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_nature_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/farms/greenhouse.png"
+      }
+    },
+    {
+      "id": "tree",
+      "title": "Tree",
+      "category": "prop",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/props/tree.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/tree.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/props/tree.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/props/tree.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_nature_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/props/tree.png"
+      }
+    },
+    {
+      "id": "bush_cluster",
+      "title": "Bush Cluster",
+      "category": "prop",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/props/bush_cluster.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/bush_cluster.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/props/bush_cluster.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/props/bush_cluster.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_nature_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/props/bush_cluster.png"
+      }
+    },
+    {
+      "id": "fountain",
+      "title": "Fountain",
+      "category": "prop",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/props/fountain.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/fountain.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/props/fountain.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/props/fountain.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/props_vehicle_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/props/fountain.png"
+      }
+    },
+    {
+      "id": "streetlight",
+      "title": "Streetlight",
+      "category": "prop",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/props/streetlight.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/streetlight.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/props/streetlight.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/props/streetlight.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/props_vehicle_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/props/streetlight.png"
+      }
+    },
+    {
+      "id": "rock_cluster",
+      "title": "Rock Cluster",
+      "category": "prop",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/props/rock_cluster.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/rock_cluster.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/props/rock_cluster.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/props/rock_cluster.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/props_vehicle_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/props/rock_cluster.png"
+      }
+    },
+    {
+      "id": "car",
+      "title": "Car",
+      "category": "prop",
+      "connectivityRole": "sprite",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/props/car.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/car.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/props/car.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/props/car.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/props_vehicle_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout",
+        "output": "assets_png_128/props/car.png"
+      }
+    },
+    {
+      "id": "selection_overlay",
+      "title": "Green Selection Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/selection_overlay.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/selection_overlay.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/selection_overlay.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/selection_overlay.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/overlay_controls_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/selection_overlay.png"
+      }
+    },
+    {
+      "id": "invalid_overlay",
+      "title": "Red Invalid Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/invalid_overlay.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/invalid_overlay.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/invalid_overlay.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/invalid_overlay.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/overlay_controls_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/invalid_overlay.png"
+      }
+    },
+    {
+      "id": "zone_residential",
+      "title": "Residential Zone Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/zone_residential.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/zone_residential.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/zone_residential.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/zone_residential.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/zone_overlays_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/zone_residential.png"
+      }
+    },
+    {
+      "id": "zone_commercial",
+      "title": "Commercial Zone Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/zone_commercial.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/zone_commercial.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/zone_commercial.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/zone_commercial.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/zone_overlays_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/zone_commercial.png"
+      }
+    },
+    {
+      "id": "zone_industrial",
+      "title": "Industrial Zone Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/zone_industrial.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/zone_industrial.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/zone_industrial.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/zone_industrial.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/zone_overlays_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/zone_industrial.png"
+      }
+    },
+    {
+      "id": "grid_overlay",
+      "title": "Grid Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/grid_overlay.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/grid_overlay.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/grid_overlay.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/grid_overlay.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/overlay_controls_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/grid_overlay.png"
+      }
+    },
+    {
+      "id": "build_preview_overlay",
+      "title": "Build Preview Overlay",
+      "category": "overlay",
+      "connectivityRole": "overlay",
+      "usesAdjacency": false,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/overlays/build_preview_overlay.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/build_preview_overlay.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/overlays/build_preview_overlay.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/overlays/build_preview_overlay.svg"
+      },
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": []
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/zone_overlays_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "cutout_all",
+        "output": "assets_png_128/overlays/build_preview_overlay.png"
+      }
+    },
+    {
+      "id": "wheat_farm",
+      "title": "Wheat Farm",
+      "category": "farm",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/farms/wheat_farm.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/wheat_farm.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/farms/wheat_farm.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/farms/wheat_farm.svg"
+      },
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_base_tiles_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/farms/wheat_farm.png"
+      }
+    },
+    {
+      "id": "vegetable_farm",
+      "title": "Vegetable Farm",
+      "category": "farm",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/farms/vegetable_farm.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/vegetable_farm.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/farms/vegetable_farm.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/farms/vegetable_farm.svg"
+      },
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_base_tiles_2x2.png",
+        "slice": {
+          "row": 0,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/farms/vegetable_farm.png"
+      }
+    },
+    {
+      "id": "orchard_farm",
+      "title": "Orchard Farm",
+      "category": "farm",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/farms/orchard_farm.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/orchard_farm.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/farms/orchard_farm.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/farms/orchard_farm.svg"
+      },
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_base_tiles_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 0,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/farms/orchard_farm.png"
+      }
+    },
+    {
+      "id": "livestock_ranch",
+      "title": "Livestock Ranch",
+      "category": "farm",
+      "connectivityRole": "base_tile",
+      "usesAdjacency": true,
+      "size": [
+        128,
+        128
+      ],
+      "sourceViewBox": [
+        24,
+        24,
+        112,
+        112
+      ],
+      "image": {
+        "packRelativePath": "assets_png_128/farms/livestock_ranch.png",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/livestock_ranch.png"
+      },
+      "sourceSvg": {
+        "packRelativePath": "assets/farms/livestock_ranch.svg",
+        "projectRelativePath": "frontend/src/assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/farms/livestock_ranch.svg"
+      },
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      },
+      "roadConnections": {
+        "top": false,
+        "right": false,
+        "bottom": false,
+        "left": false
+      },
+      "compatibleNeighbors": {
+        "top": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "coast_inlet_tile",
+          "pond_tile",
+          "road_straight",
+          "road_corner",
+          "road_t_junction",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "right": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "coast_edge_corner",
+          "pond_tile",
+          "road_vertical",
+          "road_corner",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "bottom": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "pond_tile",
+          "road_straight",
+          "road_dead_end",
+          "road_avenue",
+          "sidewalk_plaza",
+          "rail_crossing",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ],
+        "left": [
+          "grass_tile_a",
+          "grass_tile_b",
+          "dirt_tile",
+          "empty_lot_tile",
+          "sand_tile",
+          "farm_ground_tile",
+          "park_ground_tile",
+          "coast_edge_north",
+          "pond_tile",
+          "road_vertical",
+          "road_dead_end",
+          "sidewalk_plaza",
+          "wheat_farm",
+          "vegetable_farm",
+          "orchard_farm",
+          "livestock_ranch"
+        ]
+      },
+      "imagegenSource": {
+        "sheet": "metadata/imagegen_sources/farm_base_tiles_2x2.png",
+        "slice": {
+          "row": 1,
+          "col": 1,
+          "grid": [
+            2,
+            2
+          ]
+        },
+        "processing": "full_tile_crop_resize",
+        "output": "assets_png_128/farms/livestock_ranch.png"
+      }
+    }
+  ]
+}

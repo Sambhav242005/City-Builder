@@ -1,0 +1,3238 @@
+{
+  "mapId": "imagegen_showcase_city",
+  "title": "Imagegen Showcase City",
+  "width": 20,
+  "height": 16,
+  "tileSize": [
+    128,
+    128
+  ],
+  "renderTileSize": 72,
+  "purpose": "A standalone demo map using the full imagegen 128px CityBuilder asset pack with validated road access and rotations.",
+  "layers": {
+    "ground": [
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "coast_edge_north",
+        "x": 1,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 4,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 8,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 12,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 13,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 15,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 16,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 0,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "coast_edge_corner",
+        "x": 1,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 3,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 7,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 11,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 12,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 13,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 14,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 15,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 16,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 19,
+        "y": 1,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "coast_inlet_tile",
+        "x": 1,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 2,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 6,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 10,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 12,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "pond_tile",
+        "x": 13,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 14,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 15,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 16,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 18,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 2,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_corner",
+        "x": 5,
+        "y": 3,
+        "rotation": 90
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 6,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 9,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "sidewalk_plaza",
+        "x": 12,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 13,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 14,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 15,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 16,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 17,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 3,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 4,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 5,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 8,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 9,
+        "y": 4,
+        "rotation": 270
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 11,
+        "y": 4,
+        "rotation": 270
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 12,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 13,
+        "y": 4,
+        "rotation": 270
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 14,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 15,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 16,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 4,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 3,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "rail_crossing",
+        "x": 5,
+        "y": 5,
+        "rotation": 90
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 7,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "rail_crossing",
+        "x": 9,
+        "y": 5,
+        "rotation": 90
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "rail_crossing",
+        "x": 11,
+        "y": 5,
+        "rotation": 90
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "rail_crossing",
+        "x": 13,
+        "y": 5,
+        "rotation": 90
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 15,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 16,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 19,
+        "y": 5,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 2,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 5,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 6,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 9,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 10,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 11,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 13,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 14,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 15,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 16,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 18,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 6,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 2,
+        "y": 7,
+        "rotation": 180
+      },
+      {
+        "assetId": "road_straight",
+        "x": 3,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_straight",
+        "x": 4,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_cross",
+        "x": 5,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_bridge",
+        "x": 6,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_avenue",
+        "x": 7,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_straight",
+        "x": 8,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_roundabout",
+        "x": 9,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_straight",
+        "x": 10,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_t_junction",
+        "x": 11,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_straight",
+        "x": 12,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_cross",
+        "x": 13,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_straight",
+        "x": 14,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_straight",
+        "x": 15,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_t_junction",
+        "x": 16,
+        "y": 7,
+        "rotation": 180
+      },
+      {
+        "assetId": "road_straight",
+        "x": 17,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 18,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 7,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 4,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 5,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 6,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 8,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 9,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 12,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 13,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 15,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 16,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 17,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 8,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 3,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 5,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 7,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 9,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 11,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 13,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 15,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 16,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 17,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 18,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 19,
+        "y": 9,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 2,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 5,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 6,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 9,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 10,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 13,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 14,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 15,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 16,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 17,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 18,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 19,
+        "y": 10,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 2,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 3,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 4,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 5,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 6,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 9,
+        "y": 11,
+        "rotation": 90
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 13,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 15,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 16,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 17,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 18,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 19,
+        "y": 11,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 2,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 3,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 4,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 5,
+        "y": 12,
+        "rotation": 90
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 6,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 8,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 12,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 13,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 15,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 16,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 17,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 18,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 19,
+        "y": 12,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "wheat_farm",
+        "x": 2,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "vegetable_farm",
+        "x": 3,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 4,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 5,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 6,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 7,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 11,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 13,
+        "y": 13,
+        "rotation": 90
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 15,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "road_dead_end",
+        "x": 16,
+        "y": 13,
+        "rotation": 90
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 17,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 18,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 19,
+        "y": 13,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "orchard_farm",
+        "x": 2,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "livestock_ranch",
+        "x": 3,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 4,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 5,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 6,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 10,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 13,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 14,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 15,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 16,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 17,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "empty_lot_tile",
+        "x": 18,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "dirt_tile",
+        "x": 19,
+        "y": 14,
+        "rotation": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 2,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 3,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 4,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 5,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 6,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 9,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 12,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 13,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 14,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 15,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 16,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 17,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 18,
+        "y": 15,
+        "rotation": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 19,
+        "y": 15,
+        "rotation": 0
+      }
+    ],
+    "overlays": [
+      {
+        "assetId": "zone_residential",
+        "x": 4,
+        "y": 3,
+        "rotation": 0,
+        "label": "residential zone"
+      },
+      {
+        "assetId": "zone_residential",
+        "x": 6,
+        "y": 2,
+        "rotation": 0,
+        "label": "residential zone"
+      },
+      {
+        "assetId": "zone_residential",
+        "x": 4,
+        "y": 4,
+        "rotation": 0,
+        "label": "residential zone"
+      },
+      {
+        "assetId": "zone_residential",
+        "x": 6,
+        "y": 4,
+        "rotation": 0,
+        "label": "residential zone"
+      },
+      {
+        "assetId": "zone_commercial",
+        "x": 10,
+        "y": 4,
+        "rotation": 0,
+        "label": "commercial zone"
+      },
+      {
+        "assetId": "zone_commercial",
+        "x": 10,
+        "y": 6,
+        "rotation": 0,
+        "label": "commercial zone"
+      },
+      {
+        "assetId": "zone_commercial",
+        "x": 12,
+        "y": 4,
+        "rotation": 0,
+        "label": "commercial zone"
+      },
+      {
+        "assetId": "zone_commercial",
+        "x": 12,
+        "y": 6,
+        "rotation": 0,
+        "label": "commercial zone"
+      },
+      {
+        "assetId": "zone_commercial",
+        "x": 14,
+        "y": 4,
+        "rotation": 0,
+        "label": "commercial zone"
+      },
+      {
+        "assetId": "zone_industrial",
+        "x": 15,
+        "y": 9,
+        "rotation": 0,
+        "label": "industrial zone"
+      },
+      {
+        "assetId": "zone_industrial",
+        "x": 17,
+        "y": 9,
+        "rotation": 0,
+        "label": "industrial zone"
+      },
+      {
+        "assetId": "zone_industrial",
+        "x": 15,
+        "y": 11,
+        "rotation": 0,
+        "label": "industrial zone"
+      },
+      {
+        "assetId": "zone_industrial",
+        "x": 17,
+        "y": 11,
+        "rotation": 0,
+        "label": "industrial zone"
+      },
+      {
+        "assetId": "selection_overlay",
+        "x": 6,
+        "y": 9,
+        "rotation": 0,
+        "label": "selected build lot"
+      },
+      {
+        "assetId": "build_preview_overlay",
+        "x": 7,
+        "y": 9,
+        "rotation": 0,
+        "label": "build preview"
+      },
+      {
+        "assetId": "invalid_overlay",
+        "x": 0,
+        "y": 5,
+        "rotation": 0,
+        "label": "invalid water placement"
+      },
+      {
+        "assetId": "road_preview_overlay",
+        "x": 6,
+        "y": 8,
+        "rotation": 0,
+        "label": "planned east-west road preview"
+      },
+      {
+        "assetId": "grid_overlay",
+        "x": 1,
+        "y": 14,
+        "rotation": 0,
+        "label": "grid overlay sample"
+      }
+    ],
+    "sprites": [
+      {
+        "assetId": "cottage_house",
+        "x": 4,
+        "y": 3,
+        "rotation": 270,
+        "district": "residential",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "suburban_house",
+        "x": 6,
+        "y": 2,
+        "rotation": 0,
+        "district": "residential",
+        "accessSide": "bottom"
+      },
+      {
+        "assetId": "townhouse",
+        "x": 4,
+        "y": 4,
+        "rotation": 270,
+        "district": "residential",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "apartment_block",
+        "x": 6,
+        "y": 4,
+        "rotation": 90,
+        "district": "residential",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "small_market",
+        "x": 10,
+        "y": 4,
+        "rotation": 270,
+        "district": "commercial",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "corner_shop",
+        "x": 10,
+        "y": 6,
+        "rotation": 270,
+        "district": "commercial",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "grocery_store",
+        "x": 12,
+        "y": 4,
+        "rotation": 270,
+        "district": "commercial",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "cafe",
+        "x": 12,
+        "y": 6,
+        "rotation": 90,
+        "district": "commercial",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "office_building",
+        "x": 14,
+        "y": 4,
+        "rotation": 90,
+        "district": "commercial",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "school",
+        "x": 8,
+        "y": 4,
+        "rotation": 270,
+        "district": "civic",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "clinic",
+        "x": 15,
+        "y": 6,
+        "rotation": 180,
+        "district": "civic",
+        "accessSide": "bottom"
+      },
+      {
+        "assetId": "police_station",
+        "x": 14,
+        "y": 6,
+        "rotation": 90,
+        "district": "civic",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "factory",
+        "x": 15,
+        "y": 9,
+        "rotation": 270,
+        "district": "industrial",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "warehouse",
+        "x": 17,
+        "y": 9,
+        "rotation": 90,
+        "district": "industrial",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "power_plant",
+        "x": 15,
+        "y": 11,
+        "rotation": 270,
+        "district": "industrial",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "water_plant",
+        "x": 17,
+        "y": 11,
+        "rotation": 90,
+        "district": "industrial",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "farm_barn",
+        "x": 4,
+        "y": 12,
+        "rotation": 270,
+        "district": "farm",
+        "accessSide": "right"
+      },
+      {
+        "assetId": "greenhouse",
+        "x": 6,
+        "y": 11,
+        "rotation": 90,
+        "district": "farm",
+        "accessSide": "left"
+      },
+      {
+        "assetId": "tree",
+        "x": 12,
+        "y": 2,
+        "rotation": 0,
+        "district": "park"
+      },
+      {
+        "assetId": "tree",
+        "x": 14,
+        "y": 2,
+        "rotation": 90,
+        "district": "park"
+      },
+      {
+        "assetId": "bush_cluster",
+        "x": 13,
+        "y": 3,
+        "rotation": 0,
+        "district": "park"
+      },
+      {
+        "assetId": "fountain",
+        "x": 12,
+        "y": 3,
+        "rotation": 0,
+        "district": "civic"
+      },
+      {
+        "assetId": "streetlight",
+        "x": 10,
+        "y": 6,
+        "rotation": 0,
+        "district": "commercial"
+      },
+      {
+        "assetId": "streetlight",
+        "x": 12,
+        "y": 8,
+        "rotation": 180,
+        "district": "road"
+      },
+      {
+        "assetId": "rock_cluster",
+        "x": 2,
+        "y": 9,
+        "rotation": 0,
+        "district": "coast"
+      },
+      {
+        "assetId": "car",
+        "x": 12,
+        "y": 7,
+        "rotation": 90,
+        "district": "road"
+      }
+    ]
+  },
+  "features": {
+    "rail": {
+      "label": "straight railway corridor",
+      "mode": "straight_overlay_tiles",
+      "assetId": "rail_straight_overlay",
+      "tiles": [
+        {
+          "x": 0,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 1,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 2,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 3,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 4,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 5,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 6,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 7,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 8,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 9,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 10,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 11,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 12,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 13,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 14,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 15,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 16,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 17,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 18,
+          "y": 5,
+          "rotation": 0
+        },
+        {
+          "x": 19,
+          "y": 5,
+          "rotation": 0
+        }
+      ],
+      "crossings": [
+        {
+          "x": 5,
+          "y": 5
+        },
+        {
+          "x": 9,
+          "y": 5
+        },
+        {
+          "x": 11,
+          "y": 5
+        },
+        {
+          "x": 13,
+          "y": 5
+        }
+      ]
+    }
+  },
+  "assets": {
+    "grass_tile_a": {
+      "id": "grass_tile_a",
+      "title": "Grass Tile A",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/grass_tile_a.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "grass"
+      }
+    },
+    "grass_tile_b": {
+      "id": "grass_tile_b",
+      "title": "Grass Tile B",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/grass_tile_b.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "grass"
+      }
+    },
+    "dirt_tile": {
+      "id": "dirt_tile",
+      "title": "Dirt Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/dirt_tile.png",
+      "edgeSockets": {
+        "top": "dirt",
+        "right": "dirt",
+        "bottom": "dirt",
+        "left": "dirt"
+      }
+    },
+    "empty_lot_tile": {
+      "id": "empty_lot_tile",
+      "title": "Empty Lot Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/empty_lot_tile.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "grass"
+      }
+    },
+    "sand_tile": {
+      "id": "sand_tile",
+      "title": "Sand Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/sand_tile.png",
+      "edgeSockets": {
+        "top": "sand",
+        "right": "sand",
+        "bottom": "sand",
+        "left": "sand"
+      }
+    },
+    "farm_ground_tile": {
+      "id": "farm_ground_tile",
+      "title": "Farm Ground Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/farm_ground_tile.png",
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      }
+    },
+    "park_ground_tile": {
+      "id": "park_ground_tile",
+      "title": "Park Ground Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/park_ground_tile.png",
+      "edgeSockets": {
+        "top": "park",
+        "right": "park",
+        "bottom": "park",
+        "left": "park"
+      }
+    },
+    "water_tile": {
+      "id": "water_tile",
+      "title": "Water Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/water_tile.png",
+      "edgeSockets": {
+        "top": "water",
+        "right": "water",
+        "bottom": "water",
+        "left": "water"
+      }
+    },
+    "coast_edge_north": {
+      "id": "coast_edge_north",
+      "title": "Coast Edge North",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/coast_edge_north.png",
+      "edgeSockets": {
+        "top": "water",
+        "right": "sand",
+        "bottom": "sand",
+        "left": "sand"
+      }
+    },
+    "coast_edge_corner": {
+      "id": "coast_edge_corner",
+      "title": "Coast Edge Corner",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/coast_edge_corner.png",
+      "edgeSockets": {
+        "top": "water",
+        "right": "water",
+        "bottom": "sand",
+        "left": "sand"
+      }
+    },
+    "coast_inlet_tile": {
+      "id": "coast_inlet_tile",
+      "title": "Coast Inlet Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/coast_inlet_tile.png",
+      "edgeSockets": {
+        "top": "water",
+        "right": "coast",
+        "bottom": "sand",
+        "left": "coast"
+      }
+    },
+    "pond_tile": {
+      "id": "pond_tile",
+      "title": "Pond Tile",
+      "category": "terrain",
+      "role": "base_tile",
+      "image": "assets_png_128/terrain/pond_tile.png",
+      "edgeSockets": {
+        "top": "park",
+        "right": "park",
+        "bottom": "park",
+        "left": "park"
+      }
+    },
+    "road_straight": {
+      "id": "road_straight",
+      "title": "Straight Road",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_straight.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      }
+    },
+    "road_vertical": {
+      "id": "road_vertical",
+      "title": "Vertical Road",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_vertical.png",
+      "edgeSockets": {
+        "top": "road",
+        "right": "grass",
+        "bottom": "road",
+        "left": "grass"
+      }
+    },
+    "road_corner": {
+      "id": "road_corner",
+      "title": "Corner Road",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_corner.png",
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "grass",
+        "left": "grass"
+      }
+    },
+    "road_t_junction": {
+      "id": "road_t_junction",
+      "title": "T-Junction",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_t_junction.png",
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      }
+    },
+    "road_cross": {
+      "id": "road_cross",
+      "title": "Crossroad",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_cross.png",
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "road",
+        "left": "road"
+      }
+    },
+    "road_dead_end": {
+      "id": "road_dead_end",
+      "title": "Dead End",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_dead_end.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "grass",
+        "bottom": "grass",
+        "left": "road"
+      }
+    },
+    "road_avenue": {
+      "id": "road_avenue",
+      "title": "Avenue Tile",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_avenue.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      }
+    },
+    "road_bridge": {
+      "id": "road_bridge",
+      "title": "Bridge Road",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_bridge.png",
+      "edgeSockets": {
+        "top": "water",
+        "right": "road",
+        "bottom": "water",
+        "left": "road"
+      }
+    },
+    "road_roundabout": {
+      "id": "road_roundabout",
+      "title": "Roundabout Tile",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/road_roundabout.png",
+      "edgeSockets": {
+        "top": "road",
+        "right": "road",
+        "bottom": "road",
+        "left": "road"
+      }
+    },
+    "sidewalk_plaza": {
+      "id": "sidewalk_plaza",
+      "title": "Sidewalk Plaza",
+      "category": "civic",
+      "role": "base_tile",
+      "image": "assets_png_128/civic/sidewalk_plaza.png",
+      "edgeSockets": {
+        "top": "paved",
+        "right": "paved",
+        "bottom": "paved",
+        "left": "paved"
+      }
+    },
+    "rail_crossing": {
+      "id": "rail_crossing",
+      "title": "Rail Crossing",
+      "category": "road",
+      "role": "road_tile",
+      "image": "assets_png_128/roads/rail_crossing.png",
+      "edgeSockets": {
+        "top": "grass",
+        "right": "road",
+        "bottom": "grass",
+        "left": "road"
+      }
+    },
+    "road_preview_overlay": {
+      "id": "road_preview_overlay",
+      "title": "Road Preview Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/road_preview_overlay.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "rail_straight_overlay": {
+      "id": "rail_straight_overlay",
+      "title": "Straight Rail Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/rail_straight_overlay.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "cottage_house": {
+      "id": "cottage_house",
+      "title": "Cottage House",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/cottage_house.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "suburban_house": {
+      "id": "suburban_house",
+      "title": "Suburban House",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/suburban_house.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "townhouse": {
+      "id": "townhouse",
+      "title": "Townhouse",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/townhouse.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "apartment_block": {
+      "id": "apartment_block",
+      "title": "Apartment Block",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/apartment_block.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "corner_shop": {
+      "id": "corner_shop",
+      "title": "Corner Shop",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/corner_shop.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "grocery_store": {
+      "id": "grocery_store",
+      "title": "Grocery Store",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/grocery_store.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "cafe": {
+      "id": "cafe",
+      "title": "Cafe",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/cafe.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "office_building": {
+      "id": "office_building",
+      "title": "Office Building",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/office_building.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "small_market": {
+      "id": "small_market",
+      "title": "Small Market",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/small_market.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "clinic": {
+      "id": "clinic",
+      "title": "Clinic",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/clinic.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "school": {
+      "id": "school",
+      "title": "School",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/school.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "police_station": {
+      "id": "police_station",
+      "title": "Police Station",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/police_station.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "factory": {
+      "id": "factory",
+      "title": "Factory",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/factory.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "warehouse": {
+      "id": "warehouse",
+      "title": "Warehouse",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/warehouse.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "power_plant": {
+      "id": "power_plant",
+      "title": "Power Plant",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/power_plant.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "water_plant": {
+      "id": "water_plant",
+      "title": "Water Plant",
+      "category": "building",
+      "role": "sprite",
+      "image": "assets_png_128/buildings/water_plant.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "farm_barn": {
+      "id": "farm_barn",
+      "title": "Farm Barn",
+      "category": "farm",
+      "role": "sprite",
+      "image": "assets_png_128/farms/farm_barn.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "greenhouse": {
+      "id": "greenhouse",
+      "title": "Greenhouse",
+      "category": "farm",
+      "role": "sprite",
+      "image": "assets_png_128/farms/greenhouse.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "tree": {
+      "id": "tree",
+      "title": "Tree",
+      "category": "prop",
+      "role": "sprite",
+      "image": "assets_png_128/props/tree.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "bush_cluster": {
+      "id": "bush_cluster",
+      "title": "Bush Cluster",
+      "category": "prop",
+      "role": "sprite",
+      "image": "assets_png_128/props/bush_cluster.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "fountain": {
+      "id": "fountain",
+      "title": "Fountain",
+      "category": "prop",
+      "role": "sprite",
+      "image": "assets_png_128/props/fountain.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "streetlight": {
+      "id": "streetlight",
+      "title": "Streetlight",
+      "category": "prop",
+      "role": "sprite",
+      "image": "assets_png_128/props/streetlight.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "rock_cluster": {
+      "id": "rock_cluster",
+      "title": "Rock Cluster",
+      "category": "prop",
+      "role": "sprite",
+      "image": "assets_png_128/props/rock_cluster.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "car": {
+      "id": "car",
+      "title": "Car",
+      "category": "prop",
+      "role": "sprite",
+      "image": "assets_png_128/props/car.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "selection_overlay": {
+      "id": "selection_overlay",
+      "title": "Green Selection Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/selection_overlay.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "invalid_overlay": {
+      "id": "invalid_overlay",
+      "title": "Red Invalid Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/invalid_overlay.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "zone_residential": {
+      "id": "zone_residential",
+      "title": "Residential Zone Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/zone_residential.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "zone_commercial": {
+      "id": "zone_commercial",
+      "title": "Commercial Zone Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/zone_commercial.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "zone_industrial": {
+      "id": "zone_industrial",
+      "title": "Industrial Zone Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/zone_industrial.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "grid_overlay": {
+      "id": "grid_overlay",
+      "title": "Grid Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/grid_overlay.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "build_preview_overlay": {
+      "id": "build_preview_overlay",
+      "title": "Build Preview Overlay",
+      "category": "overlay",
+      "role": "overlay",
+      "image": "assets_png_128/overlays/build_preview_overlay.png",
+      "edgeSockets": {
+        "top": "transparent",
+        "right": "transparent",
+        "bottom": "transparent",
+        "left": "transparent"
+      }
+    },
+    "wheat_farm": {
+      "id": "wheat_farm",
+      "title": "Wheat Farm",
+      "category": "farm",
+      "role": "base_tile",
+      "image": "assets_png_128/farms/wheat_farm.png",
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      }
+    },
+    "vegetable_farm": {
+      "id": "vegetable_farm",
+      "title": "Vegetable Farm",
+      "category": "farm",
+      "role": "base_tile",
+      "image": "assets_png_128/farms/vegetable_farm.png",
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      }
+    },
+    "orchard_farm": {
+      "id": "orchard_farm",
+      "title": "Orchard Farm",
+      "category": "farm",
+      "role": "base_tile",
+      "image": "assets_png_128/farms/orchard_farm.png",
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      }
+    },
+    "livestock_ranch": {
+      "id": "livestock_ranch",
+      "title": "Livestock Ranch",
+      "category": "farm",
+      "role": "base_tile",
+      "image": "assets_png_128/farms/livestock_ranch.png",
+      "edgeSockets": {
+        "top": "farm",
+        "right": "farm",
+        "bottom": "farm",
+        "left": "farm"
+      }
+    }
+  },
+  "usedAssetIds": [
+    "apartment_block",
+    "build_preview_overlay",
+    "bush_cluster",
+    "cafe",
+    "car",
+    "clinic",
+    "coast_edge_corner",
+    "coast_edge_north",
+    "coast_inlet_tile",
+    "corner_shop",
+    "cottage_house",
+    "dirt_tile",
+    "empty_lot_tile",
+    "factory",
+    "farm_barn",
+    "farm_ground_tile",
+    "fountain",
+    "grass_tile_a",
+    "grass_tile_b",
+    "greenhouse",
+    "grid_overlay",
+    "grocery_store",
+    "invalid_overlay",
+    "livestock_ranch",
+    "office_building",
+    "orchard_farm",
+    "park_ground_tile",
+    "police_station",
+    "pond_tile",
+    "power_plant",
+    "rail_crossing",
+    "rail_straight_overlay",
+    "road_avenue",
+    "road_bridge",
+    "road_corner",
+    "road_cross",
+    "road_dead_end",
+    "road_preview_overlay",
+    "road_roundabout",
+    "road_straight",
+    "road_t_junction",
+    "road_vertical",
+    "rock_cluster",
+    "sand_tile",
+    "school",
+    "selection_overlay",
+    "sidewalk_plaza",
+    "small_market",
+    "streetlight",
+    "suburban_house",
+    "townhouse",
+    "tree",
+    "vegetable_farm",
+    "warehouse",
+    "water_plant",
+    "water_tile",
+    "wheat_farm",
+    "zone_commercial",
+    "zone_industrial",
+    "zone_residential"
+  ],
+  "assetCount": 60
+}

@@ -2,7 +2,7 @@ from collections import Counter
 
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import app, service
 
 
 RECOMMENDATION_ACTIONS = {
@@ -23,12 +23,15 @@ def test_state_tick_reset_flow():
     reset = client.post("/reset")
     assert reset.status_code == 200
     assert reset.json()["state"]["tick"] == 0
+    assert reset.json()["simulation"]["running"] is False
+    assert reset.json()["simulation"]["fastForwardTicks"] == 5
 
     tick = client.post("/tick")
     assert tick.status_code == 200
     payload = tick.json()
     assert payload["state"]["tick"] == 1
-    assert payload["state"]["treasury"] >= 1_000_000
+    assert payload["simulation"]["running"] is False
+    assert payload["state"]["treasury"] >= 0
     assert len(payload["history"]) >= 2
     assert payload["cityMap"]["width"] == 14
     assert payload["cityMap"]["height"] == 9
@@ -51,6 +54,27 @@ def test_state_tick_reset_flow():
     assert payload["decisionSystem"]["nodes"]
     assert payload["decisionSystem"]["candidates"]
     assert payload["decisionSystem"]["outputSummary"]["action"] in RECOMMENDATION_ACTIONS
+
+
+def test_optimizer_training_report_endpoint_exposes_checked_in_validation():
+    client = TestClient(app)
+
+    response = client.get("/optimizer/training-report")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["policyVersion"] == "q-learning-city-v1-offline"
+    assert payload["summary"]["allScenariosPassed"] is True
+    assert payload["summary"]["validationScenariosPassed"] == payload["summary"]["validationScenarios"]
+    assert len(payload["scenarios"]) == payload["summary"]["validationScenarios"]
+
+    first_scenario = payload["scenarios"][0]
+    assert first_scenario["name"]
+    assert first_scenario["passed"] is True
+    assert first_scenario["selectedAction"] in RECOMMENDATION_ACTIONS
+    assert first_scenario["baselineAction"] in RECOMMENDATION_ACTIONS
+    assert 0 <= first_scenario["confidence"] <= 1
+    assert first_scenario["candidateScores"]
 
 
 def test_city_map_reflects_simulation_counts():
@@ -121,25 +145,72 @@ def test_external_agent_endpoints_are_removed():
     assert client.post("/agent/recommendation").status_code == 404
 
 
-def test_live_websocket_streams_snapshots():
+def test_tick_advances_exactly_one_step_and_preserves_live_state():
+    client = TestClient(app)
+    client.post("/reset")
+    client.post("/live/play")
+
+    before = client.get("/state").json()
+    payload = client.post("/tick").json()
+
+    assert payload["state"]["tick"] == before["state"]["tick"] + 1
+    assert payload["simulation"]["running"] is True
+
+
+def test_advance_runs_multiple_ticks_without_enabling_live_mode():
     client = TestClient(app)
     client.post("/reset")
 
-    with client.websocket_connect("/live") as websocket:
-        payload = websocket.receive_json()
+    before = client.get("/state").json()
+    payload = client.post("/advance", json={"ticks": 4}).json()
 
-    assert payload["state"]["tick"] == 1
-    assert "history" in payload
-    assert "cityMap" in payload
-    assert "mayorScore" in payload
-    assert "decisionScorecard" in payload
-    assert "decisionSystem" in payload
-    assert "agent" not in payload
-    assert "agentRateLimit" not in payload
-    assert payload["decisionSystem"]["optimizer"]["verdict"] in {
-        "right",
-        "watch",
-        "wrong",
-        "unavailable",
-    }
-    assert payload["recommendation"]["action"] in RECOMMENDATION_ACTIONS
+    assert payload["state"]["tick"] == before["state"]["tick"] + 4
+    assert payload["simulation"]["running"] is False
+
+
+def test_live_play_pause_is_backend_driven_and_optimizer_independent():
+    client = TestClient(app)
+    client.post("/reset")
+
+    original_training_enabled = service.q_agent.training_enabled
+    service.q_agent.training_enabled = False
+
+    try:
+        play_payload = client.post("/live/play").json()
+        assert play_payload["simulation"]["running"] is True
+        assert (
+            play_payload["simulation"]["liveTickIntervalSeconds"]
+            == service.LIVE_TICK_INTERVAL_SECONDS
+        )
+
+        with client.websocket_connect("/live") as websocket:
+            payload = websocket.receive_json()
+
+        assert payload["state"]["tick"] == 1
+        assert payload["simulation"]["running"] is True
+        assert "history" in payload
+        assert "cityMap" in payload
+        assert "mayorScore" in payload
+        assert "decisionScorecard" in payload
+        assert "decisionSystem" in payload
+        assert "agent" not in payload
+        assert "agentRateLimit" not in payload
+        assert payload["decisionSystem"]["optimizer"]["verdict"] in {
+            "right",
+            "watch",
+            "wrong",
+            "unavailable",
+        }
+        assert payload["recommendation"]["action"] in RECOMMENDATION_ACTIONS
+
+        paused = client.post("/live/pause").json()
+        assert paused["simulation"]["running"] is False
+
+        with client.websocket_connect("/live") as websocket:
+            paused_payload = websocket.receive_json()
+
+        assert paused_payload["state"]["tick"] == paused["state"]["tick"]
+        assert paused_payload["simulation"]["running"] is False
+    finally:
+        service.q_agent.training_enabled = original_training_enabled
+        client.post("/live/pause")

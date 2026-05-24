@@ -1,0 +1,806 @@
+{
+  "mapId": "demo_map_01",
+  "width": 12,
+  "height": 8,
+  "tileSize": [
+    160,
+    160
+  ],
+  "purpose": "Dummy state for the isolated map preview endpoint.",
+  "economy": {
+    "basePrices": {
+      "food": 1.0,
+      "grain": 1.0,
+      "produce": 1.0,
+      "fruit": 1.0,
+      "protein": 1.0
+    },
+    "note": "Farm economyPreview.priceEffects tells the preview/model how farm variants affect prices."
+  },
+  "layers": {
+    "terrain": [
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 5,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 10,
+        "y": 0
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 0
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 1
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 4,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 1
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 8,
+        "y": 1
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 9,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 1
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 1
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 2
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 3,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 2
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 8,
+        "y": 2
+      },
+      {
+        "assetId": "park_ground_tile",
+        "x": 9,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 2
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 2
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 3
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 2,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 7,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 3
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 3
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 4
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 3,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 6,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 4
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 11,
+        "y": 4
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 5
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 5
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 2,
+        "y": 5
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 3,
+        "y": 5
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 4,
+        "y": 5
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 5,
+        "y": 5
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 5
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 5
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 5
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 5
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 10,
+        "y": 5
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 5
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 6
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 6
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 2,
+        "y": 6
+      },
+      {
+        "assetId": "farm_ground_tile",
+        "x": 3,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 4,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 8,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 9,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 6
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 6
+      },
+      {
+        "assetId": "water_tile",
+        "x": 0,
+        "y": 7
+      },
+      {
+        "assetId": "sand_tile",
+        "x": 1,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 2,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 3,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 4,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 5,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 6,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 7,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_b",
+        "x": 8,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 9,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 10,
+        "y": 7
+      },
+      {
+        "assetId": "grass_tile_a",
+        "x": 11,
+        "y": 7
+      }
+    ],
+    "roads": [
+      {
+        "assetId": "road_straight",
+        "x": 2,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 3,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 4,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 5,
+        "y": 3
+      },
+      {
+        "assetId": "road_roundabout",
+        "x": 6,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 7,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 8,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 9,
+        "y": 3
+      },
+      {
+        "assetId": "road_straight",
+        "x": 10,
+        "y": 3
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 6,
+        "y": 1
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 6,
+        "y": 2
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 6,
+        "y": 4
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 6,
+        "y": 5
+      },
+      {
+        "assetId": "road_vertical",
+        "x": 6,
+        "y": 6
+      },
+      {
+        "assetId": "rail_crossing",
+        "x": 10,
+        "y": 4
+      }
+    ],
+    "farms": [
+      {
+        "instanceId": "f_001",
+        "assetId": "wheat_farm",
+        "x": 2,
+        "y": 5,
+        "economyPreview": {
+          "outputs": {
+            "food": 14,
+            "grain": 10
+          },
+          "priceEffects": {
+            "food": -0.05,
+            "grain": -0.08
+          },
+          "waterUse": 3,
+          "labor": 4
+        }
+      },
+      {
+        "instanceId": "f_002",
+        "assetId": "vegetable_farm",
+        "x": 3,
+        "y": 5,
+        "economyPreview": {
+          "outputs": {
+            "food": 10,
+            "produce": 12
+          },
+          "priceEffects": {
+            "food": -0.03,
+            "produce": -0.09
+          },
+          "waterUse": 5,
+          "labor": 6,
+          "happinessDelta": 0.01
+        }
+      },
+      {
+        "instanceId": "f_003",
+        "assetId": "orchard_farm",
+        "x": 4,
+        "y": 5,
+        "economyPreview": {
+          "outputs": {
+            "food": 8,
+            "fruit": 14
+          },
+          "priceEffects": {
+            "fruit": -0.1
+          },
+          "waterUse": 4,
+          "labor": 5,
+          "happinessDelta": 0.015
+        }
+      },
+      {
+        "instanceId": "f_004",
+        "assetId": "livestock_ranch",
+        "x": 5,
+        "y": 5,
+        "economyPreview": {
+          "outputs": {
+            "food": 9,
+            "protein": 12
+          },
+          "priceEffects": {
+            "protein": -0.08
+          },
+          "waterUse": 6,
+          "labor": 7,
+          "pollution": 2
+        }
+      },
+      {
+        "instanceId": "f_005",
+        "assetId": "farm_barn",
+        "x": 2,
+        "y": 6,
+        "economyPreview": {
+          "storageBonus": {
+            "food": 20
+          },
+          "spoilageReduction": 0.05,
+          "labor": 2
+        }
+      },
+      {
+        "instanceId": "f_006",
+        "assetId": "greenhouse",
+        "x": 3,
+        "y": 6,
+        "economyPreview": {
+          "outputs": {
+            "food": 12,
+            "produce": 16
+          },
+          "priceEffects": {
+            "produce": -0.12
+          },
+          "waterUse": 2,
+          "powerUse": 3,
+          "seasonResilience": 0.2
+        }
+      }
+    ],
+    "civic": [
+      {
+        "instanceId": "c_001",
+        "assetId": "sidewalk_plaza",
+        "x": 8,
+        "y": 2,
+        "effects": {
+          "happinessDelta": 0.025,
+          "maintenance": 2,
+          "commerceBoost": 0.03
+        }
+      }
+    ],
+    "buildings": [
+      {
+        "instanceId": "b_001",
+        "assetId": "cottage_house",
+        "x": 3,
+        "y": 2
+      },
+      {
+        "instanceId": "b_002",
+        "assetId": "corner_shop",
+        "x": 5,
+        "y": 2
+      },
+      {
+        "instanceId": "b_003",
+        "assetId": "factory",
+        "x": 7,
+        "y": 4
+      },
+      {
+        "instanceId": "b_004",
+        "assetId": "power_plant",
+        "x": 9,
+        "y": 5
+      },
+      {
+        "instanceId": "b_005",
+        "assetId": "water_plant",
+        "x": 9,
+        "y": 1
+      }
+    ],
+    "props": [
+      {
+        "assetId": "tree",
+        "x": 8,
+        "y": 1,
+        "placement": "park_edge"
+      },
+      {
+        "assetId": "streetlight",
+        "x": 6,
+        "y": 3,
+        "placement": "road_edge",
+        "effects": {
+          "safetyDelta": 0.015,
+          "maintenance": 1,
+          "powerUse": 0.2
+        }
+      },
+      {
+        "assetId": "rock_cluster",
+        "x": 4,
+        "y": 1,
+        "placement": "tile_center"
+      },
+      {
+        "assetId": "fountain",
+        "x": 9,
+        "y": 2,
+        "placement": "tile_center"
+      }
+    ],
+    "overlays": [
+      {
+        "assetId": "selection_overlay",
+        "x": 7,
+        "y": 4
+      },
+      {
+        "assetId": "road_preview_overlay",
+        "x": 7,
+        "y": 3
+      }
+    ]
+  },
+  "sampleActions": [
+    {
+      "action": "add_farm",
+      "kind": "orchard_farm",
+      "placement": "auto",
+      "count": 2
+    },
+    {
+      "action": "add_civic",
+      "kind": "sidewalk_plaza",
+      "x": 8,
+      "y": 2
+    },
+    {
+      "action": "place_prop",
+      "kind": "streetlight",
+      "placement": "road_edge"
+    },
+    {
+      "action": "add_road",
+      "from": [
+        5,
+        3
+      ],
+      "to": [
+        7,
+        3
+      ],
+      "kind": "road_roundabout"
+    }
+  ]
+}

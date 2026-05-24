@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Water Plant">
+  <defs>
+    <filter id="water-plant-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#water-plant-shadow)">
+    <rect x="38" y="58" width="84" height="54" rx="6" fill="#c1d5db" stroke="#5d747c" stroke-width="3"/><circle cx="65" cy="84" r="19" fill="#1f93c2" stroke="#d8ffff" stroke-width="4"/><circle cx="96" cy="84" r="19" fill="#1f93c2" stroke="#d8ffff" stroke-width="4"/><path d="M51 84 H79 M82 84 H110" stroke="#a9f0ff" stroke-width="4" opacity=".72"/><path d="M50 114 C72 121 92 121 114 114" stroke="#a9f0ff" stroke-width="5" fill="none"/>
+  </g>
+</svg>

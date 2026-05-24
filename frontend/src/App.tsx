@@ -52,10 +52,14 @@ import {
 } from "recharts";
 
 import {
+  advanceTicks,
   approveGovernmentAction,
   buildStructure,
+  fetchOptimizerTrainingReport,
   fetchState,
   liveUrl,
+  pauseLive,
+  playLive,
   rejectGovernmentAction,
   reset,
   tick
@@ -73,6 +77,8 @@ import type {
   MapTile,
   MapTileKind,
   MayorDecisionScorecardEntry,
+  OptimizerTrainingReport,
+  OptimizerTrainingScenario,
   Params,
   PolicyNodeTrace,
   MayorScore,
@@ -98,6 +104,8 @@ const RESOURCE_COLORS = {
   electronics: "#d45bca",
   fuel: "#ff8842"
 };
+
+type StatTone = "neutral" | "good" | "watch" | "danger";
 
 const BUILDING_COSTS: Record<BuildingType, number> = {
   farm: 120_000,
@@ -252,9 +260,11 @@ function formatBuildingScale(building: MapBuilding) {
 
 function App() {
   const [data, setData] = useState<StateResponse | null>(null);
-  const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trainingReport, setTrainingReport] = useState<OptimizerTrainingReport | null>(null);
+  const [trainingReportError, setTrainingReportError] = useState<string | null>(null);
   const cityMapImageUrl = import.meta.env.VITE_CITY_MAP_IMAGE_URL ?? cityMapReference;
+  const running = data?.simulation.running ?? false;
 
   useEffect(() => {
     fetchState()
@@ -263,6 +273,15 @@ function App() {
         setError(null);
       })
       .catch((err: Error) => setError(err.message));
+  }, []);
+
+  useEffect(() => {
+    fetchOptimizerTrainingReport()
+      .then((payload) => {
+        setTrainingReport(payload);
+        setTrainingReportError(null);
+      })
+      .catch((err: Error) => setTrainingReportError(err.message));
   }, []);
 
   useEffect(() => {
@@ -339,6 +358,9 @@ function App() {
   const treasuryTrend = data.history.length >= 2
     ? (() => { const prev = data.history[Math.max(0, data.history.length - 6)].state.treasury; return prev === 0 ? "--" : `${((treasury - prev) / Math.abs(prev) * 100) >= 0 ? "+" : ""}${((treasury - prev) / Math.abs(prev) * 100).toFixed(1)}%`; })()
     : "--";
+  const happinessTone: StatTone = state.happiness >= 0.75 ? "good" : state.happiness >= 0.55 ? "watch" : "danger";
+  const mayorTone: StatTone = data.mayorScore.status === "off_track" ? "danger" : data.mayorScore.status === "watch" ? "watch" : "good";
+  const treasuryTone: StatTone = treasury < 50_000 ? "watch" : "neutral";
 
   async function handleUpdate(action: () => Promise<StateResponse>) {
     try {
@@ -348,6 +370,14 @@ function App() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Request failed.");
     }
+  }
+
+  function handlePlayPause() {
+    return handleUpdate(running ? pauseLive : playLive);
+  }
+
+  function handleAdvanceFaster() {
+    return handleUpdate(() => advanceTicks(data?.simulation.fastForwardTicks ?? 5));
   }
 
   function commitState(payload: StateResponse) {
@@ -372,10 +402,11 @@ function App() {
           value={`${Math.round(state.happiness * 100)}%`}
           trend={state.happiness > 0.8 ? "Thriving" : state.happiness > 0.6 ? "Happy" : state.happiness > 0.4 ? "Concerned" : "Critical"}
           icon={<Smile />}
+          tone={happinessTone}
         />
-        <StatCard label="Mayor Direction" value={`${data.mayorScore.score}/100`} trend={data.mayorScore.label} icon={<TrendingUp />} />
+        <StatCard label="Mayor Direction" value={`${data.mayorScore.score}/100`} trend={data.mayorScore.label} icon={<TrendingUp />} tone={mayorTone} />
         <StatCard label="GDP" value={formatMoney(gdp)} trend={gdpTrend} icon={<TrendingUp />} />
-        <StatCard label="Treasury" value={formatMoney(treasury)} trend={treasuryTrend} icon={<CircleDollarSign />} />
+        <StatCard label="Treasury" value={formatMoney(treasury)} trend={treasuryTrend} icon={<CircleDollarSign />} tone={treasuryTone} />
 
         <section className="time-card">
           <div>
@@ -390,14 +421,14 @@ function App() {
                   ? "Pause simulation"
                   : "Resume simulation"
               }
-              onClick={() => setRunning((value) => !value)}
+              onClick={handlePlayPause}
             >
               {running ? <Pause size={18} /> : <Play size={18} />}
             </IconButton>
             <IconButton label="Advance one tick" onClick={() => handleUpdate(tick)}>
               <Play size={18} />
             </IconButton>
-            <IconButton label="Advance faster" onClick={() => handleUpdate(tick)}>
+            <IconButton label="Advance faster" onClick={handleAdvanceFaster}>
               <FastForward size={18} />
             </IconButton>
             <IconButton label="Reset simulation" onClick={() => handleUpdate(reset)}>
@@ -467,17 +498,48 @@ function App() {
           </Panel>
         </aside>
 
-        <section className="map-column">
-          <Panel title="City Map" flush>
-            <div className="city-map-static">
-              <img
-                className="city-map-static-image"
-                src={cityMapImageUrl}
-                alt="City map overview"
-                loading="lazy"
-              />
-            </div>
-          </Panel>
+        <section className="center-column">
+          <section className="map-column">
+            <Panel title="City Map" flush>
+              <div className="city-map-static">
+                <img
+                  className="city-map-static-image"
+                  src={cityMapImageUrl}
+                  alt="City map overview"
+                  loading="lazy"
+                />
+              </div>
+            </Panel>
+          </section>
+
+          <section className="build-panel">
+            <Panel title="Build Menu">
+              <div className="build-menu">
+                <BuildCard icon={<Wheat />} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleUpdate(() => buildStructure("farm"))} />
+                <BuildCard icon={<Factory />} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleUpdate(() => buildStructure("factory"))} />
+                <BuildCard icon={<Store />} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleUpdate(() => buildStructure("market"))} />
+                <BuildCard icon={<Zap />} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleUpdate(() => buildStructure("power_plant"))} />
+                <BuildCard icon={<House />} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleUpdate(() => buildStructure("housing"))} />
+                <BuildCard icon={<Hammer />} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleUpdate(() => buildStructure("road"))} />
+              </div>
+            </Panel>
+          </section>
+
+          <section className="demand-panel">
+            <Panel title="Supply vs Demand (Food)">
+              <ChartBox height={118}>
+                <LineChart data={chartData}>
+                  <CartesianGrid stroke="#263841" strokeDasharray="4 4" />
+                  <XAxis dataKey="tick" stroke="#8fa2ad" tick={{ fontSize: 11 }} />
+                  <YAxis stroke="#8fa2ad" tick={{ fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Legend />
+                  <Line type="monotone" dataKey="supply" name="Supply" stroke="#72df50" dot={false} strokeWidth={2} />
+                  <Line type="monotone" dataKey="demand" name="Demand" stroke="#ff6161" dot={false} strokeWidth={2} />
+                </LineChart>
+              </ChartBox>
+            </Panel>
+          </section>
         </section>
 
         <aside className="right-column">
@@ -507,6 +569,10 @@ function App() {
             </div>
             <TraceNodeList nodes={decisionSystem.nodes} />
             <CandidateScoreList candidates={topCandidates} />
+          </Panel>
+
+          <Panel title="Offline Validation">
+            <OfflineValidationPanel report={trainingReport} error={trainingReportError} />
           </Panel>
 
           <Panel title="Optimizer Output">
@@ -577,35 +643,6 @@ function App() {
             </div>
           </Panel>
         </aside>
-
-        <section className="build-panel">
-          <Panel title="Build Menu">
-            <div className="build-menu">
-              <BuildCard icon={<Wheat />} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleUpdate(() => buildStructure("farm"))} />
-              <BuildCard icon={<Factory />} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleUpdate(() => buildStructure("factory"))} />
-              <BuildCard icon={<Store />} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleUpdate(() => buildStructure("market"))} />
-              <BuildCard icon={<Zap />} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleUpdate(() => buildStructure("power_plant"))} />
-              <BuildCard icon={<House />} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleUpdate(() => buildStructure("housing"))} />
-              <BuildCard icon={<Hammer />} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleUpdate(() => buildStructure("road"))} />
-            </div>
-          </Panel>
-        </section>
-
-        <section className="demand-panel">
-          <Panel title="Supply vs Demand (Food)">
-            <ChartBox height={118}>
-              <LineChart data={chartData}>
-                <CartesianGrid stroke="#263841" strokeDasharray="4 4" />
-                <XAxis dataKey="tick" stroke="#8fa2ad" tick={{ fontSize: 11 }} />
-                <YAxis stroke="#8fa2ad" tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Legend />
-                <Line type="monotone" dataKey="supply" name="Supply" stroke="#72df50" dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="demand" name="Demand" stroke="#ff6161" dot={false} strokeWidth={2} />
-              </LineChart>
-            </ChartBox>
-          </Panel>
-        </section>
       </section>
     </main>
   );
@@ -622,19 +659,25 @@ function StatCard({
   label,
   value,
   trend,
-  icon
+  icon,
+  tone = "neutral"
 }: {
   label: string;
   value: string;
   trend: string;
   icon: ReactNode;
+  tone?: StatTone;
 }) {
   return (
-    <section className="stat-card">
+    <section className={`stat-card stat-${tone}`}>
       <div className="stat-hidden-icon">{icon}</div>
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <em>{trend}</em>
+      <div className="stat-label-row">
+        <span>{label}</span>
+      </div>
+      <div className="stat-value-row">
+        <strong>{value}</strong>
+        <em>{trend}</em>
+      </div>
     </section>
   );
 }
@@ -689,12 +732,12 @@ function TraceMetric({ label, value }: { label: string; value: string }) {
 }
 
 function TraceNodeList({ nodes }: { nodes: PolicyNodeTrace[] }) {
-  const visibleNodes = nodes.slice(0, 7);
+  const visibleNodes = nodes.slice(0, 5);
   return (
     <div className="trace-block">
       <div className="trace-block-title">
         <span>Node Updates</span>
-        <em>{visibleNodes.length} active</em>
+        <em>{nodes.length > visibleNodes.length ? `${visibleNodes.length} of ${nodes.length}` : `${visibleNodes.length} active`}</em>
       </div>
       <div className="node-trace-list">
         {visibleNodes.map((node) => (
@@ -730,6 +773,101 @@ function CandidateScoreList({ candidates }: { candidates: CandidateActionTrace[]
         ))}
       </div>
     </div>
+  );
+}
+
+function OfflineValidationPanel({
+  report,
+  error
+}: {
+  report: OptimizerTrainingReport | null;
+  error: string | null;
+}) {
+  if (error) {
+    return (
+      <div className="scorecard-empty">
+        <AlertTriangle size={18} />
+        <span>{error}</span>
+      </div>
+    );
+  }
+
+  if (!report) {
+    return (
+      <div className="scorecard-empty">
+        <Cpu size={18} />
+        <span>Loading offline validation report...</span>
+      </div>
+    );
+  }
+
+  const summary = report.summary;
+  const allPassed = summary.allScenariosPassed;
+
+  return (
+    <div className="offline-validation" aria-label="Offline optimizer validation report">
+      <div className={`validation-summary ${allPassed ? "validation-pass" : "validation-fail"}`}>
+        <div>
+          <span>{formatReportDate(report.generatedAt)}</span>
+          <strong>{report.policyVersion}</strong>
+          <em>
+            {summary.validationScenariosPassed}/{summary.validationScenarios} scenarios
+          </em>
+        </div>
+        <b>
+          {allPassed ? <Check size={14} /> : <X size={14} />}
+          {allPassed ? "All passed" : "Review"}
+        </b>
+      </div>
+
+      <div className="validation-kpis">
+        <TraceMetric label="States" value={formatNumber(summary.statesLearned)} />
+        <TraceMetric label="Reward" value={summary.averageEpisodeReward.toFixed(3)} />
+      </div>
+
+      <div className="validation-scenarios">
+        {report.scenarios.map((scenario) => (
+          <ValidationScenarioCard key={scenario.name} scenario={scenario} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ValidationScenarioCard({ scenario }: { scenario: OptimizerTrainingScenario }) {
+  const selectedIsExpected = scenario.expectedActions.includes(scenario.selectedAction);
+
+  return (
+    <article className={`validation-scenario ${scenario.passed ? "validation-pass" : "validation-fail"}`}>
+      <div className="validation-scenario-head">
+        <span className={`validation-chip ${scenario.passed ? "validation-chip-pass" : "validation-chip-fail"}`}>
+          {scenario.passed ? <Check size={12} /> : <X size={12} />}
+          {scenario.passed ? "Pass" : "Fail"}
+        </span>
+        <strong>{formatScenarioName(scenario.name)}</strong>
+        <em>{formatPercent(scenario.confidence)}</em>
+      </div>
+
+      <p>{scenario.description}</p>
+
+      <div className="validation-actions">
+        <div>
+          <span>Selected</span>
+          <strong>{ACTION_LABELS[scenario.selectedAction]}</strong>
+          <em>{selectedIsExpected ? "expected" : "unexpected"}</em>
+        </div>
+        <div>
+          <span>Baseline</span>
+          <strong>{ACTION_LABELS[scenario.baselineAction]}</strong>
+          <em>{scenario.stateKey}</em>
+        </div>
+      </div>
+
+      <div className="validation-margins">
+        <span>Q {formatMargin(scenario.qMarginVsBaseline)}</span>
+        <span>Validation {formatMargin(scenario.validationMarginVsBaseline)}</span>
+      </div>
+    </article>
   );
 }
 
@@ -955,7 +1093,9 @@ function SupplyChainPanel({ state, params }: { state: WorldState; params: Params
     <div className="supply-chain-panel">
       <div className="supply-chain-row">
         <div className="supply-chain-header">
-          <span className="supply-chain-icon">🍎</span>
+          <span className="supply-chain-icon" aria-hidden="true">
+            <Wheat size={16} />
+          </span>
           <span className="supply-chain-label">Food Inventory</span>
           <strong className="supply-chain-value" style={{ color: foodColor }}>
             {state.market_food_inventory.toFixed(1)}
@@ -978,7 +1118,9 @@ function SupplyChainPanel({ state, params }: { state: WorldState; params: Params
 
       <div className="supply-chain-row">
         <div className="supply-chain-header">
-          <span className="supply-chain-icon">📦</span>
+          <span className="supply-chain-icon" aria-hidden="true">
+            <Package size={16} />
+          </span>
           <span className="supply-chain-label">Goods Inventory</span>
           <strong className="supply-chain-value" style={{ color: goodsColor }}>
             {state.market_goods_inventory.toFixed(1)}
@@ -1003,7 +1145,9 @@ function SupplyChainPanel({ state, params }: { state: WorldState; params: Params
 
       <div className="supply-chain-row">
         <div className="supply-chain-header">
-          <span className="supply-chain-icon">💰</span>
+          <span className="supply-chain-icon" aria-hidden="true">
+            <CircleDollarSign size={16} />
+          </span>
           <span className="supply-chain-label">Tax Revenue (last tick)</span>
           <strong className="supply-chain-value" style={{ color: state.tax_revenue_last_tick > 0 ? "#72df50" : "#9eb2bd" }}>
             {state.tax_revenue_last_tick > 0 ? `+${formatMoney(state.tax_revenue_last_tick)}` : "$0"}
@@ -1869,14 +2013,19 @@ function BuildCard({
 }) {
   return (
     <button className={`build-card build-${tone}`} type="button" disabled={disabled} onClick={onBuild}>
-      <strong>{name}</strong>
-      <div>
-        <span>{icon}</span>
-        <p>
-          Cost: {cost}
-          <br />
-          Land: {land}
-        </p>
+      <div className="build-card-head">
+        <span className="build-card-icon">{icon}</span>
+        <strong>{name}</strong>
+      </div>
+      <div className="build-card-meta">
+        <span>
+          <em>Cost</em>
+          <b>{cost}</b>
+        </span>
+        <span>
+          <em>Land</em>
+          <b>{land}</b>
+        </span>
       </div>
     </button>
   );
@@ -1930,6 +2079,38 @@ function formatCost(value: number) {
     return "$0";
   }
   return `-${formatMoney(value).replace("$ ", "$")}`;
+}
+
+function formatReportDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
+function formatScenarioName(value: string): string {
+  return value
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function formatPercent(value: number): string {
+  return `${Math.round(value * 100)}%`;
+}
+
+function formatMargin(value: number): string {
+  if (Math.abs(value) < 0.0005) {
+    return "0.000";
+  }
+
+  return `${value > 0 ? "+" : ""}${value.toFixed(3)}`;
 }
 
 function formatNumber(value: number): string {

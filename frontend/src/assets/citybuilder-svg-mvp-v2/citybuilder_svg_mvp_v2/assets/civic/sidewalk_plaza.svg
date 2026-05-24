@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Sidewalk Plaza">
+  <defs>
+    <filter id="sidewalk-plaza-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#sidewalk-plaza-shadow)">
+    <rect x="24" y="24" width="112" height="112" rx="10" fill="#a79f91" stroke="#d6ccba" stroke-width="3"/>
+    <path d="M40 40 H120 M40 64 H120 M40 88 H120 M40 112 H120 M40 40 V120 M64 40 V120 M88 40 V120 M112 40 V120" stroke="#d6ccba" stroke-width="2" opacity=".85"/>
+    <circle cx="80" cy="80" r="18" fill="#cfd7cf" stroke="#8f9a96" stroke-width="3"/><circle cx="80" cy="80" r="11" fill="#1f93c2" stroke="#d8ffff" stroke-width="3"/>
+    <rect x="45" y="56" width="28" height="7" rx="3" fill="#7f5b34"/><rect x="88" y="105" width="28" height="7" rx="3" fill="#7f5b34"/>
+    <circle cx="46" cy="106" r="8" fill="#65a542"/><circle cx="118" cy="50" r="8" fill="#65a542"/>
+  </g>
+</svg>

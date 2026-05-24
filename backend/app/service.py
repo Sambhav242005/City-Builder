@@ -12,6 +12,7 @@ from .models import (
     MayorDecisionOutcome,
     MayorDecisionScorecardEntry,
     Params,
+    SimulationControls,
     StateResponse,
     TickSnapshot,
     WorldState,
@@ -30,11 +31,21 @@ from .rl_policy import ACTION_TO_BUILDING, recommend_with_policy
 
 
 class CitySimulationService:
-    def __init__(self, seed: int = 42, params: Params | None = None) -> None:
+    LIVE_TICK_INTERVAL_SECONDS = 0.35
+    FAST_FORWARD_TICKS = 5
+
+    def __init__(
+        self,
+        seed: int = 42,
+        params: Params | None = None,
+        persist_online_learning: bool = False,
+    ) -> None:
         self.seed = seed
         self.params = params or Params()
+        self.persist_online_learning = persist_online_learning
         self.rng = random.Random(seed)
         self.state = WorldState()
+        self.live_running = False
         self.q_agent = QLearningAgent()
         self.recommendation, self.decision_system = recommend_with_policy(
             self.state, [], self.params, q_agent=self.q_agent
@@ -59,17 +70,20 @@ class CitySimulationService:
             cityMap=build_city_map(self.state),
             history=list(self.history),
             events=list(self.events[-80:]),
+            simulation=self._simulation_controls(),
         )
 
     def reset(self) -> StateResponse:
         self.rng = random.Random(self.seed)
         self.state = WorldState()
+        self.live_running = False
         self.events = [
             CityEvent(tick=0, message="Simulation reset.", severity="info")
         ]
         self.history = []
         self.decision_scorecard = []
         self._decision_sequence = 0
+        self._last_state_key = encode_state(self.state, self.params)
         self._refresh_policy_recommendation()
         self._record_snapshot()
         return self.snapshot()
@@ -90,8 +104,12 @@ class CitySimulationService:
         self.q_agent.learn(state_key_before, action_taken, reward_result["total"], new_state_key)
         self._last_state_key = new_state_key
 
-        terminal = self.state.population <= 0 or self.state.land_used >= self.state.land_total
-        if terminal and self.state.tick > 10:
+        terminal = (
+            self.state.population < 50
+            or self.state.land_used >= self.state.land_total * 0.9
+            or (self.state.treasury < 30_000 and self.state.population < 80)
+        )
+        if terminal and self.state.tick > 20:
             self.events.append(
                 CityEvent(
                     tick=self.state.tick,
@@ -104,7 +122,7 @@ class CitySimulationService:
             self._last_state_key = encode_state(self.state, self.params)
             self._refresh_policy_recommendation()
             self._record_snapshot()
-            self.q_agent.save()
+            self._persist_q_agent()
             return self.snapshot()
 
         if self.q_agent.training_enabled:
@@ -131,7 +149,22 @@ class CitySimulationService:
             )
 
         self._record_snapshot()
-        self.q_agent.save()
+        self._persist_q_agent()
+        return self.snapshot()
+
+    def advance(self, ticks: int | None = None) -> StateResponse:
+        ticks_to_run = ticks if ticks is not None else self.FAST_FORWARD_TICKS
+        response: StateResponse | None = None
+        for _ in range(ticks_to_run):
+            response = self.tick()
+        return response or self.snapshot()
+
+    def play_live(self) -> StateResponse:
+        self.live_running = True
+        return self.snapshot()
+
+    def pause_live(self) -> StateResponse:
+        self.live_running = False
         return self.snapshot()
 
     def approve_government_action(self) -> StateResponse:
@@ -307,6 +340,13 @@ class CitySimulationService:
             self.state, self.history, self.params, q_agent=self.q_agent
         )
 
+    def _simulation_controls(self) -> SimulationControls:
+        return SimulationControls(
+            running=self.live_running,
+            liveTickIntervalSeconds=self.LIVE_TICK_INTERVAL_SECONDS,
+            fastForwardTicks=self.FAST_FORWARD_TICKS,
+        )
+
     def _apply_action(self, action: ActionName) -> None:
         if action == "do_nothing":
             return
@@ -327,6 +367,10 @@ class CitySimulationService:
             cost = subsidy_cost(self.state, self.params)
             if self.state.treasury >= cost:
                 self.state = subsidize(self.state, self.params)
+
+    def _persist_q_agent(self) -> None:
+        if self.persist_online_learning:
+            self.q_agent.save()
 
     def _approve_build_action(self, action: str) -> None:
         building_type = ACTION_TO_BUILDING[action]  # type: ignore[index]

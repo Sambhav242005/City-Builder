@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Car">
+  <defs>
+    <filter id="car-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#car-shadow)">
+<rect x="48" y="61" width="64" height="38" rx="10" fill="#2e80c9" stroke="#d8f5ff" stroke-width="3"/><rect x="64" y="56" width="32" height="23" rx="7" fill="#9edff0"/><circle cx="60" cy="101" r="6" fill="#1f2a31"/><circle cx="100" cy="101" r="6" fill="#1f2a31"/>
+  </g>
+</svg>

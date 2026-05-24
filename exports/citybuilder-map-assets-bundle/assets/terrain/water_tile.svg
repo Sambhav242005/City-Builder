@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Water Tile">
+  <defs>
+    <filter id="water-tile-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#water-tile-shadow)">
+    <rect x="24" y="24" width="112" height="112" rx="10" fill="#1598c2" stroke="#9ff6ff" stroke-width="3"/>
+    <path d="M42 63 q11 -9 22 0 q11 9 22 0 q11 -9 22 0" stroke="#9ff6ff" stroke-width="4" fill="none" opacity=".7"/>
+    <path d="M47 93 q11 -9 22 0 q11 9 22 0 q11 -9 22 0" stroke="#9ff6ff" stroke-width="4" fill="none" opacity=".55"/>
+  </g>
+</svg>

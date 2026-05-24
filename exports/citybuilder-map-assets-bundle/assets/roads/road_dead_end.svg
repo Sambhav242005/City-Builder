@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Dead End">
+  <defs>
+    <filter id="road-dead-end-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#road-dead-end-shadow)">
+    <rect x="24" y="24" width="112" height="112" rx="10" fill="#6f913a" stroke="#b5df58" stroke-width="3"/>
+    <defs><clipPath id="road-dead-end-tile-clip"><rect x="24" y="24" width="112" height="112" rx="10"/></clipPath></defs>
+    <g clip-path="url(#road-dead-end-tile-clip)">
+      <rect x="24" y="58" width="77" height="44" fill="#4a5058" stroke="#9da399" stroke-width="3"/>
+<path d="M35 80 H86" stroke="#f4f4e9" stroke-width="4" stroke-linecap="round" stroke-dasharray="13 10"/>
+      <rect x="94" y="61" width="7" height="38" fill="#ffd95e"/>
+    </g>
+  </g>
+</svg>

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import random
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from .models import ActionName, Params, WorldState
@@ -23,19 +23,22 @@ ALL_ACTIONS: tuple[ActionName, ...] = (
 Q_TABLE_PATH = Path(__file__).resolve().parent.parent / "data" / "q_table.json"
 
 
+INITIAL_Q = 0.3
+
+
 @dataclass
 class QLearningConfig:
-    alpha: float = 0.1
+    alpha: float = 0.2
     gamma: float = 0.95
-    epsilon: float = 0.6
+    epsilon: float = 0.5
     epsilon_min: float = 0.05
-    epsilon_decay: float = 0.992
+    epsilon_decay: float = 0.99
 
 
 def encode_state(state: WorldState, params: Params) -> str:
     demand = max(state.food_demand, 1)
     ratio = state.food_supply / demand
-    fb = 0 if ratio < 0.7 else 1 if ratio < 1.3 else 2
+    fb = 0 if ratio < 0.6 else 1 if ratio < 1.4 else 2
 
     p = 0 if state.price <= 8 else 1 if state.price <= 18 else 2
 
@@ -52,9 +55,14 @@ def encode_state(state: WorldState, params: Params) -> str:
     pop_ratio = state.population / max(state.housing * 18, 1)
     pop = 0 if pop_ratio < 0.5 else 1
 
-    treasury_idle = 1 if state.treasury > 500_000 and infra < 1.0 else 0
+    if state.treasury > 300_000:
+        t = 2
+    elif state.treasury > 50_000:
+        t = 1
+    else:
+        t = 0
 
-    return f"fb{fb}_p{p}_h{h}_lb{lb}_inf{inf}_pop{pop}_t{treasury_idle}"
+    return f"fb{fb}_p{p}_h{h}_lb{lb}_inf{inf}_pop{pop}_t{t}"
 
 
 def reward_components(state: WorldState, params: Params) -> dict[str, float]:
@@ -104,18 +112,30 @@ def compute_reward(
         -0.15 if next_state.treasury > 500_000 and infra_ratio < 1.0 else 0.0
     )
 
-    pop_level = next_state.population / max(next_state.food_demand, 1)
-    if pop_level < 0.5:
-        collapse_penalty = -0.5 - (0.5 - pop_level) * 2.0
-    elif pop_level < 0.3:
+    housing_capacity = max(next_state.housing * 18, 1)
+    pop_level = next_state.population / housing_capacity
+    if pop_level < 0.4:
         collapse_penalty = -1.0
+    elif pop_level < 0.6:
+        collapse_penalty = -0.5
+    elif pop_level < 0.8:
+        collapse_penalty = -0.15
     else:
         collapse_penalty = 0.0
 
-    land_full_penalty = (
-        -0.3 if next_state.land_used >= next_state.land_total else 0.0
+    pop_decline_penalty = (
+        -0.3 if next_state.population < state.population else 0.0
     )
-    bankrupt_penalty = -0.3 if next_state.treasury < 10_000 else 0.0
+
+    land_ratio = next_state.land_used / max(next_state.land_total, 1)
+    if land_ratio >= 0.95:
+        land_full_penalty = -0.3
+    elif land_ratio >= 0.8:
+        land_full_penalty = -0.1
+    else:
+        land_full_penalty = 0.0
+
+    bankrupt_penalty = -0.3 if next_state.treasury < 100_000 else 0.0
 
     total = (
         next_comp["foodBalance"] * 0.20
@@ -127,6 +147,7 @@ def compute_reward(
         + pop_reward
         + treasury_penalty
         + collapse_penalty
+        + pop_decline_penalty
         + land_full_penalty
         + bankrupt_penalty
     )
@@ -136,20 +157,31 @@ def compute_reward(
         "popReward": round(pop_reward, 4),
         "treasuryPenalty": treasury_penalty,
         "collapsePenalty": round(collapse_penalty, 4),
+        "popDeclinePenalty": pop_decline_penalty,
         "landFullPenalty": land_full_penalty,
         "bankruptPenalty": bankrupt_penalty,
     }
 
 
 class QLearningAgent:
-    def __init__(self, config: QLearningConfig | None = None):
+    def __init__(
+        self,
+        config: QLearningConfig | None = None,
+        q_table_path: Path | None = Q_TABLE_PATH,
+        load_existing: bool = True,
+    ):
         self.config = config or QLearningConfig()
+        self.q_table_path = q_table_path
         self.q_table: dict[str, list[float]] = defaultdict(
-            lambda: [0.0] * len(ALL_ACTIONS)
+            lambda: [INITIAL_Q] * len(ALL_ACTIONS)
+        )
+        self.visit_counts: dict[str, list[int]] = defaultdict(
+            lambda: [0] * len(ALL_ACTIONS)
         )
         self.epsilon = self.config.epsilon
         self.training_enabled = True
-        self._load()
+        if load_existing and self.q_table_path is not None:
+            self._load(self.q_table_path)
 
     def action_index(self, action: ActionName) -> int:
         return ALL_ACTIONS.index(action)
@@ -165,12 +197,15 @@ class QLearningAgent:
         if self.training_enabled and random.random() < self.epsilon:
             return random.choice(legal_actions)
         q_values = self.q_table[state_key]
+        visits = self.visit_counts[state_key]
         legal_set = set(legal_actions)
-        candidates = [
-            (a, q_values[self.action_index(a)])
-            for a in ALL_ACTIONS
-            if a in legal_set
-        ]
+
+        def score(action: ActionName) -> float:
+            idx = self.action_index(action)
+            bonus = 0.15 / max(visits[idx], 1)
+            return q_values[idx] + bonus
+
+        candidates = [(a, score(a)) for a in ALL_ACTIONS if a in legal_set]
         if not candidates:
             return "do_nothing"
         return max(candidates, key=lambda x: x[1])[0]
@@ -185,6 +220,7 @@ class QLearningAgent:
         if not self.training_enabled:
             return
         idx = self.action_index(action)
+        self.visit_counts[state_key][idx] += 1
         current_q = self.q_table[state_key][idx]
         max_next = max(self.q_table[next_state_key])
         td_target = reward + self.config.gamma * max_next
@@ -195,20 +231,22 @@ class QLearningAgent:
             self.config.epsilon_min, self.epsilon * self.config.epsilon_decay
         )
 
-    def _load(self) -> None:
+    def _load(self, path: Path) -> None:
         try:
-            if Q_TABLE_PATH.exists():
-                with open(Q_TABLE_PATH) as f:
+            if path.exists():
+                with open(path) as f:
                     data = json.load(f)
                 for k, v in data.items():
-                    self.q_table[k] = v
+                    if isinstance(v, list) and len(v) == len(ALL_ACTIONS):
+                        self.q_table[k] = [float(value) for value in v]
         except Exception:
             pass
 
-    def save(self) -> None:
-        Q_TABLE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with open(Q_TABLE_PATH, "w") as f:
-            json.dump(dict(self.q_table), f, indent=2)
+    def save(self, path: Path | None = None) -> None:
+        target_path = path or self.q_table_path or Q_TABLE_PATH
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(target_path, "w") as f:
+            json.dump(dict(self.q_table), f, indent=2, sort_keys=True)
 
     def get_q_values(self, state_key: str) -> list[float]:
         return self.q_table[state_key]

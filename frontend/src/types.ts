@@ -159,6 +159,58 @@ export interface DecisionSystemStatus {
   outputSummary: DecisionOutputSummary;
 }
 
+export interface OptimizerCandidateScore {
+  action: ActionName;
+  qScore: number;
+  riskFlags: string[];
+  rolloutScore: number;
+  validationScore: number;
+}
+
+export interface OptimizerTrainingScenario {
+  baselineAction: ActionName;
+  candidateScores: OptimizerCandidateScore[];
+  confidence: number;
+  description: string;
+  expectedActions: ActionName[];
+  name: string;
+  passed: boolean;
+  qMarginVsBaseline: number;
+  selectedAction: ActionName;
+  stateKey: string;
+  validationMarginVsBaseline: number;
+}
+
+export interface OptimizerTrainingSummary {
+  allScenariosPassed: boolean;
+  averageEpisodeReward: number;
+  statesLearned: number;
+  validationScenarios: number;
+  validationScenariosPassed: number;
+}
+
+export interface OptimizerTrainingConfig {
+  alpha: number;
+  environment: string;
+  episodes: number;
+  epsilon: number;
+  epsilonDecay: number;
+  epsilonMin: number;
+  gamma: number;
+  rolloutHorizon: number;
+  scenarioRollouts: number;
+  seed: number;
+  stepsPerEpisode: number;
+}
+
+export interface OptimizerTrainingReport {
+  generatedAt: string;
+  policyVersion: string;
+  scenarios: OptimizerTrainingScenario[];
+  summary: OptimizerTrainingSummary;
+  training: OptimizerTrainingConfig;
+}
+
 export interface CityEvent {
   tick: number;
   message: string;
@@ -253,6 +305,12 @@ export interface TickSnapshot {
   recommendation: GovernmentRecommendation;
 }
 
+export interface SimulationControls {
+  running: boolean;
+  liveTickIntervalSeconds: number;
+  fastForwardTicks: number;
+}
+
 export interface StateResponse {
   state: WorldState;
   params: Params;
@@ -263,4 +321,5 @@ export interface StateResponse {
   cityMap: CityMapLayout;
   history: TickSnapshot[];
   events: CityEvent[];
+  simulation: SimulationControls;
 }

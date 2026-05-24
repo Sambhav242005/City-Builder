@@ -31,3 +31,12 @@ cd C:\Users\hp\Desktop\CityBuilder\frontend
 npm run build
 ```
 
+## Train Optimizer
+
+```powershell
+cd C:\Users\hp\Desktop\CityBuilder\backend
+..\.venv\Scripts\python -m app.training_harness
+```
+
+This regenerates `backend\data\q_table.json` and
+`backend\data\optimizer_training_report.json` from `CityTrainingEnv`.

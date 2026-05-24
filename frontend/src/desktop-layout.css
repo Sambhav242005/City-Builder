@@ -1,0 +1,153 @@
+/* Final layout layer: keep the desktop workspace dense and useful. */
+
+@media (min-width: 1181px) {
+  .topbar {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns:
+      minmax(260px, 1.24fr)
+      repeat(5, minmax(104px, 0.7fr))
+      minmax(280px, 1.08fr) !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 0 !important;
+  }
+
+  .brand-card,
+  .stat-card,
+  .time-card {
+    height: 70px !important;
+  }
+
+  .brand-card {
+    padding: 10px 14px !important;
+  }
+
+  .brand-card h1 {
+    font-size: 1rem !important;
+    line-height: 1.08 !important;
+    text-shadow: none !important;
+  }
+
+  .brand-card p {
+    margin-top: 4px !important;
+    font-size: 0.82rem !important;
+    white-space: nowrap !important;
+  }
+
+  .time-card {
+    grid-template-columns: minmax(74px, auto) minmax(66px, 1fr) auto !important;
+  }
+
+  .sim-grid {
+    display: grid !important;
+    grid-template-columns: minmax(278px, 400px) minmax(0, 1fr) minmax(318px, 430px) !important;
+    grid-template-areas: "left center right" !important;
+    grid-template-rows: auto !important;
+    align-items: start !important;
+    gap: 10px !important;
+  }
+
+  .left-column {
+    grid-area: left !important;
+    align-self: start !important;
+  }
+
+  .center-column {
+    grid-area: center !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    align-self: start !important;
+  }
+
+  .right-column {
+    grid-area: right !important;
+    align-self: start !important;
+  }
+
+  .center-column > .map-column,
+  .center-column > .build-panel,
+  .center-column > .demand-panel {
+    grid-area: auto !important;
+    min-width: 0 !important;
+  }
+
+  .city-map-static {
+    aspect-ratio: 882 / 766 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 8px !important;
+  }
+
+  .city-map-static-image {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+
+  .build-panel .panel,
+  .demand-panel .panel {
+    height: auto !important;
+  }
+
+  .build-menu {
+    grid-template-columns: repeat(3, minmax(150px, 1fr)) !important;
+    min-height: 0 !important;
+  }
+
+  .build-card {
+    min-height: 104px !important;
+  }
+
+  .demand-panel .chart-box {
+    height: 150px !important;
+  }
+}
+
+@media (min-width: 1181px) and (max-width: 1380px) {
+  .topbar {
+    grid-template-columns:
+      minmax(248px, 1.18fr)
+      repeat(3, minmax(110px, 0.72fr))
+      minmax(132px, 0.82fr)
+      minmax(132px, 0.82fr) !important;
+  }
+
+  .time-card {
+    grid-column: 5 / span 2 !important;
+  }
+
+  .sim-grid {
+    grid-template-columns: minmax(270px, 340px) minmax(0, 1fr) minmax(300px, 350px) !important;
+  }
+
+  .build-menu {
+    grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .center-column {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+  }
+
+  .sim-grid {
+    grid-template-areas:
+      "center"
+      "right"
+      "left" !important;
+  }
+
+  .center-column > .map-column,
+  .center-column > .build-panel,
+  .center-column > .demand-panel {
+    grid-area: auto !important;
+    min-width: 0 !important;
+  }
+}

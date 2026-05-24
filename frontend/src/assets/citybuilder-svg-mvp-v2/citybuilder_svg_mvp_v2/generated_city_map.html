@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imagegen Showcase City</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #07111b;
+    --panel: #0d1d2b;
+    --line: #1d3c54;
+    --text: #f5f7fb;
+    --muted: #9cc1df;
+    --accent: #5fc8ff;
+    --tile: 72px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #07111b;
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    background: #050d14;
+  }
+  h1 {
+    margin: 0;
+    font-size: 21px;
+    letter-spacing: 0;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  button, select {
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 0 10px;
+    font: inherit;
+  }
+  button { cursor: pointer; }
+  button[aria-pressed="false"] { color: var(--muted); }
+  main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 16px;
+    padding: 16px;
+  }
+  .map-shell {
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #03090f;
+    max-height: calc(100vh - 96px);
+  }
+  .map {
+    position: relative;
+    width: calc(20 * var(--tile));
+    height: calc(16 * var(--tile));
+    background: #102331;
+    isolation: isolate;
+  }
+  .tile {
+    position: absolute;
+    left: calc(var(--x) * var(--tile));
+    top: calc(var(--y) * var(--tile));
+    width: var(--tile);
+    height: var(--tile);
+    image-rendering: auto;
+    transform: rotate(var(--r));
+    transform-origin: center;
+    user-select: none;
+  }
+  .ground { z-index: 1; }
+  .rail-segment { z-index: 2; pointer-events: none; }
+  .overlay { z-index: 3; pointer-events: auto; }
+  .sprite { z-index: 4; pointer-events: auto; }
+  body.hide-sprites .sprite { display: none; }
+  body.hide-overlays .overlay { display: none; }
+  body.hide-rail .rail-segment { display: none; }
+  .map::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.14) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.14) 1px, transparent 1px);
+    background-size: var(--tile) var(--tile);
+    display: none;
+  }
+  body.show-grid .map::after { display: block; }
+  aside {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+  }
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    padding: 12px;
+  }
+  h2 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  .stats {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .stats strong { color: var(--text); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .legend span {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 8px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .legend strong { color: var(--accent); }
+  code {
+    color: var(--muted);
+    font-size: 12px;
+    word-break: break-word;
+  }
+  @media (max-width: 960px) {
+    main { grid-template-columns: 1fr; }
+    .map-shell { max-height: none; }
+  }
+</style>
+</head>
+<body class="show-grid">
+<header>
+  <h1>Imagegen Showcase City</h1>
+  <div class="controls">
+    <select id="zoom" aria-label="Zoom">
+      <option value="56">56 px</option>
+      <option value="72" selected>72 px</option>
+      <option value="88">88 px</option>
+      <option value="104">104 px</option>
+      <option value="128">128 px</option>
+    </select>
+    <button type="button" data-toggle="hide-sprites" aria-pressed="true">Sprites</button>
+    <button type="button" data-toggle="hide-overlays" aria-pressed="true">Overlays</button>
+    <button type="button" data-toggle="hide-rail" aria-pressed="true">Rail</button>
+    <button type="button" data-toggle="show-grid" aria-pressed="true">Grid</button>
+  </div>
+</header>
+<main>
+  <section class="map-shell" aria-label="Generated city map">
+    <div class="map" style="width:1440px;height:1152px">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 0)" title="Water Tile (0, 0)" data-asset="water_tile" style="--x:0;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/coast_edge_north.png" alt="Coast Edge North (1, 0)" title="Coast Edge North (1, 0)" data-asset="coast_edge_north" style="--x:1;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 0)" title="Grass Tile A (2, 0)" data-asset="grass_tile_a" style="--x:2;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 0)" title="Grass Tile A (3, 0)" data-asset="grass_tile_a" style="--x:3;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (4, 0)" title="Grass Tile B (4, 0)" data-asset="grass_tile_b" style="--x:4;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (5, 0)" title="Grass Tile A (5, 0)" data-asset="grass_tile_a" style="--x:5;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (6, 0)" title="Grass Tile A (6, 0)" data-asset="grass_tile_a" style="--x:6;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 0)" title="Grass Tile A (7, 0)" data-asset="grass_tile_a" style="--x:7;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (8, 0)" title="Grass Tile B (8, 0)" data-asset="grass_tile_b" style="--x:8;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (9, 0)" title="Grass Tile A (9, 0)" data-asset="grass_tile_a" style="--x:9;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 0)" title="Grass Tile A (10, 0)" data-asset="grass_tile_a" style="--x:10;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 0)" title="Grass Tile A (11, 0)" data-asset="grass_tile_a" style="--x:11;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (12, 0)" title="Grass Tile B (12, 0)" data-asset="grass_tile_b" style="--x:12;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (13, 0)" title="Grass Tile A (13, 0)" data-asset="grass_tile_a" style="--x:13;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 0)" title="Grass Tile A (14, 0)" data-asset="grass_tile_a" style="--x:14;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (15, 0)" title="Grass Tile A (15, 0)" data-asset="grass_tile_a" style="--x:15;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (16, 0)" title="Grass Tile B (16, 0)" data-asset="grass_tile_b" style="--x:16;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 0)" title="Grass Tile A (17, 0)" data-asset="grass_tile_a" style="--x:17;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 0)" title="Grass Tile A (18, 0)" data-asset="grass_tile_a" style="--x:18;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 0)" title="Grass Tile A (19, 0)" data-asset="grass_tile_a" style="--x:19;--y:0;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 1)" title="Water Tile (0, 1)" data-asset="water_tile" style="--x:0;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/coast_edge_corner.png" alt="Coast Edge Corner (1, 1)" title="Coast Edge Corner (1, 1)" data-asset="coast_edge_corner" style="--x:1;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 1)" title="Grass Tile A (2, 1)" data-asset="grass_tile_a" style="--x:2;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (3, 1)" title="Grass Tile B (3, 1)" data-asset="grass_tile_b" style="--x:3;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 1)" title="Grass Tile A (4, 1)" data-asset="grass_tile_a" style="--x:4;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (5, 1)" title="Grass Tile A (5, 1)" data-asset="grass_tile_a" style="--x:5;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (6, 1)" title="Grass Tile A (6, 1)" data-asset="grass_tile_a" style="--x:6;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (7, 1)" title="Grass Tile B (7, 1)" data-asset="grass_tile_b" style="--x:7;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 1)" title="Grass Tile A (8, 1)" data-asset="grass_tile_a" style="--x:8;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (9, 1)" title="Grass Tile A (9, 1)" data-asset="grass_tile_a" style="--x:9;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 1)" title="Grass Tile A (10, 1)" data-asset="grass_tile_a" style="--x:10;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (11, 1)" title="Grass Tile B (11, 1)" data-asset="grass_tile_b" style="--x:11;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (12, 1)" title="Park Ground Tile (12, 1)" data-asset="park_ground_tile" style="--x:12;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (13, 1)" title="Park Ground Tile (13, 1)" data-asset="park_ground_tile" style="--x:13;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (14, 1)" title="Park Ground Tile (14, 1)" data-asset="park_ground_tile" style="--x:14;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (15, 1)" title="Park Ground Tile (15, 1)" data-asset="park_ground_tile" style="--x:15;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (16, 1)" title="Grass Tile A (16, 1)" data-asset="grass_tile_a" style="--x:16;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 1)" title="Grass Tile A (17, 1)" data-asset="grass_tile_a" style="--x:17;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 1)" title="Grass Tile A (18, 1)" data-asset="grass_tile_a" style="--x:18;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (19, 1)" title="Grass Tile B (19, 1)" data-asset="grass_tile_b" style="--x:19;--y:1;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 2)" title="Water Tile (0, 2)" data-asset="water_tile" style="--x:0;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/coast_inlet_tile.png" alt="Coast Inlet Tile (1, 2)" title="Coast Inlet Tile (1, 2)" data-asset="coast_inlet_tile" style="--x:1;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (2, 2)" title="Grass Tile B (2, 2)" data-asset="grass_tile_b" style="--x:2;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 2)" title="Grass Tile A (3, 2)" data-asset="grass_tile_a" style="--x:3;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 2)" title="Grass Tile A (4, 2)" data-asset="grass_tile_a" style="--x:4;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (5, 2)" title="Grass Tile A (5, 2)" data-asset="grass_tile_a" style="--x:5;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (6, 2)" title="Grass Tile B (6, 2)" data-asset="grass_tile_b" style="--x:6;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 2)" title="Grass Tile A (7, 2)" data-asset="grass_tile_a" style="--x:7;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 2)" title="Grass Tile A (8, 2)" data-asset="grass_tile_a" style="--x:8;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (9, 2)" title="Grass Tile A (9, 2)" data-asset="grass_tile_a" style="--x:9;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (10, 2)" title="Grass Tile B (10, 2)" data-asset="grass_tile_b" style="--x:10;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 2)" title="Grass Tile A (11, 2)" data-asset="grass_tile_a" style="--x:11;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (12, 2)" title="Park Ground Tile (12, 2)" data-asset="park_ground_tile" style="--x:12;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/pond_tile.png" alt="Pond Tile (13, 2)" title="Pond Tile (13, 2)" data-asset="pond_tile" style="--x:13;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (14, 2)" title="Park Ground Tile (14, 2)" data-asset="park_ground_tile" style="--x:14;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (15, 2)" title="Park Ground Tile (15, 2)" data-asset="park_ground_tile" style="--x:15;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (16, 2)" title="Grass Tile A (16, 2)" data-asset="grass_tile_a" style="--x:16;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 2)" title="Grass Tile A (17, 2)" data-asset="grass_tile_a" style="--x:17;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (18, 2)" title="Grass Tile B (18, 2)" data-asset="grass_tile_b" style="--x:18;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 2)" title="Grass Tile A (19, 2)" data-asset="grass_tile_a" style="--x:19;--y:2;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 3)" title="Water Tile (0, 3)" data-asset="water_tile" style="--x:0;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 3)" title="Sand Tile (1, 3)" data-asset="sand_tile" style="--x:1;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 3)" title="Grass Tile A (2, 3)" data-asset="grass_tile_a" style="--x:2;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 3)" title="Grass Tile A (3, 3)" data-asset="grass_tile_a" style="--x:3;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 3)" title="Grass Tile A (4, 3)" data-asset="grass_tile_a" style="--x:4;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_corner.png" alt="Corner Road (5, 3)" title="Corner Road (5, 3)" data-asset="road_corner" style="--x:5;--y:3;--r:90deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (6, 3)" title="Dead End (6, 3)" data-asset="road_dead_end" style="--x:6;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 3)" title="Grass Tile A (7, 3)" data-asset="grass_tile_a" style="--x:7;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 3)" title="Grass Tile A (8, 3)" data-asset="grass_tile_a" style="--x:8;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (9, 3)" title="Grass Tile B (9, 3)" data-asset="grass_tile_b" style="--x:9;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 3)" title="Grass Tile A (10, 3)" data-asset="grass_tile_a" style="--x:10;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 3)" title="Grass Tile A (11, 3)" data-asset="grass_tile_a" style="--x:11;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/civic/sidewalk_plaza.png" alt="Sidewalk Plaza (12, 3)" title="Sidewalk Plaza (12, 3)" data-asset="sidewalk_plaza" style="--x:12;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (13, 3)" title="Park Ground Tile (13, 3)" data-asset="park_ground_tile" style="--x:13;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (14, 3)" title="Park Ground Tile (14, 3)" data-asset="park_ground_tile" style="--x:14;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (15, 3)" title="Park Ground Tile (15, 3)" data-asset="park_ground_tile" style="--x:15;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (16, 3)" title="Grass Tile A (16, 3)" data-asset="grass_tile_a" style="--x:16;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (17, 3)" title="Grass Tile B (17, 3)" data-asset="grass_tile_b" style="--x:17;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 3)" title="Grass Tile A (18, 3)" data-asset="grass_tile_a" style="--x:18;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 3)" title="Grass Tile A (19, 3)" data-asset="grass_tile_a" style="--x:19;--y:3;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 4)" title="Water Tile (0, 4)" data-asset="water_tile" style="--x:0;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 4)" title="Sand Tile (1, 4)" data-asset="sand_tile" style="--x:1;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 4)" title="Grass Tile A (2, 4)" data-asset="grass_tile_a" style="--x:2;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 4)" title="Grass Tile A (3, 4)" data-asset="grass_tile_a" style="--x:3;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (4, 4)" title="Grass Tile B (4, 4)" data-asset="grass_tile_b" style="--x:4;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (5, 4)" title="Vertical Road (5, 4)" data-asset="road_vertical" style="--x:5;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (6, 4)" title="Grass Tile A (6, 4)" data-asset="grass_tile_a" style="--x:6;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 4)" title="Grass Tile A (7, 4)" data-asset="grass_tile_a" style="--x:7;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (8, 4)" title="Grass Tile B (8, 4)" data-asset="grass_tile_b" style="--x:8;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (9, 4)" title="Dead End (9, 4)" data-asset="road_dead_end" style="--x:9;--y:4;--r:270deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 4)" title="Grass Tile A (10, 4)" data-asset="grass_tile_a" style="--x:10;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (11, 4)" title="Dead End (11, 4)" data-asset="road_dead_end" style="--x:11;--y:4;--r:270deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (12, 4)" title="Park Ground Tile (12, 4)" data-asset="park_ground_tile" style="--x:12;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (13, 4)" title="Dead End (13, 4)" data-asset="road_dead_end" style="--x:13;--y:4;--r:270deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (14, 4)" title="Park Ground Tile (14, 4)" data-asset="park_ground_tile" style="--x:14;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile (15, 4)" title="Park Ground Tile (15, 4)" data-asset="park_ground_tile" style="--x:15;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (16, 4)" title="Grass Tile B (16, 4)" data-asset="grass_tile_b" style="--x:16;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 4)" title="Grass Tile A (17, 4)" data-asset="grass_tile_a" style="--x:17;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 4)" title="Grass Tile A (18, 4)" data-asset="grass_tile_a" style="--x:18;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 4)" title="Grass Tile A (19, 4)" data-asset="grass_tile_a" style="--x:19;--y:4;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 5)" title="Water Tile (0, 5)" data-asset="water_tile" style="--x:0;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 5)" title="Sand Tile (1, 5)" data-asset="sand_tile" style="--x:1;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 5)" title="Grass Tile A (2, 5)" data-asset="grass_tile_a" style="--x:2;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (3, 5)" title="Grass Tile B (3, 5)" data-asset="grass_tile_b" style="--x:3;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 5)" title="Grass Tile A (4, 5)" data-asset="grass_tile_a" style="--x:4;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/rail_crossing.png" alt="Rail Crossing (5, 5)" title="Rail Crossing (5, 5)" data-asset="rail_crossing" style="--x:5;--y:5;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (6, 5)" title="Grass Tile A (6, 5)" data-asset="grass_tile_a" style="--x:6;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (7, 5)" title="Grass Tile B (7, 5)" data-asset="grass_tile_b" style="--x:7;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 5)" title="Grass Tile A (8, 5)" data-asset="grass_tile_a" style="--x:8;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/rail_crossing.png" alt="Rail Crossing (9, 5)" title="Rail Crossing (9, 5)" data-asset="rail_crossing" style="--x:9;--y:5;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 5)" title="Grass Tile A (10, 5)" data-asset="grass_tile_a" style="--x:10;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/rail_crossing.png" alt="Rail Crossing (11, 5)" title="Rail Crossing (11, 5)" data-asset="rail_crossing" style="--x:11;--y:5;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 5)" title="Grass Tile A (12, 5)" data-asset="grass_tile_a" style="--x:12;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/rail_crossing.png" alt="Rail Crossing (13, 5)" title="Rail Crossing (13, 5)" data-asset="rail_crossing" style="--x:13;--y:5;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 5)" title="Grass Tile A (14, 5)" data-asset="grass_tile_a" style="--x:14;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (15, 5)" title="Grass Tile B (15, 5)" data-asset="grass_tile_b" style="--x:15;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (16, 5)" title="Grass Tile A (16, 5)" data-asset="grass_tile_a" style="--x:16;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 5)" title="Grass Tile A (17, 5)" data-asset="grass_tile_a" style="--x:17;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 5)" title="Grass Tile A (18, 5)" data-asset="grass_tile_a" style="--x:18;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (19, 5)" title="Grass Tile B (19, 5)" data-asset="grass_tile_b" style="--x:19;--y:5;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 6)" title="Water Tile (0, 6)" data-asset="water_tile" style="--x:0;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 6)" title="Sand Tile (1, 6)" data-asset="sand_tile" style="--x:1;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (2, 6)" title="Grass Tile B (2, 6)" data-asset="grass_tile_b" style="--x:2;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 6)" title="Grass Tile A (3, 6)" data-asset="grass_tile_a" style="--x:3;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 6)" title="Grass Tile A (4, 6)" data-asset="grass_tile_a" style="--x:4;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (5, 6)" title="Vertical Road (5, 6)" data-asset="road_vertical" style="--x:5;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (6, 6)" title="Water Tile (6, 6)" data-asset="water_tile" style="--x:6;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 6)" title="Grass Tile A (7, 6)" data-asset="grass_tile_a" style="--x:7;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 6)" title="Grass Tile A (8, 6)" data-asset="grass_tile_a" style="--x:8;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (9, 6)" title="Vertical Road (9, 6)" data-asset="road_vertical" style="--x:9;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (10, 6)" title="Grass Tile B (10, 6)" data-asset="grass_tile_b" style="--x:10;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (11, 6)" title="Vertical Road (11, 6)" data-asset="road_vertical" style="--x:11;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 6)" title="Grass Tile A (12, 6)" data-asset="grass_tile_a" style="--x:12;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (13, 6)" title="Vertical Road (13, 6)" data-asset="road_vertical" style="--x:13;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (14, 6)" title="Grass Tile B (14, 6)" data-asset="grass_tile_b" style="--x:14;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (15, 6)" title="Grass Tile A (15, 6)" data-asset="grass_tile_a" style="--x:15;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (16, 6)" title="Grass Tile A (16, 6)" data-asset="grass_tile_a" style="--x:16;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 6)" title="Grass Tile A (17, 6)" data-asset="grass_tile_a" style="--x:17;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (18, 6)" title="Grass Tile B (18, 6)" data-asset="grass_tile_b" style="--x:18;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 6)" title="Grass Tile A (19, 6)" data-asset="grass_tile_a" style="--x:19;--y:6;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 7)" title="Water Tile (0, 7)" data-asset="water_tile" style="--x:0;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 7)" title="Sand Tile (1, 7)" data-asset="sand_tile" style="--x:1;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (2, 7)" title="Dead End (2, 7)" data-asset="road_dead_end" style="--x:2;--y:7;--r:180deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (3, 7)" title="Straight Road (3, 7)" data-asset="road_straight" style="--x:3;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (4, 7)" title="Straight Road (4, 7)" data-asset="road_straight" style="--x:4;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_cross.png" alt="Crossroad (5, 7)" title="Crossroad (5, 7)" data-asset="road_cross" style="--x:5;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_bridge.png" alt="Bridge Road (6, 7)" title="Bridge Road (6, 7)" data-asset="road_bridge" style="--x:6;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_avenue.png" alt="Avenue Tile (7, 7)" title="Avenue Tile (7, 7)" data-asset="road_avenue" style="--x:7;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (8, 7)" title="Straight Road (8, 7)" data-asset="road_straight" style="--x:8;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_roundabout.png" alt="Roundabout Tile (9, 7)" title="Roundabout Tile (9, 7)" data-asset="road_roundabout" style="--x:9;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (10, 7)" title="Straight Road (10, 7)" data-asset="road_straight" style="--x:10;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_t_junction.png" alt="T-Junction (11, 7)" title="T-Junction (11, 7)" data-asset="road_t_junction" style="--x:11;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (12, 7)" title="Straight Road (12, 7)" data-asset="road_straight" style="--x:12;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_cross.png" alt="Crossroad (13, 7)" title="Crossroad (13, 7)" data-asset="road_cross" style="--x:13;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (14, 7)" title="Straight Road (14, 7)" data-asset="road_straight" style="--x:14;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (15, 7)" title="Straight Road (15, 7)" data-asset="road_straight" style="--x:15;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_t_junction.png" alt="T-Junction (16, 7)" title="T-Junction (16, 7)" data-asset="road_t_junction" style="--x:16;--y:7;--r:180deg;">
+<img class="tile ground" src="assets_png_128/roads/road_straight.png" alt="Straight Road (17, 7)" title="Straight Road (17, 7)" data-asset="road_straight" style="--x:17;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (18, 7)" title="Dead End (18, 7)" data-asset="road_dead_end" style="--x:18;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 7)" title="Grass Tile A (19, 7)" data-asset="grass_tile_a" style="--x:19;--y:7;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 8)" title="Water Tile (0, 8)" data-asset="water_tile" style="--x:0;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 8)" title="Sand Tile (1, 8)" data-asset="sand_tile" style="--x:1;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 8)" title="Grass Tile A (2, 8)" data-asset="grass_tile_a" style="--x:2;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 8)" title="Grass Tile A (3, 8)" data-asset="grass_tile_a" style="--x:3;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (4, 8)" title="Grass Tile B (4, 8)" data-asset="grass_tile_b" style="--x:4;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (5, 8)" title="Vertical Road (5, 8)" data-asset="road_vertical" style="--x:5;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (6, 8)" title="Water Tile (6, 8)" data-asset="water_tile" style="--x:6;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 8)" title="Grass Tile A (7, 8)" data-asset="grass_tile_a" style="--x:7;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (8, 8)" title="Grass Tile B (8, 8)" data-asset="grass_tile_b" style="--x:8;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (9, 8)" title="Vertical Road (9, 8)" data-asset="road_vertical" style="--x:9;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 8)" title="Grass Tile A (10, 8)" data-asset="grass_tile_a" style="--x:10;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 8)" title="Grass Tile A (11, 8)" data-asset="grass_tile_a" style="--x:11;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (12, 8)" title="Grass Tile B (12, 8)" data-asset="grass_tile_b" style="--x:12;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (13, 8)" title="Vertical Road (13, 8)" data-asset="road_vertical" style="--x:13;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 8)" title="Grass Tile A (14, 8)" data-asset="grass_tile_a" style="--x:14;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (15, 8)" title="Grass Tile A (15, 8)" data-asset="grass_tile_a" style="--x:15;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (16, 8)" title="Vertical Road (16, 8)" data-asset="road_vertical" style="--x:16;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (17, 8)" title="Grass Tile A (17, 8)" data-asset="grass_tile_a" style="--x:17;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 8)" title="Grass Tile A (18, 8)" data-asset="grass_tile_a" style="--x:18;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 8)" title="Grass Tile A (19, 8)" data-asset="grass_tile_a" style="--x:19;--y:8;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 9)" title="Water Tile (0, 9)" data-asset="water_tile" style="--x:0;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 9)" title="Sand Tile (1, 9)" data-asset="sand_tile" style="--x:1;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (2, 9)" title="Grass Tile A (2, 9)" data-asset="grass_tile_a" style="--x:2;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (3, 9)" title="Grass Tile B (3, 9)" data-asset="grass_tile_b" style="--x:3;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 9)" title="Grass Tile A (4, 9)" data-asset="grass_tile_a" style="--x:4;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (5, 9)" title="Vertical Road (5, 9)" data-asset="road_vertical" style="--x:5;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (6, 9)" title="Grass Tile A (6, 9)" data-asset="grass_tile_a" style="--x:6;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (7, 9)" title="Grass Tile B (7, 9)" data-asset="grass_tile_b" style="--x:7;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 9)" title="Grass Tile A (8, 9)" data-asset="grass_tile_a" style="--x:8;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (9, 9)" title="Vertical Road (9, 9)" data-asset="road_vertical" style="--x:9;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 9)" title="Grass Tile A (10, 9)" data-asset="grass_tile_a" style="--x:10;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (11, 9)" title="Grass Tile B (11, 9)" data-asset="grass_tile_b" style="--x:11;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 9)" title="Grass Tile A (12, 9)" data-asset="grass_tile_a" style="--x:12;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (13, 9)" title="Vertical Road (13, 9)" data-asset="road_vertical" style="--x:13;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 9)" title="Grass Tile A (14, 9)" data-asset="grass_tile_a" style="--x:14;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (15, 9)" title="Empty Lot Tile (15, 9)" data-asset="empty_lot_tile" style="--x:15;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (16, 9)" title="Vertical Road (16, 9)" data-asset="road_vertical" style="--x:16;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (17, 9)" title="Empty Lot Tile (17, 9)" data-asset="empty_lot_tile" style="--x:17;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (18, 9)" title="Dirt Tile (18, 9)" data-asset="dirt_tile" style="--x:18;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (19, 9)" title="Empty Lot Tile (19, 9)" data-asset="empty_lot_tile" style="--x:19;--y:9;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 10)" title="Water Tile (0, 10)" data-asset="water_tile" style="--x:0;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 10)" title="Sand Tile (1, 10)" data-asset="sand_tile" style="--x:1;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (2, 10)" title="Grass Tile B (2, 10)" data-asset="grass_tile_b" style="--x:2;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (3, 10)" title="Grass Tile A (3, 10)" data-asset="grass_tile_a" style="--x:3;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (4, 10)" title="Grass Tile A (4, 10)" data-asset="grass_tile_a" style="--x:4;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (5, 10)" title="Vertical Road (5, 10)" data-asset="road_vertical" style="--x:5;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (6, 10)" title="Grass Tile B (6, 10)" data-asset="grass_tile_b" style="--x:6;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 10)" title="Grass Tile A (7, 10)" data-asset="grass_tile_a" style="--x:7;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 10)" title="Grass Tile A (8, 10)" data-asset="grass_tile_a" style="--x:8;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (9, 10)" title="Vertical Road (9, 10)" data-asset="road_vertical" style="--x:9;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (10, 10)" title="Grass Tile B (10, 10)" data-asset="grass_tile_b" style="--x:10;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 10)" title="Grass Tile A (11, 10)" data-asset="grass_tile_a" style="--x:11;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 10)" title="Grass Tile A (12, 10)" data-asset="grass_tile_a" style="--x:12;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (13, 10)" title="Vertical Road (13, 10)" data-asset="road_vertical" style="--x:13;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (14, 10)" title="Grass Tile B (14, 10)" data-asset="grass_tile_b" style="--x:14;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (15, 10)" title="Dirt Tile (15, 10)" data-asset="dirt_tile" style="--x:15;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (16, 10)" title="Vertical Road (16, 10)" data-asset="road_vertical" style="--x:16;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (17, 10)" title="Dirt Tile (17, 10)" data-asset="dirt_tile" style="--x:17;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (18, 10)" title="Empty Lot Tile (18, 10)" data-asset="empty_lot_tile" style="--x:18;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (19, 10)" title="Dirt Tile (19, 10)" data-asset="dirt_tile" style="--x:19;--y:10;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 11)" title="Water Tile (0, 11)" data-asset="water_tile" style="--x:0;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 11)" title="Sand Tile (1, 11)" data-asset="sand_tile" style="--x:1;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (2, 11)" title="Farm Ground Tile (2, 11)" data-asset="farm_ground_tile" style="--x:2;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (3, 11)" title="Farm Ground Tile (3, 11)" data-asset="farm_ground_tile" style="--x:3;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (4, 11)" title="Farm Ground Tile (4, 11)" data-asset="farm_ground_tile" style="--x:4;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (5, 11)" title="Vertical Road (5, 11)" data-asset="road_vertical" style="--x:5;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (6, 11)" title="Farm Ground Tile (6, 11)" data-asset="farm_ground_tile" style="--x:6;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 11)" title="Grass Tile A (7, 11)" data-asset="grass_tile_a" style="--x:7;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 11)" title="Grass Tile A (8, 11)" data-asset="grass_tile_a" style="--x:8;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (9, 11)" title="Dead End (9, 11)" data-asset="road_dead_end" style="--x:9;--y:11;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 11)" title="Grass Tile A (10, 11)" data-asset="grass_tile_a" style="--x:10;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 11)" title="Grass Tile A (11, 11)" data-asset="grass_tile_a" style="--x:11;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 11)" title="Grass Tile A (12, 11)" data-asset="grass_tile_a" style="--x:12;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (13, 11)" title="Vertical Road (13, 11)" data-asset="road_vertical" style="--x:13;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 11)" title="Grass Tile A (14, 11)" data-asset="grass_tile_a" style="--x:14;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (15, 11)" title="Empty Lot Tile (15, 11)" data-asset="empty_lot_tile" style="--x:15;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (16, 11)" title="Vertical Road (16, 11)" data-asset="road_vertical" style="--x:16;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (17, 11)" title="Empty Lot Tile (17, 11)" data-asset="empty_lot_tile" style="--x:17;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (18, 11)" title="Dirt Tile (18, 11)" data-asset="dirt_tile" style="--x:18;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (19, 11)" title="Empty Lot Tile (19, 11)" data-asset="empty_lot_tile" style="--x:19;--y:11;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 12)" title="Water Tile (0, 12)" data-asset="water_tile" style="--x:0;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 12)" title="Sand Tile (1, 12)" data-asset="sand_tile" style="--x:1;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (2, 12)" title="Farm Ground Tile (2, 12)" data-asset="farm_ground_tile" style="--x:2;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (3, 12)" title="Farm Ground Tile (3, 12)" data-asset="farm_ground_tile" style="--x:3;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (4, 12)" title="Farm Ground Tile (4, 12)" data-asset="farm_ground_tile" style="--x:4;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (5, 12)" title="Dead End (5, 12)" data-asset="road_dead_end" style="--x:5;--y:12;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (6, 12)" title="Farm Ground Tile (6, 12)" data-asset="farm_ground_tile" style="--x:6;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 12)" title="Grass Tile A (7, 12)" data-asset="grass_tile_a" style="--x:7;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (8, 12)" title="Grass Tile B (8, 12)" data-asset="grass_tile_b" style="--x:8;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (9, 12)" title="Grass Tile A (9, 12)" data-asset="grass_tile_a" style="--x:9;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 12)" title="Grass Tile A (10, 12)" data-asset="grass_tile_a" style="--x:10;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 12)" title="Grass Tile A (11, 12)" data-asset="grass_tile_a" style="--x:11;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (12, 12)" title="Grass Tile B (12, 12)" data-asset="grass_tile_b" style="--x:12;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (13, 12)" title="Vertical Road (13, 12)" data-asset="road_vertical" style="--x:13;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 12)" title="Grass Tile A (14, 12)" data-asset="grass_tile_a" style="--x:14;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (15, 12)" title="Dirt Tile (15, 12)" data-asset="dirt_tile" style="--x:15;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_vertical.png" alt="Vertical Road (16, 12)" title="Vertical Road (16, 12)" data-asset="road_vertical" style="--x:16;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (17, 12)" title="Dirt Tile (17, 12)" data-asset="dirt_tile" style="--x:17;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (18, 12)" title="Empty Lot Tile (18, 12)" data-asset="empty_lot_tile" style="--x:18;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (19, 12)" title="Dirt Tile (19, 12)" data-asset="dirt_tile" style="--x:19;--y:12;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 13)" title="Water Tile (0, 13)" data-asset="water_tile" style="--x:0;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 13)" title="Sand Tile (1, 13)" data-asset="sand_tile" style="--x:1;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/farms/wheat_farm.png" alt="Wheat Farm (2, 13)" title="Wheat Farm (2, 13)" data-asset="wheat_farm" style="--x:2;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/farms/vegetable_farm.png" alt="Vegetable Farm (3, 13)" title="Vegetable Farm (3, 13)" data-asset="vegetable_farm" style="--x:3;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (4, 13)" title="Farm Ground Tile (4, 13)" data-asset="farm_ground_tile" style="--x:4;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (5, 13)" title="Farm Ground Tile (5, 13)" data-asset="farm_ground_tile" style="--x:5;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (6, 13)" title="Farm Ground Tile (6, 13)" data-asset="farm_ground_tile" style="--x:6;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (7, 13)" title="Grass Tile B (7, 13)" data-asset="grass_tile_b" style="--x:7;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 13)" title="Grass Tile A (8, 13)" data-asset="grass_tile_a" style="--x:8;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (9, 13)" title="Grass Tile A (9, 13)" data-asset="grass_tile_a" style="--x:9;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 13)" title="Grass Tile A (10, 13)" data-asset="grass_tile_a" style="--x:10;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (11, 13)" title="Grass Tile B (11, 13)" data-asset="grass_tile_b" style="--x:11;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 13)" title="Grass Tile A (12, 13)" data-asset="grass_tile_a" style="--x:12;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (13, 13)" title="Dead End (13, 13)" data-asset="road_dead_end" style="--x:13;--y:13;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 13)" title="Grass Tile A (14, 13)" data-asset="grass_tile_a" style="--x:14;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (15, 13)" title="Empty Lot Tile (15, 13)" data-asset="empty_lot_tile" style="--x:15;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/roads/road_dead_end.png" alt="Dead End (16, 13)" title="Dead End (16, 13)" data-asset="road_dead_end" style="--x:16;--y:13;--r:90deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (17, 13)" title="Empty Lot Tile (17, 13)" data-asset="empty_lot_tile" style="--x:17;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (18, 13)" title="Dirt Tile (18, 13)" data-asset="dirt_tile" style="--x:18;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (19, 13)" title="Empty Lot Tile (19, 13)" data-asset="empty_lot_tile" style="--x:19;--y:13;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 14)" title="Water Tile (0, 14)" data-asset="water_tile" style="--x:0;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 14)" title="Sand Tile (1, 14)" data-asset="sand_tile" style="--x:1;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/farms/orchard_farm.png" alt="Orchard Farm (2, 14)" title="Orchard Farm (2, 14)" data-asset="orchard_farm" style="--x:2;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/farms/livestock_ranch.png" alt="Livestock Ranch (3, 14)" title="Livestock Ranch (3, 14)" data-asset="livestock_ranch" style="--x:3;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (4, 14)" title="Farm Ground Tile (4, 14)" data-asset="farm_ground_tile" style="--x:4;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (5, 14)" title="Farm Ground Tile (5, 14)" data-asset="farm_ground_tile" style="--x:5;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (6, 14)" title="Farm Ground Tile (6, 14)" data-asset="farm_ground_tile" style="--x:6;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 14)" title="Grass Tile A (7, 14)" data-asset="grass_tile_a" style="--x:7;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 14)" title="Grass Tile A (8, 14)" data-asset="grass_tile_a" style="--x:8;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (9, 14)" title="Grass Tile A (9, 14)" data-asset="grass_tile_a" style="--x:9;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (10, 14)" title="Grass Tile B (10, 14)" data-asset="grass_tile_b" style="--x:10;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 14)" title="Grass Tile A (11, 14)" data-asset="grass_tile_a" style="--x:11;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 14)" title="Grass Tile A (12, 14)" data-asset="grass_tile_a" style="--x:12;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (13, 14)" title="Grass Tile A (13, 14)" data-asset="grass_tile_a" style="--x:13;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (14, 14)" title="Grass Tile B (14, 14)" data-asset="grass_tile_b" style="--x:14;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (15, 14)" title="Dirt Tile (15, 14)" data-asset="dirt_tile" style="--x:15;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (16, 14)" title="Empty Lot Tile (16, 14)" data-asset="empty_lot_tile" style="--x:16;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (17, 14)" title="Dirt Tile (17, 14)" data-asset="dirt_tile" style="--x:17;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile (18, 14)" title="Empty Lot Tile (18, 14)" data-asset="empty_lot_tile" style="--x:18;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile (19, 14)" title="Dirt Tile (19, 14)" data-asset="dirt_tile" style="--x:19;--y:14;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/water_tile.png" alt="Water Tile (0, 15)" title="Water Tile (0, 15)" data-asset="water_tile" style="--x:0;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile (1, 15)" title="Sand Tile (1, 15)" data-asset="sand_tile" style="--x:1;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (2, 15)" title="Farm Ground Tile (2, 15)" data-asset="farm_ground_tile" style="--x:2;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (3, 15)" title="Farm Ground Tile (3, 15)" data-asset="farm_ground_tile" style="--x:3;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (4, 15)" title="Farm Ground Tile (4, 15)" data-asset="farm_ground_tile" style="--x:4;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (5, 15)" title="Farm Ground Tile (5, 15)" data-asset="farm_ground_tile" style="--x:5;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile (6, 15)" title="Farm Ground Tile (6, 15)" data-asset="farm_ground_tile" style="--x:6;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (7, 15)" title="Grass Tile A (7, 15)" data-asset="grass_tile_a" style="--x:7;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (8, 15)" title="Grass Tile A (8, 15)" data-asset="grass_tile_a" style="--x:8;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (9, 15)" title="Grass Tile B (9, 15)" data-asset="grass_tile_b" style="--x:9;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (10, 15)" title="Grass Tile A (10, 15)" data-asset="grass_tile_a" style="--x:10;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (11, 15)" title="Grass Tile A (11, 15)" data-asset="grass_tile_a" style="--x:11;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (12, 15)" title="Grass Tile A (12, 15)" data-asset="grass_tile_a" style="--x:12;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (13, 15)" title="Grass Tile B (13, 15)" data-asset="grass_tile_b" style="--x:13;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (14, 15)" title="Grass Tile A (14, 15)" data-asset="grass_tile_a" style="--x:14;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (15, 15)" title="Grass Tile A (15, 15)" data-asset="grass_tile_a" style="--x:15;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (16, 15)" title="Grass Tile A (16, 15)" data-asset="grass_tile_a" style="--x:16;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B (17, 15)" title="Grass Tile B (17, 15)" data-asset="grass_tile_b" style="--x:17;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (18, 15)" title="Grass Tile A (18, 15)" data-asset="grass_tile_a" style="--x:18;--y:15;--r:0deg;">
+<img class="tile ground" src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A (19, 15)" title="Grass Tile A (19, 15)" data-asset="grass_tile_a" style="--x:19;--y:15;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (0, 5)" title="straight railway corridor (0, 5)" data-asset="rail_straight_overlay" style="--x:0;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (1, 5)" title="straight railway corridor (1, 5)" data-asset="rail_straight_overlay" style="--x:1;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (2, 5)" title="straight railway corridor (2, 5)" data-asset="rail_straight_overlay" style="--x:2;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (3, 5)" title="straight railway corridor (3, 5)" data-asset="rail_straight_overlay" style="--x:3;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (4, 5)" title="straight railway corridor (4, 5)" data-asset="rail_straight_overlay" style="--x:4;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (5, 5)" title="straight railway corridor (5, 5)" data-asset="rail_straight_overlay" style="--x:5;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (6, 5)" title="straight railway corridor (6, 5)" data-asset="rail_straight_overlay" style="--x:6;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (7, 5)" title="straight railway corridor (7, 5)" data-asset="rail_straight_overlay" style="--x:7;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (8, 5)" title="straight railway corridor (8, 5)" data-asset="rail_straight_overlay" style="--x:8;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (9, 5)" title="straight railway corridor (9, 5)" data-asset="rail_straight_overlay" style="--x:9;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (10, 5)" title="straight railway corridor (10, 5)" data-asset="rail_straight_overlay" style="--x:10;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (11, 5)" title="straight railway corridor (11, 5)" data-asset="rail_straight_overlay" style="--x:11;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (12, 5)" title="straight railway corridor (12, 5)" data-asset="rail_straight_overlay" style="--x:12;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (13, 5)" title="straight railway corridor (13, 5)" data-asset="rail_straight_overlay" style="--x:13;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (14, 5)" title="straight railway corridor (14, 5)" data-asset="rail_straight_overlay" style="--x:14;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (15, 5)" title="straight railway corridor (15, 5)" data-asset="rail_straight_overlay" style="--x:15;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (16, 5)" title="straight railway corridor (16, 5)" data-asset="rail_straight_overlay" style="--x:16;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (17, 5)" title="straight railway corridor (17, 5)" data-asset="rail_straight_overlay" style="--x:17;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (18, 5)" title="straight railway corridor (18, 5)" data-asset="rail_straight_overlay" style="--x:18;--y:5;--r:0deg;">
+<img class="tile rail-segment" src="assets_png_128/overlays/rail_straight_overlay.png" alt="straight railway corridor (19, 5)" title="straight railway corridor (19, 5)" data-asset="rail_straight_overlay" style="--x:19;--y:5;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_residential.png" alt="Residential Zone Overlay (4, 3)" title="Residential Zone Overlay (4, 3)" data-asset="zone_residential" style="--x:4;--y:3;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_residential.png" alt="Residential Zone Overlay (6, 2)" title="Residential Zone Overlay (6, 2)" data-asset="zone_residential" style="--x:6;--y:2;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_residential.png" alt="Residential Zone Overlay (4, 4)" title="Residential Zone Overlay (4, 4)" data-asset="zone_residential" style="--x:4;--y:4;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_residential.png" alt="Residential Zone Overlay (6, 4)" title="Residential Zone Overlay (6, 4)" data-asset="zone_residential" style="--x:6;--y:4;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_commercial.png" alt="Commercial Zone Overlay (10, 4)" title="Commercial Zone Overlay (10, 4)" data-asset="zone_commercial" style="--x:10;--y:4;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_commercial.png" alt="Commercial Zone Overlay (10, 6)" title="Commercial Zone Overlay (10, 6)" data-asset="zone_commercial" style="--x:10;--y:6;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_commercial.png" alt="Commercial Zone Overlay (12, 4)" title="Commercial Zone Overlay (12, 4)" data-asset="zone_commercial" style="--x:12;--y:4;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_commercial.png" alt="Commercial Zone Overlay (12, 6)" title="Commercial Zone Overlay (12, 6)" data-asset="zone_commercial" style="--x:12;--y:6;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_commercial.png" alt="Commercial Zone Overlay (14, 4)" title="Commercial Zone Overlay (14, 4)" data-asset="zone_commercial" style="--x:14;--y:4;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_industrial.png" alt="Industrial Zone Overlay (15, 9)" title="Industrial Zone Overlay (15, 9)" data-asset="zone_industrial" style="--x:15;--y:9;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_industrial.png" alt="Industrial Zone Overlay (17, 9)" title="Industrial Zone Overlay (17, 9)" data-asset="zone_industrial" style="--x:17;--y:9;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_industrial.png" alt="Industrial Zone Overlay (15, 11)" title="Industrial Zone Overlay (15, 11)" data-asset="zone_industrial" style="--x:15;--y:11;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/zone_industrial.png" alt="Industrial Zone Overlay (17, 11)" title="Industrial Zone Overlay (17, 11)" data-asset="zone_industrial" style="--x:17;--y:11;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/selection_overlay.png" alt="Green Selection Overlay (6, 9)" title="Green Selection Overlay (6, 9)" data-asset="selection_overlay" style="--x:6;--y:9;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/build_preview_overlay.png" alt="Build Preview Overlay (7, 9)" title="Build Preview Overlay (7, 9)" data-asset="build_preview_overlay" style="--x:7;--y:9;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/invalid_overlay.png" alt="Red Invalid Overlay (0, 5)" title="Red Invalid Overlay (0, 5)" data-asset="invalid_overlay" style="--x:0;--y:5;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/road_preview_overlay.png" alt="Road Preview Overlay (6, 8)" title="Road Preview Overlay (6, 8)" data-asset="road_preview_overlay" style="--x:6;--y:8;--r:0deg;">
+<img class="tile overlay" src="assets_png_128/overlays/grid_overlay.png" alt="Grid Overlay (1, 14)" title="Grid Overlay (1, 14)" data-asset="grid_overlay" style="--x:1;--y:14;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/buildings/cottage_house.png" alt="Cottage House (4, 3)" title="Cottage House (4, 3)" data-asset="cottage_house" style="--x:4;--y:3;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/suburban_house.png" alt="Suburban House (6, 2)" title="Suburban House (6, 2)" data-asset="suburban_house" style="--x:6;--y:2;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/buildings/townhouse.png" alt="Townhouse (4, 4)" title="Townhouse (4, 4)" data-asset="townhouse" style="--x:4;--y:4;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/apartment_block.png" alt="Apartment Block (6, 4)" title="Apartment Block (6, 4)" data-asset="apartment_block" style="--x:6;--y:4;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/buildings/small_market.png" alt="Small Market (10, 4)" title="Small Market (10, 4)" data-asset="small_market" style="--x:10;--y:4;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/corner_shop.png" alt="Corner Shop (10, 6)" title="Corner Shop (10, 6)" data-asset="corner_shop" style="--x:10;--y:6;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/grocery_store.png" alt="Grocery Store (12, 4)" title="Grocery Store (12, 4)" data-asset="grocery_store" style="--x:12;--y:4;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/cafe.png" alt="Cafe (12, 6)" title="Cafe (12, 6)" data-asset="cafe" style="--x:12;--y:6;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/buildings/office_building.png" alt="Office Building (14, 4)" title="Office Building (14, 4)" data-asset="office_building" style="--x:14;--y:4;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/buildings/school.png" alt="School (8, 4)" title="School (8, 4)" data-asset="school" style="--x:8;--y:4;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/clinic.png" alt="Clinic (15, 6)" title="Clinic (15, 6)" data-asset="clinic" style="--x:15;--y:6;--r:180deg;">
+<img class="tile sprite" src="assets_png_128/buildings/police_station.png" alt="Police Station (14, 6)" title="Police Station (14, 6)" data-asset="police_station" style="--x:14;--y:6;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/buildings/factory.png" alt="Factory (15, 9)" title="Factory (15, 9)" data-asset="factory" style="--x:15;--y:9;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/warehouse.png" alt="Warehouse (17, 9)" title="Warehouse (17, 9)" data-asset="warehouse" style="--x:17;--y:9;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/buildings/power_plant.png" alt="Power Plant (15, 11)" title="Power Plant (15, 11)" data-asset="power_plant" style="--x:15;--y:11;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/buildings/water_plant.png" alt="Water Plant (17, 11)" title="Water Plant (17, 11)" data-asset="water_plant" style="--x:17;--y:11;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/farms/farm_barn.png" alt="Farm Barn (4, 12)" title="Farm Barn (4, 12)" data-asset="farm_barn" style="--x:4;--y:12;--r:270deg;">
+<img class="tile sprite" src="assets_png_128/farms/greenhouse.png" alt="Greenhouse (6, 11)" title="Greenhouse (6, 11)" data-asset="greenhouse" style="--x:6;--y:11;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/props/tree.png" alt="Tree (12, 2)" title="Tree (12, 2)" data-asset="tree" style="--x:12;--y:2;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/props/tree.png" alt="Tree (14, 2)" title="Tree (14, 2)" data-asset="tree" style="--x:14;--y:2;--r:90deg;">
+<img class="tile sprite" src="assets_png_128/props/bush_cluster.png" alt="Bush Cluster (13, 3)" title="Bush Cluster (13, 3)" data-asset="bush_cluster" style="--x:13;--y:3;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/props/fountain.png" alt="Fountain (12, 3)" title="Fountain (12, 3)" data-asset="fountain" style="--x:12;--y:3;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/props/streetlight.png" alt="Streetlight (10, 6)" title="Streetlight (10, 6)" data-asset="streetlight" style="--x:10;--y:6;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/props/streetlight.png" alt="Streetlight (12, 8)" title="Streetlight (12, 8)" data-asset="streetlight" style="--x:12;--y:8;--r:180deg;">
+<img class="tile sprite" src="assets_png_128/props/rock_cluster.png" alt="Rock Cluster (2, 9)" title="Rock Cluster (2, 9)" data-asset="rock_cluster" style="--x:2;--y:9;--r:0deg;">
+<img class="tile sprite" src="assets_png_128/props/car.png" alt="Car (12, 7)" title="Car (12, 7)" data-asset="car" style="--x:12;--y:7;--r:90deg;">
+    </div>
+  </section>
+  <aside>
+    <section class="panel">
+      <h2>Map Stats</h2>
+      <div class="stats">
+        <span><strong>20 x 16</strong> tiles</span>
+        <span><strong>60 / 60</strong> assets used</span>
+        <span><strong>320</strong> ground tiles</span>
+        <span><strong>26</strong> sprites</span>
+        <span><strong>18</strong> overlays</span>
+        <span><strong>20</strong> straight rail tiles</span>
+        <span><strong>4</strong> rail crossings</span>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Used Categories</h2>
+      <div class="legend"><span><strong>16</strong> building</span><span><strong>1</strong> civic</span><span><strong>6</strong> farm</span><span><strong>9</strong> overlay</span><span><strong>6</strong> prop</span><span><strong>10</strong> road</span><span><strong>12</strong> terrain</span></div>
+    </section>
+    <section class="panel">
+      <h2>Files</h2>
+      <div class="stats">
+        <code>metadata/generated_city_map_state.json</code>
+        <code>metadata/asset_image_adjacency_128.json</code>
+      </div>
+    </section>
+  </aside>
+</main>
+<script>
+  const zoom = document.getElementById("zoom");
+  zoom.addEventListener("change", () => {
+    document.documentElement.style.setProperty("--tile", zoom.value + "px");
+  });
+  document.querySelectorAll("[data-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const className = button.dataset.toggle;
+      document.body.classList.toggle(className);
+      const active = className === "show-grid"
+        ? document.body.classList.contains(className)
+        : !document.body.classList.contains(className);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  });
+</script>
+</body>
+</html>

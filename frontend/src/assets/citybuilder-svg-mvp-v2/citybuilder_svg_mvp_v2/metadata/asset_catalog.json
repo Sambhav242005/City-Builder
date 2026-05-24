@@ -1,0 +1,1022 @@
+{
+  "packName": "CityBuilder SVG MVP Pack v2",
+  "version": "2.2",
+  "tileSize": [
+    160,
+    160
+  ],
+  "renderMode": "SVG top-down",
+  "note": "Top-down simulation asset vocabulary with separate colored terrain tiles, transparent building sprites, clipped road tiles, farm economy metadata, civic tiles, props, and overlays.",
+  "assets": [
+    {
+      "id": "grass_tile_a",
+      "title": "Grass Tile A",
+      "category": "terrain",
+      "file": "assets/terrain/grass_tile_a.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "grass_tile_b",
+      "title": "Grass Tile B",
+      "category": "terrain",
+      "file": "assets/terrain/grass_tile_b.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "dirt_tile",
+      "title": "Dirt Tile",
+      "category": "terrain",
+      "file": "assets/terrain/dirt_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "empty_lot_tile",
+      "title": "Empty Lot Tile",
+      "category": "terrain",
+      "file": "assets/terrain/empty_lot_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "sand_tile",
+      "title": "Sand Tile",
+      "category": "terrain",
+      "file": "assets/terrain/sand_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "farm_ground_tile",
+      "title": "Farm Ground Tile",
+      "category": "terrain",
+      "file": "assets/terrain/farm_ground_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "park_ground_tile",
+      "title": "Park Ground Tile",
+      "category": "terrain",
+      "file": "assets/terrain/park_ground_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "water_tile",
+      "title": "Water Tile",
+      "category": "terrain",
+      "file": "assets/terrain/water_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "coast_edge_north",
+      "title": "Coast Edge North",
+      "category": "terrain",
+      "file": "assets/terrain/coast_edge_north.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "coast_edge_corner",
+      "title": "Coast Edge Corner",
+      "category": "terrain",
+      "file": "assets/terrain/coast_edge_corner.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "coast_inlet_tile",
+      "title": "Coast Inlet Tile",
+      "category": "terrain",
+      "file": "assets/terrain/coast_inlet_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "pond_tile",
+      "title": "Pond Tile",
+      "category": "terrain",
+      "file": "assets/terrain/pond_tile.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "terrain"
+      ]
+    },
+    {
+      "id": "road_straight",
+      "title": "Straight Road",
+      "category": "road",
+      "file": "assets/roads/road_straight.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_vertical",
+      "title": "Vertical Road",
+      "category": "road",
+      "file": "assets/roads/road_vertical.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_corner",
+      "title": "Corner Road",
+      "category": "road",
+      "file": "assets/roads/road_corner.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_t_junction",
+      "title": "T-Junction",
+      "category": "road",
+      "file": "assets/roads/road_t_junction.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_cross",
+      "title": "Crossroad",
+      "category": "road",
+      "file": "assets/roads/road_cross.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_dead_end",
+      "title": "Dead End",
+      "category": "road",
+      "file": "assets/roads/road_dead_end.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_avenue",
+      "title": "Avenue Tile",
+      "category": "road",
+      "file": "assets/roads/road_avenue.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_bridge",
+      "title": "Bridge Road",
+      "category": "road",
+      "file": "assets/roads/road_bridge.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_roundabout",
+      "title": "Roundabout Tile",
+      "category": "road",
+      "file": "assets/roads/road_roundabout.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road",
+        "intersection",
+        "traffic_flow"
+      ],
+      "traffic": {
+        "connects": [
+          "n",
+          "e",
+          "s",
+          "w"
+        ],
+        "flowBonus": 0.12
+      }
+    },
+    {
+      "id": "sidewalk_plaza",
+      "title": "Sidewalk Plaza",
+      "category": "civic",
+      "file": "assets/civic/sidewalk_plaza.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "civic",
+        "plaza",
+        "walkable",
+        "happiness"
+      ],
+      "economy": {
+        "happinessDelta": 0.025,
+        "maintenance": 2,
+        "commerceBoost": 0.03
+      }
+    },
+    {
+      "id": "rail_crossing",
+      "title": "Rail Crossing",
+      "category": "road",
+      "file": "assets/roads/rail_crossing.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "road"
+      ]
+    },
+    {
+      "id": "road_preview_overlay",
+      "title": "Road Preview Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/road_preview_overlay.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay",
+        "road_preview",
+        "placement"
+      ]
+    },
+    {
+      "id": "cottage_house",
+      "title": "Cottage House",
+      "category": "building",
+      "file": "assets/buildings/cottage_house.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "suburban_house",
+      "title": "Suburban House",
+      "category": "building",
+      "file": "assets/buildings/suburban_house.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "townhouse",
+      "title": "Townhouse",
+      "category": "building",
+      "file": "assets/buildings/townhouse.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "apartment_block",
+      "title": "Apartment Block",
+      "category": "building",
+      "file": "assets/buildings/apartment_block.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "corner_shop",
+      "title": "Corner Shop",
+      "category": "building",
+      "file": "assets/buildings/corner_shop.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "grocery_store",
+      "title": "Grocery Store",
+      "category": "building",
+      "file": "assets/buildings/grocery_store.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "cafe",
+      "title": "Cafe",
+      "category": "building",
+      "file": "assets/buildings/cafe.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "office_building",
+      "title": "Office Building",
+      "category": "building",
+      "file": "assets/buildings/office_building.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "small_market",
+      "title": "Small Market",
+      "category": "building",
+      "file": "assets/buildings/small_market.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "clinic",
+      "title": "Clinic",
+      "category": "building",
+      "file": "assets/buildings/clinic.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "school",
+      "title": "School",
+      "category": "building",
+      "file": "assets/buildings/school.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "police_station",
+      "title": "Police Station",
+      "category": "building",
+      "file": "assets/buildings/police_station.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "factory",
+      "title": "Factory",
+      "category": "building",
+      "file": "assets/buildings/factory.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "title": "Warehouse",
+      "category": "building",
+      "file": "assets/buildings/warehouse.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "power_plant",
+      "title": "Power Plant",
+      "category": "building",
+      "file": "assets/buildings/power_plant.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "water_plant",
+      "title": "Water Plant",
+      "category": "building",
+      "file": "assets/buildings/water_plant.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "building"
+      ]
+    },
+    {
+      "id": "farm_barn",
+      "title": "Farm Barn",
+      "category": "farm",
+      "file": "assets/farms/farm_barn.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "farm",
+        "storage",
+        "food_buffer"
+      ],
+      "economy": {
+        "storageBonus": {
+          "food": 20
+        },
+        "spoilageReduction": 0.05,
+        "labor": 2
+      }
+    },
+    {
+      "id": "greenhouse",
+      "title": "Greenhouse",
+      "category": "farm",
+      "file": "assets/farms/greenhouse.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "farm",
+        "produce",
+        "high_yield",
+        "power_use"
+      ],
+      "economy": {
+        "outputs": {
+          "food": 12,
+          "produce": 16
+        },
+        "priceEffects": {
+          "produce": -0.12
+        },
+        "waterUse": 2,
+        "powerUse": 3,
+        "seasonResilience": 0.2
+      }
+    },
+    {
+      "id": "tree",
+      "title": "Tree",
+      "category": "prop",
+      "file": "assets/props/tree.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "prop"
+      ]
+    },
+    {
+      "id": "bush_cluster",
+      "title": "Bush Cluster",
+      "category": "prop",
+      "file": "assets/props/bush_cluster.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "prop"
+      ]
+    },
+    {
+      "id": "fountain",
+      "title": "Fountain",
+      "category": "prop",
+      "file": "assets/props/fountain.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "prop"
+      ]
+    },
+    {
+      "id": "streetlight",
+      "title": "Streetlight",
+      "category": "prop",
+      "file": "assets/props/streetlight.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "prop",
+        "utility",
+        "safety",
+        "night_visibility"
+      ],
+      "placement": {
+        "layer": "prop",
+        "blocksBuild": false,
+        "radius": 2
+      },
+      "economy": {
+        "safetyDelta": 0.015,
+        "maintenance": 1,
+        "powerUse": 0.2
+      }
+    },
+    {
+      "id": "rock_cluster",
+      "title": "Rock Cluster",
+      "category": "prop",
+      "file": "assets/props/rock_cluster.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "prop",
+        "decoration",
+        "landscape"
+      ],
+      "placement": {
+        "layer": "prop",
+        "blocksBuild": false
+      }
+    },
+    {
+      "id": "car",
+      "title": "Car",
+      "category": "prop",
+      "file": "assets/props/car.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "prop"
+      ]
+    },
+    {
+      "id": "selection_overlay",
+      "title": "Green Selection Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/selection_overlay.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "invalid_overlay",
+      "title": "Red Invalid Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/invalid_overlay.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "zone_residential",
+      "title": "Residential Zone Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/zone_residential.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "zone_commercial",
+      "title": "Commercial Zone Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/zone_commercial.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "zone_industrial",
+      "title": "Industrial Zone Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/zone_industrial.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "grid_overlay",
+      "title": "Grid Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/grid_overlay.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "build_preview_overlay",
+      "title": "Build Preview Overlay",
+      "category": "overlay",
+      "file": "assets/overlays/build_preview_overlay.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": false,
+      "tags": [
+        "overlay"
+      ]
+    },
+    {
+      "id": "wheat_farm",
+      "title": "Wheat Farm",
+      "category": "farm",
+      "file": "assets/farms/wheat_farm.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "farm",
+        "food",
+        "grain",
+        "price_supply"
+      ],
+      "economy": {
+        "outputs": {
+          "food": 14,
+          "grain": 10
+        },
+        "priceEffects": {
+          "food": -0.05,
+          "grain": -0.08
+        },
+        "waterUse": 3,
+        "labor": 4
+      }
+    },
+    {
+      "id": "vegetable_farm",
+      "title": "Vegetable Farm",
+      "category": "farm",
+      "file": "assets/farms/vegetable_farm.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "farm",
+        "food",
+        "produce",
+        "fresh_market"
+      ],
+      "economy": {
+        "outputs": {
+          "food": 10,
+          "produce": 12
+        },
+        "priceEffects": {
+          "food": -0.03,
+          "produce": -0.09
+        },
+        "waterUse": 5,
+        "labor": 6,
+        "happinessDelta": 0.01
+      }
+    },
+    {
+      "id": "orchard_farm",
+      "title": "Orchard Farm",
+      "category": "farm",
+      "file": "assets/farms/orchard_farm.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "farm",
+        "food",
+        "fruit",
+        "slow_yield"
+      ],
+      "economy": {
+        "outputs": {
+          "food": 8,
+          "fruit": 14
+        },
+        "priceEffects": {
+          "fruit": -0.1
+        },
+        "waterUse": 4,
+        "labor": 5,
+        "happinessDelta": 0.015
+      }
+    },
+    {
+      "id": "livestock_ranch",
+      "title": "Livestock Ranch",
+      "category": "farm",
+      "file": "assets/farms/livestock_ranch.svg",
+      "viewBox": "0 0 160 160",
+      "size": [
+        1,
+        1
+      ],
+      "requiresRoad": true,
+      "tags": [
+        "farm",
+        "protein",
+        "dairy",
+        "pollution"
+      ],
+      "economy": {
+        "outputs": {
+          "food": 9,
+          "protein": 12
+        },
+        "priceEffects": {
+          "protein": -0.08
+        },
+        "waterUse": 6,
+        "labor": 7,
+        "pollution": 2
+      }
+    }
+  ]
+}

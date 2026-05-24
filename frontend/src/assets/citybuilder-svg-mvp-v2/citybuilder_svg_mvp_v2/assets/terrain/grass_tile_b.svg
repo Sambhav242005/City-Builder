@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Grass Tile B">
+  <defs>
+    <filter id="grass-tile-b-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#grass-tile-b-shadow)">
+    <rect x="24" y="24" width="112" height="112" rx="10" fill="#85c948" stroke="#b5df58" stroke-width="3"/>
+    <path d="M45 85 q5 -8 10 0 M66 57 q5 -8 10 0 M91 41 q5 -8 10 0 M112 92 q5 -8 10 0" stroke="#4f8f24" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="60" cy="100" r="3" fill="#d8e65a"/><circle cx="121" cy="61" r="3" fill="#d8e65a"/><ellipse cx="72" cy="77" rx="7" ry="4" fill="#6e6a5a"/>
+  </g>
+</svg>

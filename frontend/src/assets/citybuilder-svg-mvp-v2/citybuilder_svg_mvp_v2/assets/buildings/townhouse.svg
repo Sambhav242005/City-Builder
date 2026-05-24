@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Townhouse">
+  <defs>
+    <filter id="townhouse-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#townhouse-shadow)">
+    <rect x="30" y="53" width="100" height="58" rx="5" fill="#c74d33" stroke="#793222" stroke-width="3"/><path d="M30 72 H130 M63 53 V111 M96 53 V111 M46 56 V108 M80 56 V108 M114 56 V108" stroke="#f0b38c" stroke-width="3" opacity=".78"/><rect x="40" y="78" width="14" height="19" rx="2" fill="#e9d2ad" opacity=".86"/><rect x="73" y="78" width="14" height="19" rx="2" fill="#e9d2ad" opacity=".86"/><rect x="106" y="78" width="14" height="19" rx="2" fill="#e9d2ad" opacity=".86"/>
+  </g>
+</svg>

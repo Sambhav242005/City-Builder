@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CityBuilder SVG Top-Down Alignment Check</title>
+<style>
+  :root { color-scheme: dark; --bg:#07111b; --line:#1e3d54; --text:#f5f7fb; --muted:#9cc1df; --accent:#54ff8f; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; background:radial-gradient(circle at 20% 0%, #102f44 0%, var(--bg) 42%, #04080d 100%); color:var(--text); font-family:Inter, Segoe UI, Arial, sans-serif; }
+  header { padding:18px 22px; border-bottom:1px solid var(--line); background:rgba(5,13,20,.92); }
+  h1 { margin:0 0 5px; font-size:24px; letter-spacing:0; }
+  p { margin:0; color:var(--muted); font-size:14px; }
+  main { width:min(1180px,100%); margin:0 auto; padding:26px; }
+  .stage-shell { border:1px solid var(--line); border-radius:8px; background:linear-gradient(180deg, rgba(17,40,58,.82), rgba(8,20,31,.9)); overflow:hidden; }
+  .stage-head { display:flex; justify-content:space-between; gap:16px; padding:14px 16px; border-bottom:1px solid var(--line); color:var(--muted); font-size:13px; }
+  .stage-head strong { color:var(--accent); }
+  .stage { display:grid; grid-template-columns:repeat(6,160px); grid-auto-rows:160px; justify-content:center; gap:0; padding:28px; background:linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px),linear-gradient(0deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size:160px 160px; }
+  .asset { width:160px; height:160px; display:block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>CityBuilder SVG Top-Down Alignment Check</h1>
+  <p>Mixed terrain, roads, farms, buildings, civic tiles, props, and overlays in a tile grid.</p>
+</header>
+<main>
+  <section class="stage-shell">
+    <div class="stage-head">
+      <span><strong>Pass condition:</strong> every asset has the right map role, footprint, and readable shadow.</span>
+      <span>160 x 160 SVG assets</span>
+    </div>
+    <div class="stage">
+      <img class="asset" src="assets/terrain/grass_tile_a.svg" alt="">
+      <img class="asset" src="assets/roads/road_straight.svg" alt="">
+      <img class="asset" src="assets/roads/road_vertical.svg" alt="">
+      <img class="asset" src="assets/roads/road_cross.svg" alt="">
+      <img class="asset" src="assets/terrain/empty_lot_tile.svg" alt="">
+      <img class="asset" src="assets/civic/sidewalk_plaza.svg" alt="">
+      <img class="asset" src="assets/terrain/water_tile.svg" alt="">
+      <img class="asset" src="assets/farms/wheat_farm.svg" alt="">
+      <img class="asset" src="assets/farms/vegetable_farm.svg" alt="">
+      <img class="asset" src="assets/farms/orchard_farm.svg" alt="">
+      <img class="asset" src="assets/farms/livestock_ranch.svg" alt="">
+      <img class="asset" src="assets/props/tree.svg" alt="">
+      <img class="asset" src="assets/overlays/selection_overlay.svg" alt="">
+      <img class="asset" src="assets/terrain/coast_edge_north.svg" alt="">
+      <img class="asset" src="assets/buildings/cottage_house.svg" alt="">
+      <img class="asset" src="assets/buildings/corner_shop.svg" alt="">
+      <img class="asset" src="assets/buildings/factory.svg" alt="">
+      <img class="asset" src="assets/buildings/apartment_block.svg" alt="">
+      <img class="asset" src="assets/buildings/school.svg" alt="">
+      <img class="asset" src="assets/buildings/power_plant.svg" alt="">
+      <img class="asset" src="assets/buildings/water_plant.svg" alt="">
+      <img class="asset" src="assets/overlays/road_preview_overlay.svg" alt="">
+      <img class="asset" src="assets/roads/road_bridge.svg" alt="">
+      <img class="asset" src="assets/farms/farm_barn.svg" alt="">
+      <img class="asset" src="assets/farms/greenhouse.svg" alt="">
+      <img class="asset" src="assets/roads/road_t_junction.svg" alt="">
+      <img class="asset" src="assets/roads/road_roundabout.svg" alt="">
+      <img class="asset" src="assets/buildings/office_building.svg" alt="">
+    </div>
+  </section>
+</main>
+</body>
+</html>

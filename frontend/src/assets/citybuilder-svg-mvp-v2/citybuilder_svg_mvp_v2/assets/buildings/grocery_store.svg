@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Grocery Store">
+  <defs>
+    <filter id="grocery-store-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#grocery-store-shadow)">
+    <rect x="36" y="54" width="88" height="58" rx="6" fill="#4d6b56" stroke="#294131" stroke-width="3"/><path d="M48 65 H112 M48 78 H112 M48 91 H112" stroke="#f4e1a8" stroke-width="3" opacity=".72"/><rect x="55" y="98" width="50" height="9" rx="2" fill="#e2c199"/><circle cx="119" cy="50" r="5" fill="#ff7040"/><circle cx="108" cy="46" r="5" fill="#78c64c"/>
+  </g>
+</svg>

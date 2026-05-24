@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Avenue Tile">
+  <defs>
+    <filter id="road-avenue-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#road-avenue-shadow)">
+    <rect x="24" y="24" width="112" height="112" rx="10" fill="#6f913a" stroke="#b5df58" stroke-width="3"/>
+    <defs><clipPath id="road-avenue-tile-clip"><rect x="24" y="24" width="112" height="112" rx="10"/></clipPath></defs>
+    <g clip-path="url(#road-avenue-tile-clip)">
+      <rect x="24" y="50" width="112" height="60" fill="#4a5058" stroke="#9da399" stroke-width="3"/>
+      <path d="M24 80 H136" stroke="#ffd95e" stroke-width="4"/><path d="M40 65 H120 M40 95 H120" stroke="#f4f4e9" stroke-width="3" stroke-dasharray="13 12"/>
+    </g>
+  </g>
+</svg>

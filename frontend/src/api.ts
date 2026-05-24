@@ -1,4 +1,4 @@
-import type { BuildingType, StateResponse } from "./types";
+import type { BuildingType, OptimizerTrainingReport, StateResponse } from "./types";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000";
 
@@ -47,8 +47,20 @@ export function fetchState(): Promise<StateResponse> {
   return request("/state");
 }
 
+export function fetchOptimizerTrainingReport(): Promise<OptimizerTrainingReport> {
+  return requestJson<OptimizerTrainingReport>("/optimizer/training-report");
+}
+
 export function tick(): Promise<StateResponse> {
   return request("/tick", "POST");
+}
+
+export function advanceTicks(ticks = 5): Promise<StateResponse> {
+  return requestJson<StateResponse>("/advance", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ticks })
+  });
 }
 
 export function reset(): Promise<StateResponse> {
@@ -61,6 +73,14 @@ export function approveGovernmentAction(): Promise<StateResponse> {
 
 export function rejectGovernmentAction(): Promise<StateResponse> {
   return request("/government/reject", "POST");
+}
+
+export function playLive(): Promise<StateResponse> {
+  return request("/live/play", "POST");
+}
+
+export function pauseLive(): Promise<StateResponse> {
+  return request("/live/pause", "POST");
 }
 
 export function buildStructure(buildingType: BuildingType): Promise<StateResponse> {

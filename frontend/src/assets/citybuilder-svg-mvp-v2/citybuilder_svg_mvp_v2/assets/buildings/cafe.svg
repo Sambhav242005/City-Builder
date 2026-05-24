@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Cafe">
+  <defs>
+    <filter id="cafe-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#cafe-shadow)">
+    <rect x="43" y="60" width="74" height="46" rx="9" fill="#f1cfa5" stroke="#8c4c35" stroke-width="3"/><path d="M47 68 H113 M47 78 H113" stroke="#e45454" stroke-width="4" stroke-dasharray="10 7"/><circle cx="48" cy="116" r="9" fill="#f4d872" stroke="#8c4c35" stroke-width="2"/><circle cx="70" cy="119" r="8" fill="#e45454" stroke="#8c4c35" stroke-width="2"/><circle cx="96" cy="119" r="8" fill="#f4d872" stroke="#8c4c35" stroke-width="2"/>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Suburban House">
+  <defs>
+    <filter id="suburban-house-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#suburban-house-shadow)">
+    <path d="M40 53 H94 V68 H120 V111 H40 Z" fill="#d84b2f" stroke="#763321" stroke-width="3"/><path d="M48 62 H88 M54 104 H110 M94 68 V111" stroke="#f3c19a" stroke-width="3" opacity=".78"/><rect x="53" y="72" width="26" height="19" rx="3" fill="#ece0ca" opacity=".82"/><rect x="97" y="79" width="14" height="17" rx="2" fill="#6db7d9" opacity=".8"/><circle cx="36" cy="101" r="7" fill="#60ad55"/>
+  </g>
+</svg>

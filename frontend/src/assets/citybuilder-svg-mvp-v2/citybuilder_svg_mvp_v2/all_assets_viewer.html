@@ -1,0 +1,1554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CityBuilder Asset Gallery</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #07111b;
+    --panel: #0d1d2b;
+    --panel-2: #102435;
+    --line: #23465f;
+    --line-soft: #18344a;
+    --text: #f5f7fb;
+    --muted: #9cc1df;
+    --accent: #5fc8ff;
+    --good: #8edb6a;
+    --warn: #ffd15f;
+    --tile-size: 128px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 92%, black);
+  }
+  .bar {
+    display: grid;
+    gap: 12px;
+    padding: 16px 18px;
+  }
+  .title-row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0;
+  }
+  .counts {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .pill {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 9px;
+    background: var(--panel);
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto auto;
+    gap: 10px;
+    align-items: center;
+  }
+  input, select {
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 0 11px;
+    font: inherit;
+  }
+  .filters {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  button {
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--muted);
+    padding: 0 10px;
+    font: inherit;
+    cursor: pointer;
+  }
+  button.active {
+    border-color: var(--accent);
+    background: #12344b;
+    color: var(--text);
+  }
+  main {
+    padding: 18px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+    gap: 14px;
+  }
+  .asset-card {
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    background: var(--panel);
+    overflow: hidden;
+  }
+  .preview {
+    display: grid;
+    place-items: center;
+    min-height: calc(var(--tile-size) + 38px);
+    padding: 18px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--preview-bg);
+  }
+  body[data-bg="checker"] .preview {
+    --preview-bg:
+      linear-gradient(45deg, #0b1720 25%, transparent 25% 75%, #0b1720 75%),
+      linear-gradient(45deg, #102331 25%, transparent 25% 75%, #102331 75%);
+    background-position: 0 0, 8px 8px;
+    background-size: 16px 16px;
+    background-color: #0d1d2b;
+  }
+  body[data-bg="grass"] .preview { --preview-bg: #6f9d34; }
+  body[data-bg="sand"] .preview { --preview-bg: #d9c081; }
+  body[data-bg="water"] .preview { --preview-bg: #287faf; }
+  body[data-bg="road"] .preview { --preview-bg: #4b535c; }
+  body[data-bg="dark"] .preview { --preview-bg: #07111b; }
+  img {
+    width: var(--tile-size);
+    height: var(--tile-size);
+    image-rendering: auto;
+  }
+  .asset-info {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+  }
+  .asset-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: baseline;
+  }
+  strong {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .asset-title span {
+    color: var(--good);
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  code {
+    color: var(--muted);
+    font-size: 12px;
+    word-break: break-word;
+  }
+  .meta, .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .meta span, .links a {
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    padding: 4px 7px;
+    color: var(--muted);
+    font-size: 11px;
+    text-decoration: none;
+  }
+  .links a {
+    color: var(--accent);
+  }
+  .edges {
+    color: #b9c9d6;
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  .empty {
+    display: none;
+    margin: 30px 0;
+    color: var(--muted);
+  }
+  .empty.visible {
+    display: block;
+  }
+  @media (max-width: 760px) {
+    .controls {
+      grid-template-columns: 1fr;
+    }
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    }
+  }
+</style>
+</head>
+<body data-bg="checker">
+<header>
+  <div class="bar">
+    <div class="title-row">
+      <h1>CityBuilder Asset Gallery</h1>
+      <div class="counts">
+        <span class="pill"><strong id="visibleCount">60</strong> shown</span>
+        <span class="pill">60 total</span>
+        <span class="pill">60 at 128x128</span>
+        <span class="pill">59 imagegen sprites</span>
+      </div>
+    </div>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search assets" autocomplete="off">
+      <select id="background">
+        <option value="checker">Checker</option>
+        <option value="grass">Grass</option>
+        <option value="sand">Sand</option>
+        <option value="water">Water</option>
+        <option value="road">Road</option>
+        <option value="dark">Dark</option>
+      </select>
+      <select id="zoom">
+        <option value="96">96 px</option>
+        <option value="128" selected>128 px</option>
+        <option value="160">160 px</option>
+        <option value="192">192 px</option>
+      </select>
+    </div>
+    <div class="filters" id="categoryFilters"><button class="filter active" type="button" data-group="category" data-value="all">all categories</button><button class="filter" type="button" data-group="category" data-value="building">building</button><button class="filter" type="button" data-group="category" data-value="civic">civic</button><button class="filter" type="button" data-group="category" data-value="farm">farm</button><button class="filter" type="button" data-group="category" data-value="overlay">overlay</button><button class="filter" type="button" data-group="category" data-value="prop">prop</button><button class="filter" type="button" data-group="category" data-value="road">road</button><button class="filter" type="button" data-group="category" data-value="terrain">terrain</button></div>
+    <div class="filters" id="roleFilters"><button class="filter active" type="button" data-group="role" data-value="all">all roles</button><button class="filter" type="button" data-group="role" data-value="base_tile">base_tile</button><button class="filter" type="button" data-group="role" data-value="overlay">overlay</button><button class="filter" type="button" data-group="role" data-value="road_tile">road_tile</button><button class="filter" type="button" data-group="role" data-value="sprite">sprite</button></div>
+  </div>
+</header>
+<main>
+  <section class="grid" id="grid">
+<article class="asset-card" data-id="grass_tile_a" data-title="Grass Tile A" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/grass_tile_a.png" target="_blank" aria-label="Grass Tile A PNG">
+    <img src="assets_png_128/terrain/grass_tile_a.png" alt="Grass Tile A" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Grass Tile A</strong>
+      <span>imagegen</span>
+    </div>
+    <code>grass_tile_a</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:grass bottom:grass left:grass</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/grass_tile_a.png" target="_blank">PNG</a>
+      <a href="assets/terrain/grass_tile_a.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="grass_tile_b" data-title="Grass Tile B" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/grass_tile_b.png" target="_blank" aria-label="Grass Tile B PNG">
+    <img src="assets_png_128/terrain/grass_tile_b.png" alt="Grass Tile B" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Grass Tile B</strong>
+      <span>imagegen</span>
+    </div>
+    <code>grass_tile_b</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:grass bottom:grass left:grass</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/grass_tile_b.png" target="_blank">PNG</a>
+      <a href="assets/terrain/grass_tile_b.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="dirt_tile" data-title="Dirt Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/dirt_tile.png" target="_blank" aria-label="Dirt Tile PNG">
+    <img src="assets_png_128/terrain/dirt_tile.png" alt="Dirt Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Dirt Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>dirt_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:dirt right:dirt bottom:dirt left:dirt</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/dirt_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/dirt_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="empty_lot_tile" data-title="Empty Lot Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/empty_lot_tile.png" target="_blank" aria-label="Empty Lot Tile PNG">
+    <img src="assets_png_128/terrain/empty_lot_tile.png" alt="Empty Lot Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Empty Lot Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>empty_lot_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:grass bottom:grass left:grass</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/empty_lot_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/empty_lot_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="sand_tile" data-title="Sand Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/sand_tile.png" target="_blank" aria-label="Sand Tile PNG">
+    <img src="assets_png_128/terrain/sand_tile.png" alt="Sand Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Sand Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>sand_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:sand right:sand bottom:sand left:sand</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/sand_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/sand_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="farm_ground_tile" data-title="Farm Ground Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/farm_ground_tile.png" target="_blank" aria-label="Farm Ground Tile PNG">
+    <img src="assets_png_128/terrain/farm_ground_tile.png" alt="Farm Ground Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Farm Ground Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>farm_ground_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:farm right:farm bottom:farm left:farm</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/farm_ground_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/farm_ground_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="park_ground_tile" data-title="Park Ground Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/park_ground_tile.png" target="_blank" aria-label="Park Ground Tile PNG">
+    <img src="assets_png_128/terrain/park_ground_tile.png" alt="Park Ground Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Park Ground Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>park_ground_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:park right:park bottom:park left:park</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/park_ground_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/park_ground_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="water_tile" data-title="Water Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/water_tile.png" target="_blank" aria-label="Water Tile PNG">
+    <img src="assets_png_128/terrain/water_tile.png" alt="Water Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Water Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>water_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:water right:water bottom:water left:water</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/water_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/water_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="coast_edge_north" data-title="Coast Edge North" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/coast_edge_north.png" target="_blank" aria-label="Coast Edge North PNG">
+    <img src="assets_png_128/terrain/coast_edge_north.png" alt="Coast Edge North" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Coast Edge North</strong>
+      <span>imagegen</span>
+    </div>
+    <code>coast_edge_north</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:water right:sand bottom:sand left:sand</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/coast_edge_north.png" target="_blank">PNG</a>
+      <a href="assets/terrain/coast_edge_north.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="coast_edge_corner" data-title="Coast Edge Corner" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/coast_edge_corner.png" target="_blank" aria-label="Coast Edge Corner PNG">
+    <img src="assets_png_128/terrain/coast_edge_corner.png" alt="Coast Edge Corner" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Coast Edge Corner</strong>
+      <span>imagegen</span>
+    </div>
+    <code>coast_edge_corner</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:water right:water bottom:sand left:sand</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/coast_edge_corner.png" target="_blank">PNG</a>
+      <a href="assets/terrain/coast_edge_corner.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="coast_inlet_tile" data-title="Coast Inlet Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/coast_inlet_tile.png" target="_blank" aria-label="Coast Inlet Tile PNG">
+    <img src="assets_png_128/terrain/coast_inlet_tile.png" alt="Coast Inlet Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Coast Inlet Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>coast_inlet_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:water right:coast bottom:sand left:coast</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/coast_inlet_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/coast_inlet_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="pond_tile" data-title="Pond Tile" data-category="terrain" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/terrain/pond_tile.png" target="_blank" aria-label="Pond Tile PNG">
+    <img src="assets_png_128/terrain/pond_tile.png" alt="Pond Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Pond Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>pond_tile</code>
+    <div class="meta">
+      <span>terrain</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:park right:park bottom:park left:park</div>
+    <div class="links">
+      <a href="assets_png_128/terrain/pond_tile.png" target="_blank">PNG</a>
+      <a href="assets/terrain/pond_tile.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_straight" data-title="Straight Road" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_straight.png" target="_blank" aria-label="Straight Road PNG">
+    <img src="assets_png_128/roads/road_straight.png" alt="Straight Road" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Straight Road</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_straight</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:road bottom:grass left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_straight.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_straight.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_vertical" data-title="Vertical Road" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_vertical.png" target="_blank" aria-label="Vertical Road PNG">
+    <img src="assets_png_128/roads/road_vertical.png" alt="Vertical Road" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Vertical Road</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_vertical</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:road right:grass bottom:road left:grass</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_vertical.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_vertical.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_corner" data-title="Corner Road" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_corner.png" target="_blank" aria-label="Corner Road PNG">
+    <img src="assets_png_128/roads/road_corner.png" alt="Corner Road" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Corner Road</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_corner</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:road right:road bottom:grass left:grass</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_corner.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_corner.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_t_junction" data-title="T-Junction" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_t_junction.png" target="_blank" aria-label="T-Junction PNG">
+    <img src="assets_png_128/roads/road_t_junction.png" alt="T-Junction" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>T-Junction</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_t_junction</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:road right:road bottom:grass left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_t_junction.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_t_junction.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_cross" data-title="Crossroad" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_cross.png" target="_blank" aria-label="Crossroad PNG">
+    <img src="assets_png_128/roads/road_cross.png" alt="Crossroad" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Crossroad</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_cross</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:road right:road bottom:road left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_cross.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_cross.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_dead_end" data-title="Dead End" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_dead_end.png" target="_blank" aria-label="Dead End PNG">
+    <img src="assets_png_128/roads/road_dead_end.png" alt="Dead End" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Dead End</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_dead_end</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:grass bottom:grass left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_dead_end.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_dead_end.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_avenue" data-title="Avenue Tile" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_avenue.png" target="_blank" aria-label="Avenue Tile PNG">
+    <img src="assets_png_128/roads/road_avenue.png" alt="Avenue Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Avenue Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_avenue</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:road bottom:grass left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_avenue.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_avenue.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_bridge" data-title="Bridge Road" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_bridge.png" target="_blank" aria-label="Bridge Road PNG">
+    <img src="assets_png_128/roads/road_bridge.png" alt="Bridge Road" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Bridge Road</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_bridge</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:water right:road bottom:water left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_bridge.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_bridge.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_roundabout" data-title="Roundabout Tile" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/road_roundabout.png" target="_blank" aria-label="Roundabout Tile PNG">
+    <img src="assets_png_128/roads/road_roundabout.png" alt="Roundabout Tile" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Roundabout Tile</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_roundabout</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:road right:road bottom:road left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/road_roundabout.png" target="_blank">PNG</a>
+      <a href="assets/roads/road_roundabout.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="sidewalk_plaza" data-title="Sidewalk Plaza" data-category="civic" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/civic/sidewalk_plaza.png" target="_blank" aria-label="Sidewalk Plaza PNG">
+    <img src="assets_png_128/civic/sidewalk_plaza.png" alt="Sidewalk Plaza" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Sidewalk Plaza</strong>
+      <span>imagegen</span>
+    </div>
+    <code>sidewalk_plaza</code>
+    <div class="meta">
+      <span>civic</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:paved right:paved bottom:paved left:paved</div>
+    <div class="links">
+      <a href="assets_png_128/civic/sidewalk_plaza.png" target="_blank">PNG</a>
+      <a href="assets/civic/sidewalk_plaza.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="rail_crossing" data-title="Rail Crossing" data-category="road" data-role="road_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/roads/rail_crossing.png" target="_blank" aria-label="Rail Crossing PNG">
+    <img src="assets_png_128/roads/rail_crossing.png" alt="Rail Crossing" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Rail Crossing</strong>
+      <span>imagegen</span>
+    </div>
+    <code>rail_crossing</code>
+    <div class="meta">
+      <span>road</span>
+      <span>road_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:grass right:road bottom:grass left:road</div>
+    <div class="links">
+      <a href="assets_png_128/roads/rail_crossing.png" target="_blank">PNG</a>
+      <a href="assets/roads/rail_crossing.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="road_preview_overlay" data-title="Road Preview Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/road_preview_overlay.png" target="_blank" aria-label="Road Preview Overlay PNG">
+    <img src="assets_png_128/overlays/road_preview_overlay.png" alt="Road Preview Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Road Preview Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>road_preview_overlay</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/road_preview_overlay.png" target="_blank">PNG</a>
+      <a href="assets/overlays/road_preview_overlay.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="rail_straight_overlay" data-title="Straight Rail Overlay" data-category="overlay" data-role="overlay" data-source="svg">
+  <a class="preview" href="assets_png_128/overlays/rail_straight_overlay.png" target="_blank" aria-label="Straight Rail Overlay PNG">
+    <img src="assets_png_128/overlays/rail_straight_overlay.png" alt="Straight Rail Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Straight Rail Overlay</strong>
+      <span>svg</span>
+    </div>
+    <code>rail_straight_overlay</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/rail_straight_overlay.png" target="_blank">PNG</a>
+      
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="cottage_house" data-title="Cottage House" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/cottage_house.png" target="_blank" aria-label="Cottage House PNG">
+    <img src="assets_png_128/buildings/cottage_house.png" alt="Cottage House" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Cottage House</strong>
+      <span>imagegen</span>
+    </div>
+    <code>cottage_house</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/cottage_house.png" target="_blank">PNG</a>
+      <a href="assets/buildings/cottage_house.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="suburban_house" data-title="Suburban House" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/suburban_house.png" target="_blank" aria-label="Suburban House PNG">
+    <img src="assets_png_128/buildings/suburban_house.png" alt="Suburban House" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Suburban House</strong>
+      <span>imagegen</span>
+    </div>
+    <code>suburban_house</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/suburban_house.png" target="_blank">PNG</a>
+      <a href="assets/buildings/suburban_house.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="townhouse" data-title="Townhouse" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/townhouse.png" target="_blank" aria-label="Townhouse PNG">
+    <img src="assets_png_128/buildings/townhouse.png" alt="Townhouse" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Townhouse</strong>
+      <span>imagegen</span>
+    </div>
+    <code>townhouse</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/townhouse.png" target="_blank">PNG</a>
+      <a href="assets/buildings/townhouse.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="apartment_block" data-title="Apartment Block" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/apartment_block.png" target="_blank" aria-label="Apartment Block PNG">
+    <img src="assets_png_128/buildings/apartment_block.png" alt="Apartment Block" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Apartment Block</strong>
+      <span>imagegen</span>
+    </div>
+    <code>apartment_block</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/apartment_block.png" target="_blank">PNG</a>
+      <a href="assets/buildings/apartment_block.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="corner_shop" data-title="Corner Shop" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/corner_shop.png" target="_blank" aria-label="Corner Shop PNG">
+    <img src="assets_png_128/buildings/corner_shop.png" alt="Corner Shop" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Corner Shop</strong>
+      <span>imagegen</span>
+    </div>
+    <code>corner_shop</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/corner_shop.png" target="_blank">PNG</a>
+      <a href="assets/buildings/corner_shop.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="grocery_store" data-title="Grocery Store" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/grocery_store.png" target="_blank" aria-label="Grocery Store PNG">
+    <img src="assets_png_128/buildings/grocery_store.png" alt="Grocery Store" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Grocery Store</strong>
+      <span>imagegen</span>
+    </div>
+    <code>grocery_store</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/grocery_store.png" target="_blank">PNG</a>
+      <a href="assets/buildings/grocery_store.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="cafe" data-title="Cafe" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/cafe.png" target="_blank" aria-label="Cafe PNG">
+    <img src="assets_png_128/buildings/cafe.png" alt="Cafe" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Cafe</strong>
+      <span>imagegen</span>
+    </div>
+    <code>cafe</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/cafe.png" target="_blank">PNG</a>
+      <a href="assets/buildings/cafe.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="office_building" data-title="Office Building" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/office_building.png" target="_blank" aria-label="Office Building PNG">
+    <img src="assets_png_128/buildings/office_building.png" alt="Office Building" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Office Building</strong>
+      <span>imagegen</span>
+    </div>
+    <code>office_building</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/office_building.png" target="_blank">PNG</a>
+      <a href="assets/buildings/office_building.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="small_market" data-title="Small Market" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/small_market.png" target="_blank" aria-label="Small Market PNG">
+    <img src="assets_png_128/buildings/small_market.png" alt="Small Market" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Small Market</strong>
+      <span>imagegen</span>
+    </div>
+    <code>small_market</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/small_market.png" target="_blank">PNG</a>
+      <a href="assets/buildings/small_market.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="clinic" data-title="Clinic" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/clinic.png" target="_blank" aria-label="Clinic PNG">
+    <img src="assets_png_128/buildings/clinic.png" alt="Clinic" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Clinic</strong>
+      <span>imagegen</span>
+    </div>
+    <code>clinic</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/clinic.png" target="_blank">PNG</a>
+      <a href="assets/buildings/clinic.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="school" data-title="School" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/school.png" target="_blank" aria-label="School PNG">
+    <img src="assets_png_128/buildings/school.png" alt="School" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>School</strong>
+      <span>imagegen</span>
+    </div>
+    <code>school</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/school.png" target="_blank">PNG</a>
+      <a href="assets/buildings/school.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="police_station" data-title="Police Station" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/police_station.png" target="_blank" aria-label="Police Station PNG">
+    <img src="assets_png_128/buildings/police_station.png" alt="Police Station" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Police Station</strong>
+      <span>imagegen</span>
+    </div>
+    <code>police_station</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/police_station.png" target="_blank">PNG</a>
+      <a href="assets/buildings/police_station.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="factory" data-title="Factory" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/factory.png" target="_blank" aria-label="Factory PNG">
+    <img src="assets_png_128/buildings/factory.png" alt="Factory" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Factory</strong>
+      <span>imagegen</span>
+    </div>
+    <code>factory</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/factory.png" target="_blank">PNG</a>
+      <a href="assets/buildings/factory.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="warehouse" data-title="Warehouse" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/warehouse.png" target="_blank" aria-label="Warehouse PNG">
+    <img src="assets_png_128/buildings/warehouse.png" alt="Warehouse" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Warehouse</strong>
+      <span>imagegen</span>
+    </div>
+    <code>warehouse</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/warehouse.png" target="_blank">PNG</a>
+      <a href="assets/buildings/warehouse.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="power_plant" data-title="Power Plant" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/power_plant.png" target="_blank" aria-label="Power Plant PNG">
+    <img src="assets_png_128/buildings/power_plant.png" alt="Power Plant" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Power Plant</strong>
+      <span>imagegen</span>
+    </div>
+    <code>power_plant</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/power_plant.png" target="_blank">PNG</a>
+      <a href="assets/buildings/power_plant.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="water_plant" data-title="Water Plant" data-category="building" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/buildings/water_plant.png" target="_blank" aria-label="Water Plant PNG">
+    <img src="assets_png_128/buildings/water_plant.png" alt="Water Plant" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Water Plant</strong>
+      <span>imagegen</span>
+    </div>
+    <code>water_plant</code>
+    <div class="meta">
+      <span>building</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/buildings/water_plant.png" target="_blank">PNG</a>
+      <a href="assets/buildings/water_plant.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="farm_barn" data-title="Farm Barn" data-category="farm" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/farms/farm_barn.png" target="_blank" aria-label="Farm Barn PNG">
+    <img src="assets_png_128/farms/farm_barn.png" alt="Farm Barn" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Farm Barn</strong>
+      <span>imagegen</span>
+    </div>
+    <code>farm_barn</code>
+    <div class="meta">
+      <span>farm</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/farms/farm_barn.png" target="_blank">PNG</a>
+      <a href="assets/farms/farm_barn.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="greenhouse" data-title="Greenhouse" data-category="farm" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/farms/greenhouse.png" target="_blank" aria-label="Greenhouse PNG">
+    <img src="assets_png_128/farms/greenhouse.png" alt="Greenhouse" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Greenhouse</strong>
+      <span>imagegen</span>
+    </div>
+    <code>greenhouse</code>
+    <div class="meta">
+      <span>farm</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/farms/greenhouse.png" target="_blank">PNG</a>
+      <a href="assets/farms/greenhouse.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="tree" data-title="Tree" data-category="prop" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/props/tree.png" target="_blank" aria-label="Tree PNG">
+    <img src="assets_png_128/props/tree.png" alt="Tree" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Tree</strong>
+      <span>imagegen</span>
+    </div>
+    <code>tree</code>
+    <div class="meta">
+      <span>prop</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/props/tree.png" target="_blank">PNG</a>
+      <a href="assets/props/tree.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="bush_cluster" data-title="Bush Cluster" data-category="prop" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/props/bush_cluster.png" target="_blank" aria-label="Bush Cluster PNG">
+    <img src="assets_png_128/props/bush_cluster.png" alt="Bush Cluster" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Bush Cluster</strong>
+      <span>imagegen</span>
+    </div>
+    <code>bush_cluster</code>
+    <div class="meta">
+      <span>prop</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/props/bush_cluster.png" target="_blank">PNG</a>
+      <a href="assets/props/bush_cluster.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="fountain" data-title="Fountain" data-category="prop" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/props/fountain.png" target="_blank" aria-label="Fountain PNG">
+    <img src="assets_png_128/props/fountain.png" alt="Fountain" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Fountain</strong>
+      <span>imagegen</span>
+    </div>
+    <code>fountain</code>
+    <div class="meta">
+      <span>prop</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/props/fountain.png" target="_blank">PNG</a>
+      <a href="assets/props/fountain.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="streetlight" data-title="Streetlight" data-category="prop" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/props/streetlight.png" target="_blank" aria-label="Streetlight PNG">
+    <img src="assets_png_128/props/streetlight.png" alt="Streetlight" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Streetlight</strong>
+      <span>imagegen</span>
+    </div>
+    <code>streetlight</code>
+    <div class="meta">
+      <span>prop</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/props/streetlight.png" target="_blank">PNG</a>
+      <a href="assets/props/streetlight.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="rock_cluster" data-title="Rock Cluster" data-category="prop" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/props/rock_cluster.png" target="_blank" aria-label="Rock Cluster PNG">
+    <img src="assets_png_128/props/rock_cluster.png" alt="Rock Cluster" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Rock Cluster</strong>
+      <span>imagegen</span>
+    </div>
+    <code>rock_cluster</code>
+    <div class="meta">
+      <span>prop</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/props/rock_cluster.png" target="_blank">PNG</a>
+      <a href="assets/props/rock_cluster.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="car" data-title="Car" data-category="prop" data-role="sprite" data-source="imagegen">
+  <a class="preview" href="assets_png_128/props/car.png" target="_blank" aria-label="Car PNG">
+    <img src="assets_png_128/props/car.png" alt="Car" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Car</strong>
+      <span>imagegen</span>
+    </div>
+    <code>car</code>
+    <div class="meta">
+      <span>prop</span>
+      <span>sprite</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/props/car.png" target="_blank">PNG</a>
+      <a href="assets/props/car.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="selection_overlay" data-title="Green Selection Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/selection_overlay.png" target="_blank" aria-label="Green Selection Overlay PNG">
+    <img src="assets_png_128/overlays/selection_overlay.png" alt="Green Selection Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Green Selection Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>selection_overlay</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/selection_overlay.png" target="_blank">PNG</a>
+      <a href="assets/overlays/selection_overlay.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="invalid_overlay" data-title="Red Invalid Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/invalid_overlay.png" target="_blank" aria-label="Red Invalid Overlay PNG">
+    <img src="assets_png_128/overlays/invalid_overlay.png" alt="Red Invalid Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Red Invalid Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>invalid_overlay</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/invalid_overlay.png" target="_blank">PNG</a>
+      <a href="assets/overlays/invalid_overlay.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="zone_residential" data-title="Residential Zone Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/zone_residential.png" target="_blank" aria-label="Residential Zone Overlay PNG">
+    <img src="assets_png_128/overlays/zone_residential.png" alt="Residential Zone Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Residential Zone Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>zone_residential</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/zone_residential.png" target="_blank">PNG</a>
+      <a href="assets/overlays/zone_residential.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="zone_commercial" data-title="Commercial Zone Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/zone_commercial.png" target="_blank" aria-label="Commercial Zone Overlay PNG">
+    <img src="assets_png_128/overlays/zone_commercial.png" alt="Commercial Zone Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Commercial Zone Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>zone_commercial</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/zone_commercial.png" target="_blank">PNG</a>
+      <a href="assets/overlays/zone_commercial.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="zone_industrial" data-title="Industrial Zone Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/zone_industrial.png" target="_blank" aria-label="Industrial Zone Overlay PNG">
+    <img src="assets_png_128/overlays/zone_industrial.png" alt="Industrial Zone Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Industrial Zone Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>zone_industrial</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/zone_industrial.png" target="_blank">PNG</a>
+      <a href="assets/overlays/zone_industrial.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="grid_overlay" data-title="Grid Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/grid_overlay.png" target="_blank" aria-label="Grid Overlay PNG">
+    <img src="assets_png_128/overlays/grid_overlay.png" alt="Grid Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Grid Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>grid_overlay</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/grid_overlay.png" target="_blank">PNG</a>
+      <a href="assets/overlays/grid_overlay.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="build_preview_overlay" data-title="Build Preview Overlay" data-category="overlay" data-role="overlay" data-source="imagegen">
+  <a class="preview" href="assets_png_128/overlays/build_preview_overlay.png" target="_blank" aria-label="Build Preview Overlay PNG">
+    <img src="assets_png_128/overlays/build_preview_overlay.png" alt="Build Preview Overlay" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Build Preview Overlay</strong>
+      <span>imagegen</span>
+    </div>
+    <code>build_preview_overlay</code>
+    <div class="meta">
+      <span>overlay</span>
+      <span>overlay</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:transparent right:transparent bottom:transparent left:transparent</div>
+    <div class="links">
+      <a href="assets_png_128/overlays/build_preview_overlay.png" target="_blank">PNG</a>
+      <a href="assets/overlays/build_preview_overlay.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="wheat_farm" data-title="Wheat Farm" data-category="farm" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/farms/wheat_farm.png" target="_blank" aria-label="Wheat Farm PNG">
+    <img src="assets_png_128/farms/wheat_farm.png" alt="Wheat Farm" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Wheat Farm</strong>
+      <span>imagegen</span>
+    </div>
+    <code>wheat_farm</code>
+    <div class="meta">
+      <span>farm</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:farm right:farm bottom:farm left:farm</div>
+    <div class="links">
+      <a href="assets_png_128/farms/wheat_farm.png" target="_blank">PNG</a>
+      <a href="assets/farms/wheat_farm.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="vegetable_farm" data-title="Vegetable Farm" data-category="farm" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/farms/vegetable_farm.png" target="_blank" aria-label="Vegetable Farm PNG">
+    <img src="assets_png_128/farms/vegetable_farm.png" alt="Vegetable Farm" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Vegetable Farm</strong>
+      <span>imagegen</span>
+    </div>
+    <code>vegetable_farm</code>
+    <div class="meta">
+      <span>farm</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:farm right:farm bottom:farm left:farm</div>
+    <div class="links">
+      <a href="assets_png_128/farms/vegetable_farm.png" target="_blank">PNG</a>
+      <a href="assets/farms/vegetable_farm.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="orchard_farm" data-title="Orchard Farm" data-category="farm" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/farms/orchard_farm.png" target="_blank" aria-label="Orchard Farm PNG">
+    <img src="assets_png_128/farms/orchard_farm.png" alt="Orchard Farm" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Orchard Farm</strong>
+      <span>imagegen</span>
+    </div>
+    <code>orchard_farm</code>
+    <div class="meta">
+      <span>farm</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:farm right:farm bottom:farm left:farm</div>
+    <div class="links">
+      <a href="assets_png_128/farms/orchard_farm.png" target="_blank">PNG</a>
+      <a href="assets/farms/orchard_farm.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+<article class="asset-card" data-id="livestock_ranch" data-title="Livestock Ranch" data-category="farm" data-role="base_tile" data-source="imagegen">
+  <a class="preview" href="assets_png_128/farms/livestock_ranch.png" target="_blank" aria-label="Livestock Ranch PNG">
+    <img src="assets_png_128/farms/livestock_ranch.png" alt="Livestock Ranch" loading="lazy">
+  </a>
+  <div class="asset-info">
+    <div class="asset-title">
+      <strong>Livestock Ranch</strong>
+      <span>imagegen</span>
+    </div>
+    <code>livestock_ranch</code>
+    <div class="meta">
+      <span>farm</span>
+      <span>base_tile</span>
+    </div>
+    <div class="edges" aria-label="edge sockets">top:farm right:farm bottom:farm left:farm</div>
+    <div class="links">
+      <a href="assets_png_128/farms/livestock_ranch.png" target="_blank">PNG</a>
+      <a href="assets/farms/livestock_ranch.svg" target="_blank">SVG</a>
+    </div>
+  </div>
+</article>
+  </section>
+  <p class="empty" id="empty">No assets match the current filters.</p>
+</main>
+<script>
+  const state = { category: "all", role: "all", search: "" };
+  const cards = Array.from(document.querySelectorAll(".asset-card"));
+  const visibleCount = document.getElementById("visibleCount");
+  const empty = document.getElementById("empty");
+  const search = document.getElementById("search");
+  const background = document.getElementById("background");
+  const zoom = document.getElementById("zoom");
+
+  function applyFilters() {
+    const query = state.search.trim().toLowerCase();
+    let count = 0;
+    for (const card of cards) {
+      const matchesCategory = state.category === "all" || card.dataset.category === state.category;
+      const matchesRole = state.role === "all" || card.dataset.role === state.role;
+      const haystack = [card.dataset.id, card.dataset.title, card.dataset.category, card.dataset.role, card.dataset.source].join(" ").toLowerCase();
+      const matchesSearch = !query || haystack.includes(query);
+      const visible = matchesCategory && matchesRole && matchesSearch;
+      card.hidden = !visible;
+      if (visible) count += 1;
+    }
+    visibleCount.textContent = String(count);
+    empty.classList.toggle("visible", count === 0);
+  }
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("button.filter");
+    if (!button) return;
+    const group = button.dataset.group;
+    state[group] = button.dataset.value;
+    document.querySelectorAll(`button.filter[data-group="${group}"]`).forEach((item) => {
+      item.classList.toggle("active", item === button);
+    });
+    applyFilters();
+  });
+
+  search.addEventListener("input", () => {
+    state.search = search.value;
+    applyFilters();
+  });
+
+  background.addEventListener("change", () => {
+    document.body.dataset.bg = background.value;
+  });
+
+  zoom.addEventListener("change", () => {
+    document.documentElement.style.setProperty("--tile-size", `${zoom.value}px`);
+  });
+</script>
+</body>
+</html>

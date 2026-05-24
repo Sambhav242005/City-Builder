@@ -58,9 +58,9 @@ class Params(BaseModel):
     history_limit: int = 240
 
     # New Economic Simulation parameters
-    market_buy_food_limit: float = 20.0
+    market_buy_food_limit: float = 30.0
     market_buy_goods_limit: float = 15.0
-    export_food_limit: float = 12.0
+    export_food_limit: float = 16.0
     export_goods_limit: float = 8.0
     food_spoilage_rate: float = 0.15
     goods_decay_rate: float = 0.05
@@ -187,6 +187,66 @@ class DecisionSystemStatus(BaseModel):
     output_summary: DecisionOutputSummary = Field(default_factory=DecisionOutputSummary, alias="outputSummary")
 
 
+class OptimizerCandidateScore(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    action: ActionName
+    q_score: float = Field(alias="qScore")
+    risk_flags: list[str] = Field(default_factory=list, alias="riskFlags")
+    rollout_score: float = Field(alias="rolloutScore")
+    validation_score: float = Field(alias="validationScore")
+
+
+class OptimizerTrainingScenario(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    baseline_action: ActionName = Field(alias="baselineAction")
+    candidate_scores: list[OptimizerCandidateScore] = Field(alias="candidateScores")
+    confidence: float = Field(ge=0.0, le=1.0)
+    description: str
+    expected_actions: list[ActionName] = Field(alias="expectedActions")
+    name: str
+    passed: bool
+    q_margin_vs_baseline: float = Field(alias="qMarginVsBaseline")
+    selected_action: ActionName = Field(alias="selectedAction")
+    state_key: str = Field(alias="stateKey")
+    validation_margin_vs_baseline: float = Field(alias="validationMarginVsBaseline")
+
+
+class OptimizerTrainingSummary(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    all_scenarios_passed: bool = Field(alias="allScenariosPassed")
+    average_episode_reward: float = Field(alias="averageEpisodeReward")
+    states_learned: int = Field(alias="statesLearned")
+    validation_scenarios: int = Field(alias="validationScenarios")
+    validation_scenarios_passed: int = Field(alias="validationScenariosPassed")
+
+
+class OptimizerTrainingConfig(BaseModel):
+    alpha: float
+    environment: str
+    episodes: int
+    epsilon: float
+    epsilon_decay: float = Field(alias="epsilonDecay")
+    epsilon_min: float = Field(alias="epsilonMin")
+    gamma: float
+    rollout_horizon: int = Field(alias="rolloutHorizon")
+    scenario_rollouts: int = Field(alias="scenarioRollouts")
+    seed: int
+    steps_per_episode: int = Field(alias="stepsPerEpisode")
+
+
+class OptimizerTrainingReport(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    generated_at: str = Field(alias="generatedAt")
+    policy_version: str = Field(alias="policyVersion")
+    scenarios: list[OptimizerTrainingScenario]
+    summary: OptimizerTrainingSummary
+    training: OptimizerTrainingConfig
+
+
 class CityEvent(BaseModel):
     tick: int
     message: str
@@ -291,6 +351,18 @@ class TickSnapshot(BaseModel):
     recommendation: GovernmentRecommendation
 
 
+class SimulationControls(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    running: bool = False
+    live_tick_interval_seconds: float = Field(
+        default=0.35,
+        gt=0,
+        alias="liveTickIntervalSeconds",
+    )
+    fast_forward_ticks: int = Field(default=5, ge=1, le=50, alias="fastForwardTicks")
+
+
 class StateResponse(BaseModel):
     state: WorldState
     params: Params
@@ -303,6 +375,7 @@ class StateResponse(BaseModel):
     city_map: CityMapLayout = Field(alias="cityMap")
     history: list[TickSnapshot] = Field(default_factory=list)
     events: list[CityEvent] = Field(default_factory=list)
+    simulation: SimulationControls
 
 
 class StepResult(BaseModel):
@@ -314,3 +387,7 @@ class BuildRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     building_type: BuildingType = Field(alias="buildingType")
+
+
+class AdvanceRequest(BaseModel):
+    ticks: int = Field(default=5, ge=1, le=50)

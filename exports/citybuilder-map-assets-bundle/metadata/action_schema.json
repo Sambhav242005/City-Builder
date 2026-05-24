@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CityBuilder AI Map Action",
+  "description": "Actions the model can take in the isolated map preview. Asset ids come from asset_catalog.json; farm assets include economy.priceEffects so placement can affect prices and supply.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "Add building",
+      "description": "Place a residential, commercial, industrial, or utility building.",
+      "required": [
+        "action",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "add_building"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "cottage_house",
+            "suburban_house",
+            "townhouse",
+            "apartment_block",
+            "corner_shop",
+            "grocery_store",
+            "cafe",
+            "office_building",
+            "small_market",
+            "clinic",
+            "school",
+            "police_station",
+            "factory",
+            "warehouse",
+            "power_plant",
+            "water_plant"
+          ]
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "placement": {
+          "enum": [
+            "auto",
+            "manual"
+          ],
+          "default": "auto"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      }
+    },
+    {
+      "title": "Add farm",
+      "description": "Place a farm variant. Each variant changes different market prices.",
+      "required": [
+        "action",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "add_farm"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "farm_barn",
+            "greenhouse",
+            "wheat_farm",
+            "vegetable_farm",
+            "orchard_farm",
+            "livestock_ranch"
+          ]
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "placement": {
+          "enum": [
+            "auto",
+            "manual"
+          ],
+          "default": "auto"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      }
+    },
+    {
+      "title": "Add civic tile",
+      "description": "Place civic/amenity map tiles such as plazas.",
+      "required": [
+        "action",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "add_civic"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "sidewalk_plaza"
+          ]
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "placement": {
+          "enum": [
+            "auto",
+            "manual"
+          ],
+          "default": "auto"
+        }
+      }
+    },
+    {
+      "title": "Add road",
+      "description": "Draw or place road connector tiles, including roundabouts and rail crossings.",
+      "required": [
+        "action",
+        "from",
+        "to"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "add_road"
+        },
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "road_straight",
+            "road_vertical",
+            "road_corner",
+            "road_t_junction",
+            "road_cross",
+            "road_dead_end",
+            "road_avenue",
+            "road_bridge",
+            "road_roundabout",
+            "rail_crossing"
+          ],
+          "default": "road_straight"
+        }
+      }
+    },
+    {
+      "title": "Set terrain",
+      "description": "Replace the base terrain tile before adding roads, buildings, farms, or props.",
+      "required": [
+        "action",
+        "kind",
+        "x",
+        "y"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "set_terrain"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "grass_tile_a",
+            "grass_tile_b",
+            "dirt_tile",
+            "empty_lot_tile",
+            "sand_tile",
+            "farm_ground_tile",
+            "park_ground_tile",
+            "water_tile",
+            "coast_edge_north",
+            "coast_edge_corner",
+            "coast_inlet_tile",
+            "pond_tile"
+          ]
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "title": "Place prop",
+      "description": "Place non-blocking props such as streetlights, trees, fountains, cars, or rocks.",
+      "required": [
+        "action",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "place_prop"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "tree",
+            "bush_cluster",
+            "fountain",
+            "streetlight",
+            "rock_cluster",
+            "car"
+          ]
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "placement": {
+          "enum": [
+            "auto",
+            "tile_center",
+            "road_edge",
+            "park_edge"
+          ],
+          "default": "auto"
+        }
+      }
+    },
+    {
+      "title": "Remove map item",
+      "description": "Remove an existing asset instance by id or by layer coordinate.",
+      "required": [
+        "action",
+        "layer"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "remove_asset"
+        },
+        "layer": {
+          "enum": [
+            "building",
+            "farm",
+            "civic",
+            "prop",
+            "road",
+            "terrain"
+          ]
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  ]
+}

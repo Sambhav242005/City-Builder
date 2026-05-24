@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Clinic">
+  <defs>
+    <filter id="clinic-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#clinic-shadow)">
+    <rect x="42" y="47" width="76" height="68" rx="6" fill="#f8fbfb" stroke="#8c9a9f" stroke-width="3"/><rect x="64" y="63" width="32" height="32" rx="4" fill="#ffffff" stroke="#cdd7da" stroke-width="2"/><path d="M80 69 v20 M70 79 h20" stroke="#e43d3d" stroke-width="7" stroke-linecap="round"/><rect x="98" y="89" width="13" height="14" rx="2" fill="#8bd5ed"/>
+  </g>
+</svg>

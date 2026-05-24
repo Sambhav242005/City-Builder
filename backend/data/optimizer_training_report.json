@@ -1,0 +1,281 @@
+{
+  "generatedAt": "2026-05-23T00:00:00Z",
+  "policyVersion": "q-learning-city-v1-offline",
+  "scenarios": [
+    {
+      "baselineAction": "do_nothing",
+      "candidateScores": [
+        {
+          "action": "build_farm",
+          "qScore": 0.041911,
+          "riskFlags": [],
+          "rolloutScore": 0.041911,
+          "validationScore": 0.6509
+        },
+        {
+          "action": "subsidize",
+          "qScore": 0.020926,
+          "riskFlags": [],
+          "rolloutScore": 0.020926,
+          "validationScore": 0.252556
+        },
+        {
+          "action": "build_power_plant",
+          "qScore": 0.018667,
+          "riskFlags": [],
+          "rolloutScore": 0.018667,
+          "validationScore": 0.391375
+        },
+        {
+          "action": "build_road",
+          "qScore": 0.013961,
+          "riskFlags": [],
+          "rolloutScore": 0.013961,
+          "validationScore": 0.386669
+        },
+        {
+          "action": "do_nothing",
+          "qScore": 0.009255,
+          "riskFlags": [
+            "stagnation_risk"
+          ],
+          "rolloutScore": 0.009255,
+          "validationScore": 0.146963
+        },
+        {
+          "action": "build_factory",
+          "qScore": 0.006118,
+          "riskFlags": [],
+          "rolloutScore": 0.006118,
+          "validationScore": 0.338826
+        },
+        {
+          "action": "build_market",
+          "qScore": 0.006118,
+          "riskFlags": [],
+          "rolloutScore": 0.006118,
+          "validationScore": 0.378826
+        },
+        {
+          "action": "build_housing",
+          "qScore": -0.006751,
+          "riskFlags": [],
+          "rolloutScore": -0.006751,
+          "validationScore": 0.371443
+        }
+      ],
+      "confidence": 0.559,
+      "description": "Food demand materially exceeds farm output.",
+      "expectedActions": [
+        "build_farm"
+      ],
+      "name": "shortage",
+      "passed": true,
+      "qMarginVsBaseline": 0.032656,
+      "selectedAction": "build_farm",
+      "stateKey": "fb0_p1_h1_lb2_inf1_pop1_t2",
+      "validationMarginVsBaseline": 0.503938
+    },
+    {
+      "baselineAction": "build_farm",
+      "candidateScores": [
+        {
+          "action": "build_housing",
+          "qScore": 0.128516,
+          "riskFlags": [],
+          "rolloutScore": 0.128516,
+          "validationScore": 0.500055
+        },
+        {
+          "action": "build_power_plant",
+          "qScore": 0.018006,
+          "riskFlags": [],
+          "rolloutScore": 0.018006,
+          "validationScore": 0.466356
+        },
+        {
+          "action": "build_road",
+          "qScore": 0.012672,
+          "riskFlags": [],
+          "rolloutScore": 0.012672,
+          "validationScore": 0.461022
+        },
+        {
+          "action": "subsidize",
+          "qScore": 0.007339,
+          "riskFlags": [],
+          "rolloutScore": 0.007339,
+          "validationScore": 0.455689
+        },
+        {
+          "action": "do_nothing",
+          "qScore": 0.007339,
+          "riskFlags": [],
+          "rolloutScore": 0.007339,
+          "validationScore": 0.535689
+        },
+        {
+          "action": "build_factory",
+          "qScore": 0.003339,
+          "riskFlags": [],
+          "rolloutScore": 0.003339,
+          "validationScore": 0.491689
+        },
+        {
+          "action": "build_market",
+          "qScore": 0.003339,
+          "riskFlags": [],
+          "rolloutScore": 0.003339,
+          "validationScore": 0.451689
+        },
+        {
+          "action": "build_farm",
+          "qScore": -0.008217,
+          "riskFlags": [
+            "oversupply_risk"
+          ],
+          "rolloutScore": -0.008217,
+          "validationScore": 0.385133
+        }
+      ],
+      "confidence": 0.6,
+      "description": "Farms overproduce while prices and happiness are stable.",
+      "expectedActions": [
+        "do_nothing",
+        "build_housing"
+      ],
+      "name": "oversupply",
+      "passed": true,
+      "qMarginVsBaseline": 0.136733,
+      "selectedAction": "build_housing",
+      "stateKey": "fb2_p0_h2_lb2_inf1_pop1_t2",
+      "validationMarginVsBaseline": 0.114922
+    },
+    {
+      "baselineAction": "do_nothing",
+      "candidateScores": [
+        {
+          "action": "subsidize",
+          "qScore": 0.030229,
+          "riskFlags": [],
+          "rolloutScore": 0.030229,
+          "validationScore": 0.829257
+        },
+        {
+          "action": "build_power_plant",
+          "qScore": 0.029537,
+          "riskFlags": [],
+          "rolloutScore": 0.029537,
+          "validationScore": 0.725286
+        },
+        {
+          "action": "build_road",
+          "qScore": 0.023822,
+          "riskFlags": [],
+          "rolloutScore": 0.023822,
+          "validationScore": 0.719571
+        },
+        {
+          "action": "do_nothing",
+          "qScore": 0.018108,
+          "riskFlags": [
+            "stagnation_risk"
+          ],
+          "rolloutScore": 0.018108,
+          "validationScore": 0.478857
+        },
+        {
+          "action": "build_factory",
+          "qScore": 0.013918,
+          "riskFlags": [],
+          "rolloutScore": 0.013918,
+          "validationScore": 0.669667
+        },
+        {
+          "action": "build_market",
+          "qScore": 0.013918,
+          "riskFlags": [],
+          "rolloutScore": 0.013918,
+          "validationScore": 0.709667
+        },
+        {
+          "action": "build_farm",
+          "qScore": -0.006295,
+          "riskFlags": [],
+          "rolloutScore": -0.006295,
+          "validationScore": 0.689094
+        },
+        {
+          "action": "build_housing",
+          "qScore": -0.009491,
+          "riskFlags": [],
+          "rolloutScore": -0.009491,
+          "validationScore": 0.665722
+        }
+      ],
+      "confidence": 0.55,
+      "description": "Supply matches demand, but food is unaffordable.",
+      "expectedActions": [
+        "subsidize"
+      ],
+      "name": "high_price",
+      "passed": true,
+      "qMarginVsBaseline": 0.012121,
+      "selectedAction": "subsidize",
+      "stateKey": "fb1_p2_h1_lb2_inf1_pop1_t2",
+      "validationMarginVsBaseline": 0.3504
+    },
+    {
+      "baselineAction": "build_road",
+      "candidateScores": [
+        {
+          "action": "do_nothing",
+          "qScore": 0.007339,
+          "riskFlags": [],
+          "rolloutScore": 0.007339,
+          "validationScore": 0.8306
+        },
+        {
+          "action": "build_road",
+          "qScore": 0.001533,
+          "riskFlags": [
+            "land_pressure"
+          ],
+          "rolloutScore": 0.001533,
+          "validationScore": 0.574933
+        }
+      ],
+      "confidence": 0.553,
+      "description": "The city is stable with only one parcel of land free.",
+      "expectedActions": [
+        "do_nothing"
+      ],
+      "name": "low_land",
+      "passed": true,
+      "qMarginVsBaseline": 0.005806,
+      "selectedAction": "do_nothing",
+      "stateKey": "fb1_p0_h2_lb0_inf1_pop1_t2",
+      "validationMarginVsBaseline": 0.255667
+    }
+  ],
+  "summary": {
+    "allScenariosPassed": true,
+    "averageEpisodeReward": -0.063862,
+    "statesLearned": 410,
+    "validationScenarios": 4,
+    "validationScenariosPassed": 4
+  },
+  "training": {
+    "alpha": 0.24,
+    "environment": "CityTrainingEnv",
+    "episodes": 320,
+    "epsilon": 0.55,
+    "epsilonDecay": 0.992,
+    "epsilonMin": 0.03,
+    "gamma": 0.88,
+    "rolloutHorizon": 4,
+    "scenarioRollouts": 24,
+    "seed": 20260523,
+    "stepsPerEpisode": 30
+  }
+}
