@@ -64,7 +64,7 @@ import {
   reset,
   tick
 } from "./api";
-import cityMapReference from "./assets/city-map-reference.png";
+import { CityCanvasMap, CITY_CANVAS_BUILD_MENU_ASSETS, buildCityCanvasMapPlan } from "./CityCanvasMap";
 
 import type {
   ActionName,
@@ -85,6 +85,12 @@ import type {
   StateResponse,
   WorldState
 } from "./types";
+
+const cityTileAssetModules = import.meta.glob("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/**/*.svg", {
+  eager: true,
+  query: "?url",
+  import: "default"
+}) as Record<string, string>;
 
 const ACTION_LABELS: Record<ActionName, string> = {
   build_farm: "Build Farm",
@@ -144,6 +150,8 @@ const MAP_LAND_OVERLAY_OPACITY = 0.12;
 const MAP_TEXTURE_OVERLAY_OPACITY = 0.06;
 const MAP_STAGE_MAX_WIDTH = 1180;
 const MAP_STAGE_PADDING = 32;
+const CITY_TILE_ASSET_ROOT = "./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets";
+const CITY_TILE_SIZE = 160;
 
 const TILE_ZONE_LABELS: Record<MapTileKind, string> = {
   water: "Waterfront",
@@ -196,6 +204,85 @@ const CITY_MAP_LEGEND: { label: string; color: string; icon: ReactNode; kinds: M
   { label: "Waterfront", color: "#28749a", icon: <Droplets />, kinds: ["water"] },
   { label: "Open Land", color: "#6f8b4a", icon: <Map />, kinds: ["empty"] }
 ];
+
+function cityTileAsset(relativePath: string) {
+  return cityTileAssetModules[`${CITY_TILE_ASSET_ROOT}/${relativePath}`] ?? "";
+}
+
+const TILE_TERRAIN_ASSETS: Record<MapTileKind, string> = {
+  water: cityTileAsset("terrain/water_tile.svg"),
+  road: cityTileAsset("roads/road_straight.svg"),
+  residential: cityTileAsset("terrain/grass_tile_a.svg"),
+  farm: cityTileAsset("terrain/farm_ground_tile.svg"),
+  factory: cityTileAsset("terrain/dirt_tile.svg"),
+  market: cityTileAsset("terrain/empty_lot_tile.svg"),
+  government: cityTileAsset("civic/sidewalk_plaza.svg"),
+  park: cityTileAsset("terrain/park_ground_tile.svg"),
+  power_plant: cityTileAsset("terrain/dirt_tile.svg"),
+  empty: cityTileAsset("terrain/empty_lot_tile.svg")
+};
+
+const ROAD_TILE_ASSETS = {
+  straight: cityTileAsset("roads/road_straight.svg"),
+  vertical: cityTileAsset("roads/road_vertical.svg"),
+  corner: cityTileAsset("roads/road_corner.svg"),
+  t: cityTileAsset("roads/road_t_junction.svg"),
+  cross: cityTileAsset("roads/road_cross.svg"),
+  end: cityTileAsset("roads/road_dead_end.svg")
+};
+
+const FARM_TILE_ASSETS = [
+  cityTileAsset("farms/wheat_farm.svg"),
+  cityTileAsset("farms/vegetable_farm.svg"),
+  cityTileAsset("farms/orchard_farm.svg"),
+  cityTileAsset("farms/livestock_ranch.svg"),
+  cityTileAsset("farms/farm_barn.svg"),
+  cityTileAsset("farms/greenhouse.svg")
+];
+
+const PARK_PROP_ASSETS = [
+  cityTileAsset("props/tree.svg"),
+  cityTileAsset("props/bush_cluster.svg"),
+  cityTileAsset("props/fountain.svg"),
+  cityTileAsset("props/rock_cluster.svg")
+];
+
+const RESIDENTIAL_BUILDING_ASSETS = [
+  cityTileAsset("buildings/cottage_house.svg"),
+  cityTileAsset("buildings/suburban_house.svg"),
+  cityTileAsset("buildings/townhouse.svg"),
+  cityTileAsset("buildings/apartment_block.svg")
+];
+
+const MARKET_BUILDING_ASSETS = [
+  cityTileAsset("buildings/small_market.svg"),
+  cityTileAsset("buildings/grocery_store.svg"),
+  cityTileAsset("buildings/corner_shop.svg"),
+  cityTileAsset("buildings/cafe.svg")
+];
+
+const FACTORY_BUILDING_ASSETS = [
+  cityTileAsset("buildings/factory.svg"),
+  cityTileAsset("buildings/warehouse.svg")
+];
+
+const GOVERNMENT_BUILDING_ASSETS = [
+  cityTileAsset("buildings/office_building.svg"),
+  cityTileAsset("buildings/school.svg"),
+  cityTileAsset("buildings/clinic.svg"),
+  cityTileAsset("buildings/police_station.svg")
+];
+
+const POWER_BUILDING_ASSETS = [
+  cityTileAsset("buildings/power_plant.svg"),
+  cityTileAsset("buildings/water_plant.svg")
+];
+
+const BUILD_MENU_ASSETS: Record<BuildingType, string> = {
+  ...CITY_CANVAS_BUILD_MENU_ASSETS
+};
+
+const SELECTION_OVERLAY_ASSET = cityTileAsset("overlays/selection_overlay.svg");
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
@@ -263,7 +350,9 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [trainingReport, setTrainingReport] = useState<OptimizerTrainingReport | null>(null);
   const [trainingReportError, setTrainingReportError] = useState<string | null>(null);
-  const cityMapImageUrl = import.meta.env.VITE_CITY_MAP_IMAGE_URL ?? cityMapReference;
+  const [selectedZone, setSelectedZone] = useState("Available Land");
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
+  const [showMapOverlay, setShowMapOverlay] = useState(true);
   const running = data?.simulation.running ?? false;
 
   useEffect(() => {
@@ -361,6 +450,12 @@ function App() {
   const happinessTone: StatTone = state.happiness >= 0.75 ? "good" : state.happiness >= 0.55 ? "watch" : "danger";
   const mayorTone: StatTone = data.mayorScore.status === "off_track" ? "danger" : data.mayorScore.status === "watch" ? "watch" : "good";
   const treasuryTone: StatTone = treasury < 50_000 ? "watch" : "neutral";
+  const selectedBuilding = selectedBuildingId
+    ? data.cityMap.buildings.find((building) => building.id === selectedBuildingId) ?? null
+    : null;
+  const selectedMapLabel = selectedBuilding?.label ?? selectedZone;
+  const selectedZoneData = selectedBuilding ? getBuildingData(selectedBuilding) : getZoneData(selectedZone, state);
+  const mapTileCounts = countMapTiles(data.cityMap.tiles);
 
   async function handleUpdate(action: () => Promise<StateResponse>) {
     try {
@@ -501,13 +596,43 @@ function App() {
         <section className="center-column">
           <section className="map-column">
             <Panel title="City Map" flush>
-              <div className="city-map-static">
-                <img
-                  className="city-map-static-image"
-                  src={cityMapImageUrl}
-                  alt="City map overview"
-                  loading="lazy"
+              <div className="city-map">
+                <CityMapBoard
+                  layout={data.cityMap}
+                  selectedZone={selectedZone}
+                  selectedBuildingId={selectedBuildingId}
+                  onSelectZone={(zone) => {
+                    setSelectedZone(zone);
+                    setSelectedBuildingId(null);
+                  }}
+                  onSelectBuilding={(building) => {
+                    setSelectedBuildingId(building.id);
+                    setSelectedZone(TILE_ZONE_LABELS[building.kind]);
+                  }}
+                  showOverlay={showMapOverlay}
+                  setShowOverlay={setShowMapOverlay}
                 />
+                {showMapOverlay ? (
+                  <>
+                    <aside className="legend-card" aria-label="City map legend">
+                      {CITY_MAP_LEGEND.map((item) => (
+                        <LegendItem
+                          key={item.label}
+                          icon={item.icon}
+                          color={item.color}
+                          label={item.label}
+                          count={item.kinds.reduce((total, kind) => total + mapTileCounts[kind], 0)}
+                        />
+                      ))}
+                    </aside>
+                    <aside className="map-status-card" aria-label="Land status">
+                      <span>Open Land</span>
+                      <strong>{landRemaining}</strong>
+                      <em>{state.land_total} total tiles</em>
+                    </aside>
+                    <MapInspector label={selectedMapLabel} zoneData={selectedZoneData} building={selectedBuilding} />
+                  </>
+                ) : null}
               </div>
             </Panel>
           </section>
@@ -515,12 +640,12 @@ function App() {
           <section className="build-panel">
             <Panel title="Build Menu">
               <div className="build-menu">
-                <BuildCard icon={<Wheat />} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleUpdate(() => buildStructure("farm"))} />
-                <BuildCard icon={<Factory />} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleUpdate(() => buildStructure("factory"))} />
-                <BuildCard icon={<Store />} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleUpdate(() => buildStructure("market"))} />
-                <BuildCard icon={<Zap />} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleUpdate(() => buildStructure("power_plant"))} />
-                <BuildCard icon={<House />} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleUpdate(() => buildStructure("housing"))} />
-                <BuildCard icon={<Hammer />} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleUpdate(() => buildStructure("road"))} />
+                <BuildCard icon={<Wheat />} assetSrc={BUILD_MENU_ASSETS.farm} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleUpdate(() => buildStructure("farm"))} />
+                <BuildCard icon={<Factory />} assetSrc={BUILD_MENU_ASSETS.factory} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleUpdate(() => buildStructure("factory"))} />
+                <BuildCard icon={<Store />} assetSrc={BUILD_MENU_ASSETS.market} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleUpdate(() => buildStructure("market"))} />
+                <BuildCard icon={<Zap />} assetSrc={BUILD_MENU_ASSETS.power_plant} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleUpdate(() => buildStructure("power_plant"))} />
+                <BuildCard icon={<House />} assetSrc={BUILD_MENU_ASSETS.housing} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleUpdate(() => buildStructure("housing"))} />
+                <BuildCard icon={<Hammer />} assetSrc={BUILD_MENU_ASSETS.road} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleUpdate(() => buildStructure("road"))} />
               </div>
             </Panel>
           </section>
@@ -1239,7 +1364,6 @@ function MapMetric({
 
 function CityMapBoard({
   layout,
-  state,
   selectedZone,
   selectedBuildingId,
   onSelectZone,
@@ -1248,7 +1372,6 @@ function CityMapBoard({
   setShowOverlay
 }: {
   layout: CityMapLayout;
-  state: WorldState;
   selectedZone: string;
   selectedBuildingId: string | null;
   onSelectZone: (zone: string) => void;
@@ -1270,16 +1393,17 @@ function CityMapBoard({
   const [dragging, setDragging] = useState(false);
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const selectedKinds = selectedKindsForZone(selectedZone);
-  const plan = useMemo(() => buildTopDownMapPlan(layout, state), [layout, state]);
+  const plan = useMemo(() => buildCityCanvasMapPlan(layout, CITY_TILE_SIZE), [layout]);
+  const stageAspectRatio = plan.width / plan.height;
   const stageWidth = useMemo(() => {
     if (!viewportSize.width || !viewportSize.height) {
       return undefined;
     }
 
-    const widthBound = Math.max(220, viewportSize.width - MAP_STAGE_PADDING * 2);
-    const heightBound = Math.max(220, (viewportSize.height - MAP_STAGE_PADDING * 2) * MAP_REFERENCE_ASPECT_RATIO);
+    const widthBound = Math.max(680, viewportSize.width * 1.45);
+    const heightBound = Math.max(220, (viewportSize.height - MAP_STAGE_PADDING * 2) * stageAspectRatio);
     return Math.min(MAP_STAGE_MAX_WIDTH, widthBound, heightBound);
-  }, [viewportSize]);
+  }, [stageAspectRatio, viewportSize]);
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -1401,10 +1525,19 @@ function CityMapBoard({
     onSelectBuilding(building);
   }
 
+  function selectZone(zone: string) {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+
+    onSelectZone(zone);
+  }
+
   const stageStyle = {
     width: stageWidth ? `${stageWidth}px` : "min(1180px, calc(100% - 32px))",
     transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-    "--map-aspect-ratio": MAP_REFERENCE_ASPECT_RATIO_CSS
+    "--map-aspect-ratio": stageAspectRatio.toString()
   } satisfies CSSProperties & { "--map-aspect-ratio": string };
 
   return (
@@ -1450,16 +1583,224 @@ function CityMapBoard({
         className="top-map-stage"
         style={stageStyle}
       >
-        <TopDownSvgMap
+        <CityCanvasMap
           plan={plan}
           selectedKinds={selectedKinds}
           selectedBuildingId={selectedBuildingId}
+          showOverlay={showOverlay}
+          tileZoneLabels={TILE_ZONE_LABELS}
           onSelectBuilding={selectBuilding}
-          onSelectZone={onSelectZone}
+          onSelectZone={selectZone}
         />
       </div>
     </div>
   );
+}
+
+type AssetTileMapPlan = {
+  width: number;
+  height: number;
+  tileSize: number;
+  tiles: MapTile[];
+  buildingsById: globalThis.Map<string, MapBuilding>;
+};
+
+function buildAssetTileMapPlan(layout: CityMapLayout): AssetTileMapPlan {
+  return {
+    width: layout.width * CITY_TILE_SIZE,
+    height: layout.height * CITY_TILE_SIZE,
+    tileSize: CITY_TILE_SIZE,
+    tiles: layout.tiles,
+    buildingsById: new globalThis.Map(layout.buildings.map((building) => [building.id, building]))
+  };
+}
+
+function AssetTileMap({
+  plan,
+  selectedKinds,
+  selectedBuildingId,
+  showOverlay,
+  onSelectBuilding,
+  onSelectZone
+}: {
+  plan: AssetTileMapPlan;
+  selectedKinds: Set<MapTileKind>;
+  selectedBuildingId: string | null;
+  showOverlay: boolean;
+  onSelectBuilding: (building: MapBuilding) => void;
+  onSelectZone: (zone: string) => void;
+}) {
+  return (
+    <svg className="tile-map-svg" viewBox={`0 0 ${plan.width} ${plan.height}`} role="img" aria-label="Top-down city tile map">
+      <defs>
+        <clipPath id="tileMapBounds">
+          <rect x="0" y="0" width={plan.width} height={plan.height} rx="18" />
+        </clipPath>
+      </defs>
+      <rect className="tile-map-background" x="0" y="0" width={plan.width} height={plan.height} rx="18" />
+      <g clipPath="url(#tileMapBounds)">
+        {plan.tiles.map((tile) => (
+          <AssetMapTile
+            key={`${tile.x}-${tile.y}`}
+            tile={tile}
+            building={tile.buildingId ? plan.buildingsById.get(tile.buildingId) ?? null : null}
+            selectedKinds={selectedKinds}
+            selectedBuildingId={selectedBuildingId}
+            showOverlay={showOverlay}
+            onSelectBuilding={onSelectBuilding}
+            onSelectZone={onSelectZone}
+          />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function AssetMapTile({
+  tile,
+  building,
+  selectedKinds,
+  selectedBuildingId,
+  showOverlay,
+  onSelectBuilding,
+  onSelectZone
+}: {
+  tile: MapTile;
+  building: MapBuilding | null;
+  selectedKinds: Set<MapTileKind>;
+  selectedBuildingId: string | null;
+  showOverlay: boolean;
+  onSelectBuilding: (building: MapBuilding) => void;
+  onSelectZone: (zone: string) => void;
+}) {
+  const x = tile.x * CITY_TILE_SIZE;
+  const y = tile.y * CITY_TILE_SIZE;
+  const selected = selectedBuildingId
+    ? building?.id === selectedBuildingId
+    : selectedKinds.has(tile.kind);
+  const buildingAsset = building ? buildingAssetForTile(tile, building) : null;
+  const roadRender = tile.kind === "road" ? roadAssetForTile(tile) : null;
+  const tileAsset = roadRender?.src ?? primaryTileAssetFor(tile, building);
+  const title = building ? `${building.label} (${tile.label})` : tile.label;
+
+  function selectTile() {
+    if (building) {
+      onSelectBuilding(building);
+      return;
+    }
+
+    onSelectZone(TILE_ZONE_LABELS[tile.kind]);
+  }
+
+  return (
+    <g
+      className={`tile-map-cell tile-map-${tile.kind} ${tile.active ? "tile-map-active" : "tile-map-open"} ${selected ? "tile-map-selected" : ""}`}
+      transform={`translate(${x} ${y})`}
+      tabIndex={0}
+      role="button"
+      aria-label={title}
+      onClick={selectTile}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          selectTile();
+        }
+      }}
+    >
+      <title>{title}</title>
+      <rect className="tile-hit-area" x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
+      {roadRender && roadRender.rotation ? (
+        <g transform={`rotate(${roadRender.rotation} ${CITY_TILE_SIZE / 2} ${CITY_TILE_SIZE / 2})`}>
+          <image className="tile-map-asset tile-terrain-asset" href={tileAsset} x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
+        </g>
+      ) : (
+        <image className="tile-map-asset tile-terrain-asset" href={tileAsset} x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
+      )}
+      {buildingAsset ? (
+        <image
+          className="tile-map-asset tile-building-asset"
+          href={buildingAsset}
+          x="0"
+          y="0"
+          width={CITY_TILE_SIZE}
+          height={CITY_TILE_SIZE}
+        />
+      ) : null}
+      {showOverlay && selected ? (
+        <image className="tile-map-asset tile-selection-asset" href={SELECTION_OVERLAY_ASSET} x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
+      ) : null}
+      <rect className="tile-keyboard-ring" x="24" y="24" width="112" height="112" rx="10" />
+    </g>
+  );
+}
+
+function primaryTileAssetFor(tile: MapTile, building: MapBuilding | null) {
+  if (tile.kind === "farm" && building) {
+    return FARM_TILE_ASSETS[tileVariantIndex(tile, FARM_TILE_ASSETS.length, building.units)];
+  }
+
+  return TILE_TERRAIN_ASSETS[tile.kind] || TILE_TERRAIN_ASSETS.empty;
+}
+
+function roadAssetForTile(tile: MapTile) {
+  const connections = new Set(tile.roadConnections);
+
+  if (tile.roadType === "cross") {
+    return { src: ROAD_TILE_ASSETS.cross, rotation: 0 };
+  }
+
+  if (tile.roadType === "t") {
+    const missing = (["n", "e", "s", "w"] as const).find((direction) => !connections.has(direction));
+    const rotationByMissing = { s: 0, w: 90, n: 180, e: 270 } as const;
+    return { src: ROAD_TILE_ASSETS.t, rotation: missing ? rotationByMissing[missing] : 0 };
+  }
+
+  if (tile.roadType === "corner") {
+    if (connections.has("e") && connections.has("s")) return { src: ROAD_TILE_ASSETS.corner, rotation: 90 };
+    if (connections.has("s") && connections.has("w")) return { src: ROAD_TILE_ASSETS.corner, rotation: 180 };
+    if (connections.has("w") && connections.has("n")) return { src: ROAD_TILE_ASSETS.corner, rotation: 270 };
+    return { src: ROAD_TILE_ASSETS.corner, rotation: 0 };
+  }
+
+  if (tile.roadType === "end") {
+    if (connections.has("n")) return { src: ROAD_TILE_ASSETS.end, rotation: 90 };
+    if (connections.has("e")) return { src: ROAD_TILE_ASSETS.end, rotation: 180 };
+    if (connections.has("s")) return { src: ROAD_TILE_ASSETS.end, rotation: 270 };
+    return { src: ROAD_TILE_ASSETS.end, rotation: 0 };
+  }
+
+  if (connections.has("n") && connections.has("s")) {
+    return { src: ROAD_TILE_ASSETS.vertical, rotation: 0 };
+  }
+
+  return { src: ROAD_TILE_ASSETS.straight, rotation: 0 };
+}
+
+function buildingAssetForTile(tile: MapTile, building: MapBuilding) {
+  const salt = building.level + building.units;
+  switch (building.kind) {
+    case "residential": {
+      if (building.level >= 3) return RESIDENTIAL_BUILDING_ASSETS[3];
+      return RESIDENTIAL_BUILDING_ASSETS[tileVariantIndex(tile, 3, salt)];
+    }
+    case "factory":
+      return FACTORY_BUILDING_ASSETS[tileVariantIndex(tile, FACTORY_BUILDING_ASSETS.length, salt)];
+    case "market":
+      return MARKET_BUILDING_ASSETS[tileVariantIndex(tile, MARKET_BUILDING_ASSETS.length, salt)];
+    case "government":
+      return GOVERNMENT_BUILDING_ASSETS[tileVariantIndex(tile, GOVERNMENT_BUILDING_ASSETS.length, salt)];
+    case "power_plant":
+      return POWER_BUILDING_ASSETS[tileVariantIndex(tile, POWER_BUILDING_ASSETS.length, salt)];
+    case "park":
+      return PARK_PROP_ASSETS[tileVariantIndex(tile, PARK_PROP_ASSETS.length, salt)];
+    default:
+      return null;
+  }
+}
+
+function tileVariantIndex(tile: MapTile, modulo: number, salt = 0) {
+  if (modulo <= 1) return 0;
+  return Math.abs(tile.x * 31 + tile.y * 17 + salt * 13) % modulo;
 }
 
 type TopDownPlan = {
@@ -1507,7 +1848,7 @@ function TopDownSvgMap({
 
       <image
         className="top-map-image"
-        href={cityMapReference}
+        href=""
         x="0"
         y="0"
         width={plan.width}
@@ -1996,6 +2337,7 @@ function AlertRow({ level, text }: { level: EventSeverity; text: string }) {
 
 function BuildCard({
   icon,
+  assetSrc,
   name,
   cost,
   land,
@@ -2004,6 +2346,7 @@ function BuildCard({
   disabled = false
 }: {
   icon: ReactNode;
+  assetSrc?: string;
   name: string;
   cost: string;
   land: string;
@@ -2014,7 +2357,9 @@ function BuildCard({
   return (
     <button className={`build-card build-${tone}`} type="button" disabled={disabled} onClick={onBuild}>
       <div className="build-card-head">
-        <span className="build-card-icon">{icon}</span>
+        <span className="build-card-icon">
+          {assetSrc ? <img src={assetSrc} alt="" aria-hidden="true" /> : icon}
+        </span>
         <strong>{name}</strong>
       </div>
       <div className="build-card-meta">
