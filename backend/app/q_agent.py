@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import random
 from collections import defaultdict
 from dataclasses import dataclass
@@ -8,6 +9,8 @@ from pathlib import Path
 
 from .models import ActionName, Params, WorldState
 
+
+logger = logging.getLogger(__name__)
 
 ALL_ACTIONS: tuple[ActionName, ...] = (
     "build_farm",
@@ -233,14 +236,19 @@ class QLearningAgent:
 
     def _load(self, path: Path) -> None:
         try:
-            if path.exists():
-                with open(path) as f:
-                    data = json.load(f)
-                for k, v in data.items():
-                    if isinstance(v, list) and len(v) == len(ALL_ACTIONS):
-                        self.q_table[k] = [float(value) for value in v]
-        except Exception:
-            pass
+            if not path.exists():
+                return
+
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+            if not isinstance(data, dict):
+                raise ValueError("Q-table root must be a JSON object.")
+
+            for k, v in data.items():
+                if isinstance(v, list) and len(v) == len(ALL_ACTIONS):
+                    self.q_table[k] = [float(value) for value in v]
+        except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+            logger.warning("Could not load Q-table from %s: %s", path, exc)
 
     def save(self, path: Path | None = None) -> None:
         target_path = path or self.q_table_path or Q_TABLE_PATH

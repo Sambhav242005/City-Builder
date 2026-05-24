@@ -65,6 +65,7 @@ import {
   tick
 } from "./api";
 import { CityCanvasMap, CITY_CANVAS_BUILD_MENU_ASSETS, buildCityCanvasMapPlan } from "./CityCanvasMap";
+import { attachExperimentDebugTools, resolveExperimentAssignment, trackExperimentEvent } from "./experiments";
 
 import type {
   ActionName,
@@ -86,11 +87,6 @@ import type {
   WorldState
 } from "./types";
 
-const cityTileAssetModules = import.meta.glob("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets/**/*.svg", {
-  eager: true,
-  query: "?url",
-  import: "default"
-}) as Record<string, string>;
 
 const ACTION_LABELS: Record<ActionName, string> = {
   build_farm: "Build Farm",
@@ -143,14 +139,8 @@ const ACTION_BUILDING_TYPES: Partial<Record<ActionName, BuildingType>> = {
 const MAP_MIN_SCALE = 0.78;
 const MAP_MAX_SCALE = 2.2;
 const MAP_ZOOM_STEP = 1.16;
-// Matches the dimensions of city-map-reference.png.
-const MAP_REFERENCE_ASPECT_RATIO = 882 / 766;
-const MAP_REFERENCE_ASPECT_RATIO_CSS = MAP_REFERENCE_ASPECT_RATIO.toString();
-const MAP_LAND_OVERLAY_OPACITY = 0.12;
-const MAP_TEXTURE_OVERLAY_OPACITY = 0.06;
 const MAP_STAGE_MAX_WIDTH = 1180;
 const MAP_STAGE_PADDING = 32;
-const CITY_TILE_ASSET_ROOT = "./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets";
 const CITY_TILE_SIZE = 160;
 
 const TILE_ZONE_LABELS: Record<MapTileKind, string> = {
@@ -166,18 +156,6 @@ const TILE_ZONE_LABELS: Record<MapTileKind, string> = {
   empty: "Available Land"
 };
 
-const markerColors: Record<MapTileKind, string> = {
-  water: "#28749a",
-  road: "#39464d",
-  residential: "#2f65b4",
-  farm: "#439a37",
-  factory: "#8652b6",
-  market: "#d99a24",
-  government: "#c8453c",
-  park: "#5ca85a",
-  power_plant: "#4d9bd8",
-  empty: "#6f8b4a"
-};
 
 const EMPTY_TILE_COUNTS: Record<MapTileKind, number> = {
   water: 0,
@@ -205,84 +183,9 @@ const CITY_MAP_LEGEND: { label: string; color: string; icon: ReactNode; kinds: M
   { label: "Open Land", color: "#6f8b4a", icon: <Map />, kinds: ["empty"] }
 ];
 
-function cityTileAsset(relativePath: string) {
-  return cityTileAssetModules[`${CITY_TILE_ASSET_ROOT}/${relativePath}`] ?? "";
-}
-
-const TILE_TERRAIN_ASSETS: Record<MapTileKind, string> = {
-  water: cityTileAsset("terrain/water_tile.svg"),
-  road: cityTileAsset("roads/road_straight.svg"),
-  residential: cityTileAsset("terrain/grass_tile_a.svg"),
-  farm: cityTileAsset("terrain/farm_ground_tile.svg"),
-  factory: cityTileAsset("terrain/dirt_tile.svg"),
-  market: cityTileAsset("terrain/empty_lot_tile.svg"),
-  government: cityTileAsset("civic/sidewalk_plaza.svg"),
-  park: cityTileAsset("terrain/park_ground_tile.svg"),
-  power_plant: cityTileAsset("terrain/dirt_tile.svg"),
-  empty: cityTileAsset("terrain/empty_lot_tile.svg")
-};
-
-const ROAD_TILE_ASSETS = {
-  straight: cityTileAsset("roads/road_straight.svg"),
-  vertical: cityTileAsset("roads/road_vertical.svg"),
-  corner: cityTileAsset("roads/road_corner.svg"),
-  t: cityTileAsset("roads/road_t_junction.svg"),
-  cross: cityTileAsset("roads/road_cross.svg"),
-  end: cityTileAsset("roads/road_dead_end.svg")
-};
-
-const FARM_TILE_ASSETS = [
-  cityTileAsset("farms/wheat_farm.svg"),
-  cityTileAsset("farms/vegetable_farm.svg"),
-  cityTileAsset("farms/orchard_farm.svg"),
-  cityTileAsset("farms/livestock_ranch.svg"),
-  cityTileAsset("farms/farm_barn.svg"),
-  cityTileAsset("farms/greenhouse.svg")
-];
-
-const PARK_PROP_ASSETS = [
-  cityTileAsset("props/tree.svg"),
-  cityTileAsset("props/bush_cluster.svg"),
-  cityTileAsset("props/fountain.svg"),
-  cityTileAsset("props/rock_cluster.svg")
-];
-
-const RESIDENTIAL_BUILDING_ASSETS = [
-  cityTileAsset("buildings/cottage_house.svg"),
-  cityTileAsset("buildings/suburban_house.svg"),
-  cityTileAsset("buildings/townhouse.svg"),
-  cityTileAsset("buildings/apartment_block.svg")
-];
-
-const MARKET_BUILDING_ASSETS = [
-  cityTileAsset("buildings/small_market.svg"),
-  cityTileAsset("buildings/grocery_store.svg"),
-  cityTileAsset("buildings/corner_shop.svg"),
-  cityTileAsset("buildings/cafe.svg")
-];
-
-const FACTORY_BUILDING_ASSETS = [
-  cityTileAsset("buildings/factory.svg"),
-  cityTileAsset("buildings/warehouse.svg")
-];
-
-const GOVERNMENT_BUILDING_ASSETS = [
-  cityTileAsset("buildings/office_building.svg"),
-  cityTileAsset("buildings/school.svg"),
-  cityTileAsset("buildings/clinic.svg"),
-  cityTileAsset("buildings/police_station.svg")
-];
-
-const POWER_BUILDING_ASSETS = [
-  cityTileAsset("buildings/power_plant.svg"),
-  cityTileAsset("buildings/water_plant.svg")
-];
-
 const BUILD_MENU_ASSETS: Record<BuildingType, string> = {
   ...CITY_CANVAS_BUILD_MENU_ASSETS
 };
-
-const SELECTION_OVERLAY_ASSET = cityTileAsset("overlays/selection_overlay.svg");
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
@@ -346,6 +249,7 @@ function formatBuildingScale(building: MapBuilding) {
 }
 
 function App() {
+  const experiment = useMemo(() => resolveExperimentAssignment(), []);
   const [data, setData] = useState<StateResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [trainingReport, setTrainingReport] = useState<OptimizerTrainingReport | null>(null);
@@ -354,6 +258,14 @@ function App() {
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [showMapOverlay, setShowMapOverlay] = useState(true);
   const running = data?.simulation.running ?? false;
+
+  useEffect(() => {
+    attachExperimentDebugTools(experiment);
+    trackExperimentEvent(experiment, "page_view", {
+      path: window.location.pathname,
+      search: window.location.search || null
+    });
+  }, [experiment]);
 
   useEffect(() => {
     fetchState()
@@ -415,7 +327,7 @@ function App() {
 
   if (!state || !data || !recommendation || !decisionSystem) {
     return (
-      <main className="app-shell loading-screen">
+      <main className={`app-shell loading-screen experiment-${experiment.variant}`} data-experiment-key={experiment.key} data-experiment-variant={experiment.variant}>
         <section className="loading-panel">
           <Landmark size={38} />
           <h1>Evolution Government Simulator</h1>
@@ -468,11 +380,55 @@ function App() {
   }
 
   function handlePlayPause() {
+    trackExperimentEvent(experiment, "simulation_control", {
+      action: running ? "pause" : "play",
+      tick: state?.tick ?? null
+    });
     return handleUpdate(running ? pauseLive : playLive);
   }
 
+  function handleAdvanceOneTick() {
+    trackExperimentEvent(experiment, "simulation_control", {
+      action: "advance_one",
+      tick: state?.tick ?? null
+    });
+    return handleUpdate(tick);
+  }
+
   function handleAdvanceFaster() {
+    trackExperimentEvent(experiment, "simulation_control", {
+      action: "advance_fast",
+      tick: state?.tick ?? null,
+      ticks: data?.simulation.fastForwardTicks ?? 5
+    });
     return handleUpdate(() => advanceTicks(data?.simulation.fastForwardTicks ?? 5));
+  }
+
+  function handleResetSimulation() {
+    trackExperimentEvent(experiment, "simulation_control", {
+      action: "reset",
+      tick: state?.tick ?? null
+    });
+    return handleUpdate(reset);
+  }
+
+  function handleBuild(buildingType: BuildingType) {
+    trackExperimentEvent(experiment, "build_attempt", {
+      buildingType,
+      tick: state?.tick ?? null,
+      treasury: state?.treasury ?? null,
+      landRemaining: state ? state.land_total - state.land_used : null
+    });
+    return handleUpdate(() => buildStructure(buildingType));
+  }
+
+  function handleDecision(decision: "approve" | "reject") {
+    trackExperimentEvent(experiment, "mayor_decision", {
+      decision,
+      recommendedAction: recommendation?.action ?? null,
+      tick: state?.tick ?? null
+    });
+    return handleUpdate(decision === "approve" ? approveGovernmentAction : rejectGovernmentAction);
   }
 
   function commitState(payload: StateResponse) {
@@ -481,7 +437,11 @@ function App() {
 
 
   return (
-    <main className="app-shell">
+    <main
+      className={`app-shell experiment-${experiment.variant}`}
+      data-experiment-key={experiment.key}
+      data-experiment-variant={experiment.variant}
+    >
       <header className="topbar">
         <section className="brand-card">
           <Landmark size={42} />
@@ -520,13 +480,13 @@ function App() {
             >
               {running ? <Pause size={18} /> : <Play size={18} />}
             </IconButton>
-            <IconButton label="Advance one tick" onClick={() => handleUpdate(tick)}>
+            <IconButton label="Advance one tick" onClick={handleAdvanceOneTick}>
               <Play size={18} />
             </IconButton>
             <IconButton label="Advance faster" onClick={handleAdvanceFaster}>
               <FastForward size={18} />
             </IconButton>
-            <IconButton label="Reset simulation" onClick={() => handleUpdate(reset)}>
+            <IconButton label="Reset simulation" onClick={handleResetSimulation}>
               <RotateCcw size={18} />
             </IconButton>
           </div>
@@ -602,10 +562,21 @@ function App() {
                   selectedZone={selectedZone}
                   selectedBuildingId={selectedBuildingId}
                   onSelectZone={(zone) => {
+                    trackExperimentEvent(experiment, "map_select", {
+                      target: "zone",
+                      zone,
+                      tick: state.tick
+                    });
                     setSelectedZone(zone);
                     setSelectedBuildingId(null);
                   }}
                   onSelectBuilding={(building) => {
+                    trackExperimentEvent(experiment, "map_select", {
+                      target: "building",
+                      buildingKind: building.kind,
+                      units: building.units,
+                      tick: state.tick
+                    });
                     setSelectedBuildingId(building.id);
                     setSelectedZone(TILE_ZONE_LABELS[building.kind]);
                   }}
@@ -640,12 +611,12 @@ function App() {
           <section className="build-panel">
             <Panel title="Build Menu">
               <div className="build-menu">
-                <BuildCard icon={<Wheat />} assetSrc={BUILD_MENU_ASSETS.farm} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleUpdate(() => buildStructure("farm"))} />
-                <BuildCard icon={<Factory />} assetSrc={BUILD_MENU_ASSETS.factory} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleUpdate(() => buildStructure("factory"))} />
-                <BuildCard icon={<Store />} assetSrc={BUILD_MENU_ASSETS.market} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleUpdate(() => buildStructure("market"))} />
-                <BuildCard icon={<Zap />} assetSrc={BUILD_MENU_ASSETS.power_plant} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleUpdate(() => buildStructure("power_plant"))} />
-                <BuildCard icon={<House />} assetSrc={BUILD_MENU_ASSETS.housing} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleUpdate(() => buildStructure("housing"))} />
-                <BuildCard icon={<Hammer />} assetSrc={BUILD_MENU_ASSETS.road} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleUpdate(() => buildStructure("road"))} />
+                <BuildCard icon={<Wheat />} assetSrc={BUILD_MENU_ASSETS.farm} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleBuild("farm")} />
+                <BuildCard icon={<Factory />} assetSrc={BUILD_MENU_ASSETS.factory} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleBuild("factory")} />
+                <BuildCard icon={<Store />} assetSrc={BUILD_MENU_ASSETS.market} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleBuild("market")} />
+                <BuildCard icon={<Zap />} assetSrc={BUILD_MENU_ASSETS.power_plant} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleBuild("power_plant")} />
+                <BuildCard icon={<House />} assetSrc={BUILD_MENU_ASSETS.housing} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleBuild("housing")} />
+                <BuildCard icon={<Hammer />} assetSrc={BUILD_MENU_ASSETS.road} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleBuild("road")} />
               </div>
             </Panel>
           </section>
@@ -731,7 +702,7 @@ function App() {
                 className="approve-button"
                 type="button"
                 disabled={!actionIsAvailable}
-                onClick={() => handleUpdate(approveGovernmentAction)}
+                onClick={() => handleDecision("approve")}
               >
                 <Check size={16} />
                 Approve
@@ -740,7 +711,7 @@ function App() {
                 className="reject-button"
                 type="button"
                 disabled={!actionIsAvailable}
-                onClick={() => handleUpdate(rejectGovernmentAction)}
+                onClick={() => handleDecision("reject")}
               >
                 <X size={16} />
                 Reject
@@ -838,11 +809,34 @@ function IconButton({
 }
 
 function ChartBox({ height, children }: { height: number; children: ReactNode }) {
+  const chartRef = useRef<HTMLDivElement | null>(null);
+  const [chartReady, setChartReady] = useState(false);
+
+  useEffect(() => {
+    const node = chartRef.current;
+    if (!node) {
+      return;
+    }
+
+    const updateSize = () => {
+      const rect = node.getBoundingClientRect();
+      const hasSize = rect.width > 0 && rect.height > 0;
+      setChartReady((current) => (current === hasSize ? current : hasSize));
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="chart-box" style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        {children}
-      </ResponsiveContainer>
+    <div className="chart-box" ref={chartRef} style={{ height, minHeight: height, minWidth: 0, width: "100%" }}>
+      {chartReady ? (
+        <ResponsiveContainer width="100%" height="100%">
+          {children}
+        </ResponsiveContainer>
+      ) : null}
     </div>
   );
 }
@@ -1392,7 +1386,7 @@ function CityMapBoard({
   const [view, setView] = useState({ scale: 1, x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
-  const selectedKinds = selectedKindsForZone(selectedZone);
+  const selectedKinds = useMemo(() => selectedKindsForZone(selectedZone), [selectedZone]);
   const plan = useMemo(() => buildCityCanvasMapPlan(layout, CITY_TILE_SIZE), [layout]);
   const stageAspectRatio = plan.width / plan.height;
   const stageWidth = useMemo(() => {
@@ -1580,7 +1574,7 @@ function CityMapBoard({
       </div>
 
       <div
-        className="top-map-stage"
+        className="canvas-map-stage"
         style={stageStyle}
       >
         <CityCanvasMap
@@ -1595,697 +1589,6 @@ function CityMapBoard({
       </div>
     </div>
   );
-}
-
-type AssetTileMapPlan = {
-  width: number;
-  height: number;
-  tileSize: number;
-  tiles: MapTile[];
-  buildingsById: globalThis.Map<string, MapBuilding>;
-};
-
-function buildAssetTileMapPlan(layout: CityMapLayout): AssetTileMapPlan {
-  return {
-    width: layout.width * CITY_TILE_SIZE,
-    height: layout.height * CITY_TILE_SIZE,
-    tileSize: CITY_TILE_SIZE,
-    tiles: layout.tiles,
-    buildingsById: new globalThis.Map(layout.buildings.map((building) => [building.id, building]))
-  };
-}
-
-function AssetTileMap({
-  plan,
-  selectedKinds,
-  selectedBuildingId,
-  showOverlay,
-  onSelectBuilding,
-  onSelectZone
-}: {
-  plan: AssetTileMapPlan;
-  selectedKinds: Set<MapTileKind>;
-  selectedBuildingId: string | null;
-  showOverlay: boolean;
-  onSelectBuilding: (building: MapBuilding) => void;
-  onSelectZone: (zone: string) => void;
-}) {
-  return (
-    <svg className="tile-map-svg" viewBox={`0 0 ${plan.width} ${plan.height}`} role="img" aria-label="Top-down city tile map">
-      <defs>
-        <clipPath id="tileMapBounds">
-          <rect x="0" y="0" width={plan.width} height={plan.height} rx="18" />
-        </clipPath>
-      </defs>
-      <rect className="tile-map-background" x="0" y="0" width={plan.width} height={plan.height} rx="18" />
-      <g clipPath="url(#tileMapBounds)">
-        {plan.tiles.map((tile) => (
-          <AssetMapTile
-            key={`${tile.x}-${tile.y}`}
-            tile={tile}
-            building={tile.buildingId ? plan.buildingsById.get(tile.buildingId) ?? null : null}
-            selectedKinds={selectedKinds}
-            selectedBuildingId={selectedBuildingId}
-            showOverlay={showOverlay}
-            onSelectBuilding={onSelectBuilding}
-            onSelectZone={onSelectZone}
-          />
-        ))}
-      </g>
-    </svg>
-  );
-}
-
-function AssetMapTile({
-  tile,
-  building,
-  selectedKinds,
-  selectedBuildingId,
-  showOverlay,
-  onSelectBuilding,
-  onSelectZone
-}: {
-  tile: MapTile;
-  building: MapBuilding | null;
-  selectedKinds: Set<MapTileKind>;
-  selectedBuildingId: string | null;
-  showOverlay: boolean;
-  onSelectBuilding: (building: MapBuilding) => void;
-  onSelectZone: (zone: string) => void;
-}) {
-  const x = tile.x * CITY_TILE_SIZE;
-  const y = tile.y * CITY_TILE_SIZE;
-  const selected = selectedBuildingId
-    ? building?.id === selectedBuildingId
-    : selectedKinds.has(tile.kind);
-  const buildingAsset = building ? buildingAssetForTile(tile, building) : null;
-  const roadRender = tile.kind === "road" ? roadAssetForTile(tile) : null;
-  const tileAsset = roadRender?.src ?? primaryTileAssetFor(tile, building);
-  const title = building ? `${building.label} (${tile.label})` : tile.label;
-
-  function selectTile() {
-    if (building) {
-      onSelectBuilding(building);
-      return;
-    }
-
-    onSelectZone(TILE_ZONE_LABELS[tile.kind]);
-  }
-
-  return (
-    <g
-      className={`tile-map-cell tile-map-${tile.kind} ${tile.active ? "tile-map-active" : "tile-map-open"} ${selected ? "tile-map-selected" : ""}`}
-      transform={`translate(${x} ${y})`}
-      tabIndex={0}
-      role="button"
-      aria-label={title}
-      onClick={selectTile}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          selectTile();
-        }
-      }}
-    >
-      <title>{title}</title>
-      <rect className="tile-hit-area" x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
-      {roadRender && roadRender.rotation ? (
-        <g transform={`rotate(${roadRender.rotation} ${CITY_TILE_SIZE / 2} ${CITY_TILE_SIZE / 2})`}>
-          <image className="tile-map-asset tile-terrain-asset" href={tileAsset} x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
-        </g>
-      ) : (
-        <image className="tile-map-asset tile-terrain-asset" href={tileAsset} x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
-      )}
-      {buildingAsset ? (
-        <image
-          className="tile-map-asset tile-building-asset"
-          href={buildingAsset}
-          x="0"
-          y="0"
-          width={CITY_TILE_SIZE}
-          height={CITY_TILE_SIZE}
-        />
-      ) : null}
-      {showOverlay && selected ? (
-        <image className="tile-map-asset tile-selection-asset" href={SELECTION_OVERLAY_ASSET} x="0" y="0" width={CITY_TILE_SIZE} height={CITY_TILE_SIZE} />
-      ) : null}
-      <rect className="tile-keyboard-ring" x="24" y="24" width="112" height="112" rx="10" />
-    </g>
-  );
-}
-
-function primaryTileAssetFor(tile: MapTile, building: MapBuilding | null) {
-  if (tile.kind === "farm" && building) {
-    return FARM_TILE_ASSETS[tileVariantIndex(tile, FARM_TILE_ASSETS.length, building.units)];
-  }
-
-  return TILE_TERRAIN_ASSETS[tile.kind] || TILE_TERRAIN_ASSETS.empty;
-}
-
-function roadAssetForTile(tile: MapTile) {
-  const connections = new Set(tile.roadConnections);
-
-  if (tile.roadType === "cross") {
-    return { src: ROAD_TILE_ASSETS.cross, rotation: 0 };
-  }
-
-  if (tile.roadType === "t") {
-    const missing = (["n", "e", "s", "w"] as const).find((direction) => !connections.has(direction));
-    const rotationByMissing = { s: 0, w: 90, n: 180, e: 270 } as const;
-    return { src: ROAD_TILE_ASSETS.t, rotation: missing ? rotationByMissing[missing] : 0 };
-  }
-
-  if (tile.roadType === "corner") {
-    if (connections.has("e") && connections.has("s")) return { src: ROAD_TILE_ASSETS.corner, rotation: 90 };
-    if (connections.has("s") && connections.has("w")) return { src: ROAD_TILE_ASSETS.corner, rotation: 180 };
-    if (connections.has("w") && connections.has("n")) return { src: ROAD_TILE_ASSETS.corner, rotation: 270 };
-    return { src: ROAD_TILE_ASSETS.corner, rotation: 0 };
-  }
-
-  if (tile.roadType === "end") {
-    if (connections.has("n")) return { src: ROAD_TILE_ASSETS.end, rotation: 90 };
-    if (connections.has("e")) return { src: ROAD_TILE_ASSETS.end, rotation: 180 };
-    if (connections.has("s")) return { src: ROAD_TILE_ASSETS.end, rotation: 270 };
-    return { src: ROAD_TILE_ASSETS.end, rotation: 0 };
-  }
-
-  if (connections.has("n") && connections.has("s")) {
-    return { src: ROAD_TILE_ASSETS.vertical, rotation: 0 };
-  }
-
-  return { src: ROAD_TILE_ASSETS.straight, rotation: 0 };
-}
-
-function buildingAssetForTile(tile: MapTile, building: MapBuilding) {
-  const salt = building.level + building.units;
-  switch (building.kind) {
-    case "residential": {
-      if (building.level >= 3) return RESIDENTIAL_BUILDING_ASSETS[3];
-      return RESIDENTIAL_BUILDING_ASSETS[tileVariantIndex(tile, 3, salt)];
-    }
-    case "factory":
-      return FACTORY_BUILDING_ASSETS[tileVariantIndex(tile, FACTORY_BUILDING_ASSETS.length, salt)];
-    case "market":
-      return MARKET_BUILDING_ASSETS[tileVariantIndex(tile, MARKET_BUILDING_ASSETS.length, salt)];
-    case "government":
-      return GOVERNMENT_BUILDING_ASSETS[tileVariantIndex(tile, GOVERNMENT_BUILDING_ASSETS.length, salt)];
-    case "power_plant":
-      return POWER_BUILDING_ASSETS[tileVariantIndex(tile, POWER_BUILDING_ASSETS.length, salt)];
-    case "park":
-      return PARK_PROP_ASSETS[tileVariantIndex(tile, PARK_PROP_ASSETS.length, salt)];
-    default:
-      return null;
-  }
-}
-
-function tileVariantIndex(tile: MapTile, modulo: number, salt = 0) {
-  if (modulo <= 1) return 0;
-  return Math.abs(tile.x * 31 + tile.y * 17 + salt * 13) % modulo;
-}
-
-type TopDownPlan = {
-  width: number;
-  height: number;
-  roads: MapPath[];
-  paths: MapPath[];
-  parking: MapRect[];
-  fields: MapRect[];
-  trees: MapPoint[];
-  buildings: TopDownBuilding[];
-};
-
-type MapPath = { id: string; d: string; width: number };
-type MapRect = { id: string; x: number; y: number; width: number; height: number; rotation?: number; kind?: MapTileKind };
-type MapPoint = { id: string; x: number; y: number; size: number };
-type TopDownBuilding = MapRect & { source: MapBuilding; marker: number };
-
-function TopDownSvgMap({
-  plan,
-  selectedKinds,
-  selectedBuildingId,
-  onSelectBuilding,
-  onSelectZone
-}: {
-  plan: TopDownPlan;
-  selectedKinds: Set<MapTileKind>;
-  selectedBuildingId: string | null;
-  onSelectBuilding: (building: MapBuilding) => void;
-  onSelectZone: (zone: string) => void;
-}) {
-  return (
-    <svg className="top-map-svg" viewBox={`0 0 ${plan.width} ${plan.height}`} role="img" aria-label="Top-down city plan">
-      <defs>
-        <filter id="topMapShadow" x="-25%" y="-25%" width="150%" height="150%">
-          <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="#6b785e" floodOpacity="0.28" />
-        </filter>
-        <pattern id="topMapGrass" width="34" height="34" patternUnits="userSpaceOnUse">
-          <path d="M0 34 L34 0" stroke="rgba(99,122,75,0.12)" strokeWidth="1" />
-        </pattern>
-        <pattern id="fieldRows" width="12" height="12" patternUnits="userSpaceOnUse">
-          <path d="M0 6 H12" stroke="rgba(89,126,43,0.3)" strokeWidth="2" />
-        </pattern>
-      </defs>
-
-      <image
-        className="top-map-image"
-        href=""
-        x="0"
-        y="0"
-        width={plan.width}
-        height={plan.height}
-        aria-hidden="true"
-        style={{ pointerEvents: "none" }}
-      />
-      <rect
-        className="top-map-land"
-        x="0"
-        y="0"
-        width={plan.width}
-        height={plan.height}
-        rx="18"
-        style={{ cursor: "pointer", opacity: MAP_LAND_OVERLAY_OPACITY }}
-        onClick={() => onSelectZone("Available Land")}
-      />
-      <rect
-        className="top-map-texture"
-        x="0"
-        y="0"
-        width={plan.width}
-        height={plan.height}
-        fill="url(#topMapGrass)"
-        rx="18"
-        style={{ cursor: "pointer", opacity: MAP_TEXTURE_OVERLAY_OPACITY }}
-        onClick={() => onSelectZone("Available Land")}
-      />
-
-      {plan.paths.map((path) => (
-        <path className="top-footpath" key={path.id} d={path.d} strokeWidth={path.width} />
-      ))}
-
-      {plan.roads.map((road) => (
-        <g key={road.id}>
-          <path className="top-road-edge" d={road.d} strokeWidth={road.width + 12} />
-          <path className="top-road" d={road.d} strokeWidth={road.width} />
-          <path className="top-road-line" d={road.d} strokeWidth="2" />
-        </g>
-      ))}
-
-      {plan.parking.map((lot) => (
-        <g className="top-parking" key={lot.id} transform={rectTransform(lot)}>
-          <rect x={lot.x} y={lot.y} width={lot.width} height={lot.height} rx="4" />
-          {Array.from({ length: Math.max(2, Math.floor(lot.width / 18)) }).map((_, index) => (
-            <line key={index} x1={lot.x + 12 + index * 18} y1={lot.y + 6} x2={lot.x + 12 + index * 18} y2={lot.y + lot.height - 6} />
-          ))}
-        </g>
-      ))}
-
-      {plan.fields.map((field) => (
-        <g className="top-field" key={field.id} transform={rectTransform(field)}>
-          <rect x={field.x} y={field.y} width={field.width} height={field.height} rx="7" />
-          <rect x={field.x + 5} y={field.y + 5} width={field.width - 10} height={field.height - 10} rx="5" fill="url(#fieldRows)" />
-        </g>
-      ))}
-
-      {plan.trees.map((tree) => (
-        <g className="top-tree" key={tree.id}>
-          <circle cx={tree.x} cy={tree.y} r={tree.size} />
-          <circle cx={tree.x - tree.size * 0.42} cy={tree.y + tree.size * 0.24} r={tree.size * 0.56} />
-          <circle cx={tree.x + tree.size * 0.5} cy={tree.y + tree.size * 0.18} r={tree.size * 0.48} />
-        </g>
-      ))}
-
-      {plan.buildings.map((building) => {
-        const selected = selectedBuildingId
-          ? building.source.id === selectedBuildingId
-          : selectedKinds.has(building.source.kind);
-        return (
-          <TopDownBuildingShape
-            key={building.id}
-            building={building}
-            selected={selected}
-            onSelectBuilding={onSelectBuilding}
-          />
-        );
-      })}
-    </svg>
-  );
-}
-
-function TopDownBuildingShape({
-  building,
-  selected,
-  onSelectBuilding
-}: {
-  building: TopDownBuilding;
-  selected: boolean;
-  onSelectBuilding: (building: MapBuilding) => void;
-}) {
-  const centerX = building.x + building.width / 2;
-  const centerY = building.y + building.height / 2;
-
-  function select() {
-    onSelectBuilding(building.source);
-  }
-
-  return (
-    <g
-      className={`top-building top-building-${building.source.kind} ${selected ? "top-building-selected" : ""}`}
-      transform={rectTransform(building)}
-      tabIndex={0}
-      role="button"
-      aria-label={`Select ${building.source.label}`}
-      onClick={select}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          select();
-        }
-      }}
-    >
-      <title>{`${building.source.label} (Unit ${building.marker}/${building.source.units})`}</title>
-      <rect className="top-building-shadow" x={building.x + 4} y={building.y + 5} width={building.width} height={building.height} rx="5" />
-      <rect className="top-building-base" x={building.x} y={building.y} width={building.width} height={building.height} rx="5" />
-      <path
-        className="top-building-roof"
-        d={`M ${building.x + building.width * 0.08} ${building.y + building.height * 0.12} H ${building.x + building.width * 0.92} V ${building.y + building.height * 0.38} H ${building.x + building.width * 0.08} Z`}
-      />
-      {building.source.kind === "government" ? (
-        <g opacity="0.9">
-          {/* Neoclassical Pediment (Triangular Roof) */}
-          <polygon
-            points={`${building.x + building.width * 0.05},${building.y + building.height * 0.32} ${building.x + building.width * 0.95},${building.y + building.height * 0.32} ${centerX},${building.y + building.height * 0.08}`}
-            fill="#78909c"
-            stroke="#37474f"
-            strokeWidth="1.5"
-          />
-          {/* Neoclassical Columns */}
-          <rect x={building.x + building.width * 0.18} y={building.y + building.height * 0.32} width={building.width * 0.08} height={building.height * 0.48} fill="#b0bec5" stroke="#37474f" strokeWidth="1" />
-          <rect x={centerX - building.width * 0.04} y={building.y + building.height * 0.32} width={building.width * 0.08} height={building.height * 0.48} fill="#b0bec5" stroke="#37474f" strokeWidth="1" />
-          <rect x={building.x + building.width * 0.74} y={building.y + building.height * 0.32} width={building.width * 0.08} height={building.height * 0.48} fill="#b0bec5" stroke="#37474f" strokeWidth="1" />
-          {/* Neoclassical Staircase Entrance */}
-          <rect x={building.x + building.width * 0.1} y={building.y + building.height * 0.8} width={building.width * 0.8} height={building.height * 0.08} fill="#cfd8dc" stroke="#37474f" strokeWidth="1" />
-          <rect x={building.x + building.width * 0.15} y={building.y + building.height * 0.88} width={building.width * 0.7} height={building.height * 0.07} fill="#eceff1" stroke="#37474f" strokeWidth="1" />
-        </g>
-      ) : null}
-      {building.source.kind === "residential" ? (
-        <g opacity="0.9">
-          {/* Residential pitched roof */}
-          <polygon
-            points={`${building.x + building.width * 0.05},${building.y + building.height * 0.35} ${centerX},${building.y + building.height * 0.08} ${building.x + building.width * 0.95},${building.y + building.height * 0.35}`}
-            fill="#cfd8dc"
-            stroke="#5a6b73"
-            strokeWidth="1.5"
-          />
-          {/* Double entry door */}
-          <rect x={centerX - building.width * 0.08} y={building.y + building.height * 0.65} width={building.width * 0.16} height={building.height * 0.3} rx="1" fill="#8d6e63" stroke="#4e342e" strokeWidth="1" />
-          {/* Left & Right Windows */}
-          <rect x={building.x + building.width * 0.15} y={building.y + building.height * 0.45} width={building.width * 0.15} height={building.height * 0.18} rx="1" fill="#e0f7fa" stroke="#006064" strokeWidth="1" />
-          <rect x={building.x + building.width * 0.7} y={building.y + building.height * 0.45} width={building.width * 0.15} height={building.height * 0.18} rx="1" fill="#e0f7fa" stroke="#006064" strokeWidth="1" />
-        </g>
-      ) : null}
-      {building.source.kind === "farm" ? (
-        <g>
-          {/* Gambrel Barn Roof */}
-          <polygon
-            points={`${building.x + building.width * 0.15},${building.y + building.height * 0.42} ${building.x + building.width * 0.28},${building.y + building.height * 0.14} ${building.x + building.width * 0.72},${building.y + building.height * 0.14} ${building.x + building.width * 0.85},${building.y + building.height * 0.42}`}
-            fill="#d32f2f"
-            stroke="#5c2e16"
-            strokeWidth="1.5"
-          />
-          {/* Hayloft window */}
-          <circle cx={centerX} cy={building.y + building.height * 0.28} r={Math.min(building.width, building.height) * 0.08} fill="#ffffff" stroke="#5c2e16" strokeWidth="1" />
-          {/* Barn Double-Doors with White "X" Planks */}
-          <rect x={centerX - building.width * 0.16} y={building.y + building.height * 0.55} width={building.width * 0.32} height={building.height * 0.4} fill="#a0522d" stroke="#5c2e16" strokeWidth="1.5" rx="1.5" />
-          <line x1={centerX - building.width * 0.16} y1={building.y + building.height * 0.55} x2={centerX + building.width * 0.16} y2={building.y + building.height * 0.95} stroke="#f0d3b7" strokeWidth="1.5" />
-          <line x1={centerX + building.width * 0.16} y1={building.y + building.height * 0.55} x2={centerX - building.width * 0.16} y2={building.y + building.height * 0.95} stroke="#f0d3b7" strokeWidth="1.5" />
-        </g>
-      ) : null}
-      {building.source.kind === "market" ? (
-        <g>
-          {/* Awning stretched across the building width */}
-          <rect x={building.x + building.width * 0.06} y={building.y + building.height * 0.18} width={building.width - building.width * 0.12} height={building.height * 0.25} fill="#d94135" rx="1.5" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <rect
-              key={i}
-              x={building.x + building.width * 0.12 + i * building.width * 0.15}
-              y={building.y + building.height * 0.18}
-              width={building.width * 0.08}
-              height={building.height * 0.25}
-              fill="#ffffff"
-            />
-          ))}
-          {/* Storefront Display Window */}
-          <rect x={building.x + building.width * 0.1} y={building.y + building.height * 0.55} width={building.width * 0.38} height={building.height * 0.38} rx="1" fill="#e0f7fa" stroke="#00838f" strokeWidth="1" />
-          <line x1={building.x + building.width * 0.29} y1={building.y + building.height * 0.55} x2={building.x + building.width * 0.29} y2={building.y + building.height * 0.93} stroke="#00838f" strokeWidth="1" />
-          {/* Entrance Door */}
-          <rect x={building.x + building.width * 0.58} y={building.y + building.height * 0.52} width={building.width * 0.24} height={building.height * 0.42} rx="1.5" fill="#8d6e63" stroke="#4e342e" strokeWidth="1.5" />
-        </g>
-      ) : null}
-      {building.source.kind === "factory" ? (
-        <g>
-          {/* Sawtooth Roofline */}
-          <path
-            d={`M ${building.x + building.width * 0.08} ${building.y + building.height * 0.4} L ${building.x + building.width * 0.32} ${building.y + building.height * 0.15} L ${building.x + building.width * 0.32} ${building.y + building.height * 0.4} L ${building.x + building.width * 0.56} ${building.y + building.height * 0.15} L ${building.x + building.width * 0.56} ${building.y + building.height * 0.4} L ${building.x + building.width * 0.8} ${building.y + building.height * 0.15} L ${building.x + building.width * 0.8} ${building.y + building.height * 0.4} Z`}
-            fill="#cfd8dc"
-            stroke="#37474f"
-            strokeWidth="1.5"
-          />
-          {/* Smokestack emitting clouds */}
-          <rect x={building.x + building.width * 0.74} y={building.y - building.height * 0.22} width={building.width * 0.1} height={building.height * 0.36} fill="#4f5b66" stroke="#2c3539" strokeWidth="1" rx="0.5" />
-          <rect x={building.x + building.width * 0.72} y={building.y - building.height * 0.25} width={building.width * 0.14} height={building.height * 0.06} fill="#ff7f24" rx="0.5" />
-          <circle cx={building.x + building.width * 0.78} cy={building.y - building.height * 0.34} r={Math.min(building.width, building.height) * 0.1} fill="#eceff1" opacity="0.6" />
-          <circle cx={building.x + building.width * 0.86} cy={building.y - building.height * 0.46} r={Math.min(building.width, building.height) * 0.14} fill="#eceff1" opacity="0.4" />
-          {/* Garage shutter metal door */}
-          <rect x={centerX - building.width * 0.2} y={building.y + building.height * 0.55} width={building.width * 0.4} height={building.height * 0.4} fill="#90a4ae" stroke="#37474f" strokeWidth="1.5" rx="1" />
-          <line x1={centerX - building.width * 0.2} y1={building.y + building.height * 0.65} x2={centerX + building.width * 0.2} y2={building.y + building.height * 0.65} stroke="#37474f" strokeWidth="1" />
-          <line x1={centerX - building.width * 0.2} y1={building.y + building.height * 0.75} x2={centerX + building.width * 0.2} y2={building.y + building.height * 0.75} stroke="#37474f" strokeWidth="1" />
-          <line x1={centerX - building.width * 0.2} y1={building.y + building.height * 0.85} x2={centerX + building.width * 0.2} y2={building.y + building.height * 0.85} stroke="#37474f" strokeWidth="1" />
-        </g>
-      ) : null}
-      {building.source.kind === "power_plant" ? (
-        <g>
-          {/* Cooling Tower Neoclassical Blueprint */}
-          <path
-            d={`M ${building.x + building.width * 0.15} ${building.y + building.height * 0.9} L ${building.x + building.width * 0.26} ${building.y + building.height * 0.15} H ${building.x + building.width * 0.74} L ${building.x + building.width * 0.85} ${building.y + building.height * 0.9} Z`}
-            fill="#5b6e7a"
-            stroke="#2f3a40"
-            strokeWidth="1.5"
-          />
-          {/* Rim safety hazard stripes */}
-          <rect x={building.x + building.width * 0.26} y={building.y + building.height * 0.15} width={building.width * 0.48} height={building.height * 0.08} fill="#ffca28" />
-          <line x1={building.x + building.width * 0.34} y1={building.y + building.height * 0.15} x2={building.x + building.width * 0.4} y2={building.y + building.height * 0.23} stroke="#000000" strokeWidth="2" />
-          <line x1={building.x + building.width * 0.48} y1={building.y + building.height * 0.15} x2={building.x + building.width * 0.54} y2={building.y + building.height * 0.23} stroke="#000000" strokeWidth="2" />
-          <line x1={building.x + building.width * 0.62} y1={building.y + building.height * 0.15} x2={building.x + building.width * 0.68} y2={building.y + building.height * 0.23} stroke="#000000" strokeWidth="2" />
-          {/* Yellow lightning bolt emblem */}
-          <polygon
-            points={`${centerX - building.width * 0.04},${centerY - building.height * 0.12} ${centerX + building.width * 0.05},${centerY - building.height * 0.12} ${centerX - building.width * 0.01},${centerY + building.height * 0.02} ${centerX + building.width * 0.04},${centerY + building.height * 0.02} ${centerX - building.width * 0.05},${centerY + building.height * 0.18} ${centerX - building.width * 0.01},${centerY + building.height * 0.05} ${centerX - building.width * 0.05},${centerY + building.height * 0.05}`}
-            fill="#ffca28"
-            stroke="#b78a00"
-            strokeWidth="0.8"
-          />
-        </g>
-      ) : null}
-      {building.source.kind === "park" ? (
-        <g>
-          {/* Multi-toned nested tree circles */}
-          <circle cx={centerX} cy={centerY - building.height * 0.08} r={Math.min(building.width, building.height) * 0.32} fill="#2e7d32" opacity="0.85" />
-          <circle cx={centerX - building.width * 0.18} cy={centerY + building.height * 0.08} r={Math.min(building.width, building.height) * 0.24} fill="#388e3c" opacity="0.9" />
-          <circle cx={centerX + building.width * 0.18} cy={centerY + building.height * 0.08} r={Math.min(building.width, building.height) * 0.22} fill="#4caf50" opacity="0.85" />
-          {/* Dynamic park pond */}
-          <ellipse cx={centerX} cy={building.y + building.height * 0.74} rx={building.width * 0.28} ry={building.height * 0.16} fill="#0288d1" stroke="#01579b" strokeWidth="1" />
-        </g>
-      ) : null}
-      <circle
-        className="top-marker"
-        cx={centerX}
-        cy={building.y - 4}
-        r="12"
-        style={{ fill: selected ? "#f3a62d" : markerColors[building.source.kind] }}
-      />
-      <text className="top-marker-text" x={centerX} y={building.y} textAnchor="middle">{building.marker}</text>
-    </g>
-  );
-}
-
-function buildTopDownMapPlan(layout: CityMapLayout, state: WorldState): TopDownPlan {
-  const expansion = Math.max(0, Math.min(4, Math.floor((state.land_used - 58) / 10)));
-  const width = 980 + expansion * 210;
-  const height = Math.round(width / MAP_REFERENCE_ASPECT_RATIO);
-  const margin = 76;
-  const roads = topRoads(width, height, expansion);
-  const paths = topPaths(width, height);
-  const districtBuildings = layout.buildings.flatMap((building, districtIndex) =>
-    placeDistrictBuildings(building, districtZone(building.kind, width, height, expansion), districtIndex)
-  );
-  const buildings = districtBuildings.map((building, index) => ({
-    ...building,
-    marker: 1 + index
-  }));
-  const fields = buildings
-    .filter((building) => building.source.kind === "farm")
-    .map((building, index) => {
-      const fW = building.width * 0.9;
-      const fH = building.height * 0.35;
-      return {
-        id: `field-${index}`,
-        x: building.x + (building.width - fW) / 2,
-        y: building.y + building.height + Math.max(1, building.height * 0.05),
-        width: fW,
-        height: fH,
-        rotation: building.rotation,
-        kind: "farm" as MapTileKind
-      };
-    });
-  const parking = [
-    { id: "parking-market", x: width * 0.58, y: height * 0.54, width: 112, height: 58, rotation: 0 },
-    { id: "parking-power", x: width * 0.72, y: height * 0.74, width: 138, height: 62, rotation: -2 },
-    ...(expansion >= 2 ? [{ id: "parking-north", x: width * 0.72, y: height * 0.16, width: 120, height: 58, rotation: 1 }] : [])
-  ];
-  const trees = topTrees(width, height, margin, buildings);
-
-  return { width, height, roads, paths, parking, fields, trees, buildings };
-}
-
-function topRoads(width: number, height: number, expansion: number): MapPath[] {
-  const x1 = width * 0.25;
-  const x2 = width * 0.51;
-  const x3 = width * 0.76;
-  const y1 = height * 0.18;
-  const y2 = height * 0.43;
-  const y3 = height * 0.68;
-  return [
-    { id: "north", d: `M 0 ${y1} H ${width}`, width: 34 },
-    { id: "middle", d: `M 0 ${y2} H ${width}`, width: 42 },
-    { id: "south", d: `M 0 ${y3} C ${width * 0.24} ${y3 - 28}, ${width * 0.42} ${y3 + 40}, ${width} ${y3 + 12}`, width: 42 },
-    { id: "west", d: `M ${x1} 0 V ${height}`, width: 34 },
-    { id: "center", d: `M ${x2} 0 V ${height}`, width: 38 },
-    { id: "east", d: `M ${x3} 0 V ${height}`, width: 34 },
-    ...(expansion >= 1 ? [{ id: "expansion-east", d: `M ${width * 0.89} ${height * 0.04} V ${height * 0.92}`, width: 30 }] : []),
-    ...(expansion >= 2 ? [{ id: "expansion-south", d: `M ${width * 0.08} ${height * 0.84} H ${width * 0.94}`, width: 32 }] : [])
-  ];
-}
-
-function topPaths(width: number, height: number): MapPath[] {
-  return [
-    { id: "quad-loop", d: `M ${width * 0.34} ${height * 0.28} C ${width * 0.44} ${height * 0.18}, ${width * 0.58} ${height * 0.22}, ${width * 0.64} ${height * 0.34} C ${width * 0.54} ${height * 0.48}, ${width * 0.41} ${height * 0.49}, ${width * 0.34} ${height * 0.28}`, width: 7 },
-    { id: "park-cross-1", d: `M ${width * 0.34} ${height * 0.28} L ${width * 0.64} ${height * 0.34}`, width: 5 },
-    { id: "park-cross-2", d: `M ${width * 0.49} ${height * 0.21} L ${width * 0.48} ${height * 0.51}`, width: 5 },
-    { id: "farm-path", d: `M ${width * 0.18} ${height * 0.62} C ${width * 0.28} ${height * 0.58}, ${width * 0.36} ${height * 0.75}, ${width * 0.49} ${height * 0.66}`, width: 5 }
-  ];
-}
-
-function districtZone(kind: MapTileKind, width: number, height: number, expansion: number): MapRect {
-  const zones: Partial<Record<MapTileKind, MapRect>> = {
-    residential: { id: "zone-residential", x: width * 0.08, y: height * 0.08, width: width * 0.34, height: height * 0.27 },
-    market: { id: "zone-market", x: width * 0.54, y: height * 0.22, width: width * 0.22, height: height * 0.22 },
-    factory: { id: "zone-factory", x: width * 0.73, y: height * 0.1, width: width * 0.2, height: height * 0.28 },
-    government: { id: "zone-government", x: width * 0.41, y: height * 0.42, width: width * 0.18, height: height * 0.18 },
-    park: { id: "zone-park", x: width * 0.28, y: height * 0.22, width: width * 0.22, height: height * 0.2 },
-    farm: { id: "zone-farm", x: width * 0.08, y: height * 0.55, width: width * (0.34 + expansion * 0.02), height: height * 0.26 },
-    power_plant: { id: "zone-power", x: width * 0.62, y: height * 0.62, width: width * 0.28, height: height * 0.12 }
-  };
-  return zones[kind] ?? { id: `zone-${kind}`, x: width * 0.12, y: height * 0.12, width: width * 0.2, height: height * 0.2 };
-}
-
-function placeDistrictBuildings(building: MapBuilding, zone: MapRect, districtIndex: number): TopDownBuilding[] {
-  if (building.kind === "government") {
-    return [{
-      id: `${building.id}-main`,
-      source: building,
-      marker: 0,
-      x: zone.x + zone.width * 0.12,
-      y: zone.y + zone.height * 0.04,
-      width: zone.width * 0.72,
-      height: zone.height * 0.72,
-      rotation: 0,
-      kind: building.kind
-    }];
-  }
-
-  const visibleUnits = Math.max(1, building.units);
-  const cols = Math.ceil(Math.sqrt(visibleUnits * (zone.width / Math.max(zone.height, 1))));
-  const rows = Math.ceil(visibleUnits / cols);
-  const cellW = zone.width / Math.max(cols, 1);
-  const cellH = zone.height / Math.max(rows, 1);
-  return Array.from({ length: visibleUnits }).map((_, index) => {
-    const col = index % cols;
-    const row = Math.floor(index / cols);
-    const size = buildingSize(building.kind, cellW, cellH);
-    const spaceX = cellW - size.width;
-    const spaceY = cellH - size.height;
-    const jitterX = spaceX > 0 ? (pseudoJitter(index + districtIndex * 7, 0.28) - 0.5) * spaceX * 0.65 : 0;
-    const jitterY = spaceY > 0 ? (pseudoJitter(index + districtIndex * 11, 0.36) - 0.5) * spaceY * 0.65 : 0;
-    return {
-      id: `${building.id}-${index}`,
-      source: building,
-      marker: 0,
-      x: zone.x + col * cellW + Math.max(0, (cellW - size.width) / 2) + jitterX,
-      y: zone.y + row * cellH + Math.max(0, (cellH - size.height) / 2) + jitterY,
-      width: size.width,
-      height: size.height,
-      rotation: building.kind === "farm" ? -3 + (index % 3) * 2 : index % 2 === 0 ? 0 : 1.5,
-      kind: building.kind
-    };
-  });
-}
-
-function buildingSize(kind: MapTileKind, cellW?: number, cellH?: number) {
-  let base = { width: 74, height: 48 };
-  if (kind === "residential") base = { width: 66, height: 42 };
-  else if (kind === "farm") base = { width: 76, height: 38 };
-  else if (kind === "factory") base = { width: 86, height: 58 };
-  else if (kind === "market") base = { width: 72, height: 52 };
-  else if (kind === "power_plant") base = { width: 118, height: 70 };
-  else if (kind === "park") base = { width: 64, height: 42 };
-
-  if (typeof cellW === "number" && typeof cellH === "number") {
-    // Proportional scaling algorithm:
-    // Scale down if base size is larger than cell size (with some padding, e.g. 12% of cell size)
-    const paddingW = Math.max(8, cellW * 0.12);
-    const paddingH = Math.max(6, cellH * 0.12);
-    const maxW = Math.max(20, cellW - paddingW);
-    let maxH = Math.max(20, cellH - paddingH);
-    if (kind === "farm") {
-      maxH = Math.max(12, (cellH - paddingH) / 1.6);
-    }
-    
-    const scaleW = maxW / base.width;
-    const scaleH = maxH / base.height;
-    const scale = Math.min(1.0, scaleW, scaleH);
-    
-    return {
-      width: Math.max(16, Math.round(base.width * scale)),
-      height: Math.max(12, Math.round(base.height * scale))
-    };
-  }
-  return base;
-}
-
-function topTrees(width: number, height: number, margin: number, buildings: TopDownBuilding[]): MapPoint[] {
-  const trees: MapPoint[] = [];
-  for (let i = 0; i < 130; i += 1) {
-    const edge = i % 4;
-    const x = edge === 0 ? margin * pseudoJitter(i, 0.7) : edge === 1 ? width - margin * pseudoJitter(i, 0.8) : margin + pseudoJitter(i, 0.33) * (width - margin * 2);
-    const y = edge === 2 ? margin * pseudoJitter(i, 0.6) : edge === 3 ? height - margin * pseudoJitter(i, 0.55) : margin + pseudoJitter(i, 0.44) * (height - margin * 2);
-    if (buildings.some((building) => x > building.x - 34 && x < building.x + building.width + 34 && y > building.y - 34 && y < building.y + building.height + 34)) {
-      continue;
-    }
-    trees.push({ id: `tree-${i}`, x, y, size: 7 + pseudoJitter(i, 0.22) * 7 });
-  }
-  return trees;
-}
-
-function pseudoJitter(index: number, salt: number) {
-  const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
-  return value - Math.floor(value);
-}
-
-function rectTransform(rect: { x: number; y: number; width: number; height: number; rotation?: number }) {
-  const rotation = rect.rotation ?? 0;
-  if (!rotation) {
-    return undefined;
-  }
-  return `rotate(${rotation} ${rect.x + rect.width / 2} ${rect.y + rect.height / 2})`;
 }
 
 function selectedKindsForZone(zone: string) {

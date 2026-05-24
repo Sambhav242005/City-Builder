@@ -1,61 +1,49 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import type { BuildingType, CityMapLayout, MapBuilding, MapTile, MapTileKind, RoadDirection } from "./types";
 
-const CITY_CANVAS_ASSET_ROOT = "./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128";
-
-const cityCanvasAssetModules = import.meta.glob("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/**/*.png", {
-  eager: true,
-  query: "?url",
-  import: "default"
-}) as Record<string, string>;
-
-function cityCanvasAsset(relativePath: string) {
-  return cityCanvasAssetModules[`${CITY_CANVAS_ASSET_ROOT}/${relativePath}`] ?? "";
-}
-
 const CITY_CANVAS_ASSETS = {
-  grass_tile_a: cityCanvasAsset("terrain/grass_tile_a.png"),
-  grass_tile_b: cityCanvasAsset("terrain/grass_tile_b.png"),
-  dirt_tile: cityCanvasAsset("terrain/dirt_tile.png"),
-  sand_tile: cityCanvasAsset("terrain/sand_tile.png"),
-  farm_ground_tile: cityCanvasAsset("terrain/farm_ground_tile.png"),
-  park_ground_tile: cityCanvasAsset("terrain/park_ground_tile.png"),
-  water_tile: cityCanvasAsset("terrain/water_tile.png"),
-  pond_tile: cityCanvasAsset("terrain/pond_tile.png"),
-  road_straight: cityCanvasAsset("roads/road_straight.png"),
-  zone_residential: cityCanvasAsset("overlays/zone_residential.png"),
-  zone_commercial: cityCanvasAsset("overlays/zone_commercial.png"),
-  zone_industrial: cityCanvasAsset("overlays/zone_industrial.png"),
-  sidewalk_plaza: cityCanvasAsset("civic/sidewalk_plaza.png"),
-  cottage_house: cityCanvasAsset("buildings/cottage_house.png"),
-  suburban_house: cityCanvasAsset("buildings/suburban_house.png"),
-  townhouse: cityCanvasAsset("buildings/townhouse.png"),
-  apartment_block: cityCanvasAsset("buildings/apartment_block.png"),
-  corner_shop: cityCanvasAsset("buildings/corner_shop.png"),
-  grocery_store: cityCanvasAsset("buildings/grocery_store.png"),
-  cafe: cityCanvasAsset("buildings/cafe.png"),
-  office_building: cityCanvasAsset("buildings/office_building.png"),
-  small_market: cityCanvasAsset("buildings/small_market.png"),
-  clinic: cityCanvasAsset("buildings/clinic.png"),
-  school: cityCanvasAsset("buildings/school.png"),
-  police_station: cityCanvasAsset("buildings/police_station.png"),
-  factory: cityCanvasAsset("buildings/factory.png"),
-  warehouse: cityCanvasAsset("buildings/warehouse.png"),
-  power_plant: cityCanvasAsset("buildings/power_plant.png"),
-  water_plant: cityCanvasAsset("buildings/water_plant.png"),
-  farm_barn: cityCanvasAsset("farms/farm_barn.png"),
-  greenhouse: cityCanvasAsset("farms/greenhouse.png"),
-  wheat_farm: cityCanvasAsset("farms/wheat_farm.png"),
-  vegetable_farm: cityCanvasAsset("farms/vegetable_farm.png"),
-  orchard_farm: cityCanvasAsset("farms/orchard_farm.png"),
-  livestock_ranch: cityCanvasAsset("farms/livestock_ranch.png"),
-  tree: cityCanvasAsset("props/tree.png"),
-  bush_cluster: cityCanvasAsset("props/bush_cluster.png"),
-  fountain: cityCanvasAsset("props/fountain.png"),
-  streetlight: cityCanvasAsset("props/streetlight.png"),
-  rock_cluster: cityCanvasAsset("props/rock_cluster.png"),
-  car: cityCanvasAsset("props/car.png")
+  grass_tile_a: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/grass_tile_a.png", import.meta.url).href,
+  grass_tile_b: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/grass_tile_b.png", import.meta.url).href,
+  dirt_tile: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/dirt_tile.png", import.meta.url).href,
+  sand_tile: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/sand_tile.png", import.meta.url).href,
+  farm_ground_tile: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/farm_ground_tile.png", import.meta.url).href,
+  park_ground_tile: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/park_ground_tile.png", import.meta.url).href,
+  water_tile: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/water_tile.png", import.meta.url).href,
+  pond_tile: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/terrain/pond_tile.png", import.meta.url).href,
+  road_straight: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/roads/road_straight.png", import.meta.url).href,
+  zone_residential: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/zone_residential.png", import.meta.url).href,
+  zone_commercial: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/zone_commercial.png", import.meta.url).href,
+  zone_industrial: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/overlays/zone_industrial.png", import.meta.url).href,
+  sidewalk_plaza: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/civic/sidewalk_plaza.png", import.meta.url).href,
+  cottage_house: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/cottage_house.png", import.meta.url).href,
+  suburban_house: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/suburban_house.png", import.meta.url).href,
+  townhouse: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/townhouse.png", import.meta.url).href,
+  apartment_block: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/apartment_block.png", import.meta.url).href,
+  corner_shop: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/corner_shop.png", import.meta.url).href,
+  grocery_store: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/grocery_store.png", import.meta.url).href,
+  cafe: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/cafe.png", import.meta.url).href,
+  office_building: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/office_building.png", import.meta.url).href,
+  small_market: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/small_market.png", import.meta.url).href,
+  clinic: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/clinic.png", import.meta.url).href,
+  school: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/school.png", import.meta.url).href,
+  police_station: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/police_station.png", import.meta.url).href,
+  factory: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/factory.png", import.meta.url).href,
+  warehouse: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/warehouse.png", import.meta.url).href,
+  power_plant: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/power_plant.png", import.meta.url).href,
+  water_plant: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/buildings/water_plant.png", import.meta.url).href,
+  farm_barn: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/farm_barn.png", import.meta.url).href,
+  greenhouse: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/greenhouse.png", import.meta.url).href,
+  wheat_farm: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/wheat_farm.png", import.meta.url).href,
+  vegetable_farm: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/vegetable_farm.png", import.meta.url).href,
+  orchard_farm: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/orchard_farm.png", import.meta.url).href,
+  livestock_ranch: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/farms/livestock_ranch.png", import.meta.url).href,
+  tree: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/tree.png", import.meta.url).href,
+  bush_cluster: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/bush_cluster.png", import.meta.url).href,
+  fountain: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/fountain.png", import.meta.url).href,
+  streetlight: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/streetlight.png", import.meta.url).href,
+  rock_cluster: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/rock_cluster.png", import.meta.url).href,
+  car: new URL("./assets/citybuilder-svg-mvp-v2/citybuilder_svg_mvp_v2/assets_png_128/props/car.png", import.meta.url).href
 } as const;
 
 type CityCanvasAssetId = keyof typeof CITY_CANVAS_ASSETS;
@@ -87,6 +75,21 @@ const GOVERNMENT_ASSETS = ["office_building", "school", "clinic", "police_statio
 const POWER_ASSETS = ["power_plant", "water_plant"] as const;
 const FARM_ASSETS = ["wheat_farm", "vegetable_farm", "orchard_farm", "livestock_ranch", "farm_barn", "greenhouse"] as const;
 const PARK_PROPS = ["tree", "bush_cluster", "fountain", "rock_cluster"] as const;
+const CRITICAL_CANVAS_ASSET_IDS = [
+  "grass_tile_a",
+  "grass_tile_b",
+  "dirt_tile",
+  "sand_tile",
+  "farm_ground_tile",
+  "park_ground_tile",
+  "water_tile",
+  "pond_tile",
+  "road_straight"
+] as const satisfies readonly CityCanvasAssetId[];
+const CRITICAL_CANVAS_ASSET_SET = new Set<CityCanvasAssetId>(CRITICAL_CANVAS_ASSET_IDS);
+const OPTIONAL_CANVAS_ASSET_IDS = (Object.keys(CITY_CANVAS_ASSETS) as CityCanvasAssetId[]).filter(
+  (id) => !CRITICAL_CANVAS_ASSET_SET.has(id)
+);
 
 export const CITY_CANVAS_BUILD_MENU_ASSETS: Record<BuildingType, string> = {
   farm: CITY_CANVAS_ASSETS.wheat_farm,
@@ -173,15 +176,23 @@ export function CityCanvasMap({
   onSelectZone: (zone: string) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const tileButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const [images, setImages] = useState<CanvasImageMap | null>(null);
+  const [activeTileKey, setActiveTileKey] = useState(() => tileKey(plan.tiles[0]?.x ?? 0, plan.tiles[0]?.y ?? 0));
   const renderState = useMemo(() => buildCanvasMapState(plan), [plan]);
 
   useEffect(() => {
     let mounted = true;
 
-    loadCanvasImages().then((loadedImages) => {
+    loadCanvasImages(CRITICAL_CANVAS_ASSET_IDS).then((criticalImages) => {
       if (mounted) {
-        setImages(loadedImages);
+        setImages(criticalImages);
+      }
+    });
+
+    loadCanvasImages(OPTIONAL_CANVAS_ASSET_IDS).then((optionalImages) => {
+      if (mounted) {
+        setImages((current) => ({ ...(current ?? {}), ...optionalImages }));
       }
     });
 
@@ -189,6 +200,13 @@ export function CityCanvasMap({
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!plan.tilesByKey.has(activeTileKey)) {
+      const firstTile = plan.tiles[0];
+      setActiveTileKey(tileKey(firstTile?.x ?? 0, firstTile?.y ?? 0));
+    }
+  }, [activeTileKey, plan]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -209,6 +227,7 @@ export function CityCanvasMap({
   } satisfies CSSProperties;
 
   function selectTile(tile: MapTile) {
+    setActiveTileKey(tileKey(tile.x, tile.y));
     const building = tile.buildingId ? plan.buildingsById.get(tile.buildingId) ?? null : null;
     if (building) {
       onSelectBuilding(building);
@@ -216,6 +235,53 @@ export function CityCanvasMap({
     }
 
     onSelectZone(tileZoneLabels[tile.kind]);
+  }
+
+  function focusTile(key: string) {
+    setActiveTileKey(key);
+    window.requestAnimationFrame(() => {
+      tileButtonRefs.current.get(key)?.focus();
+    });
+  }
+
+  function moveFocus(tile: MapTile, deltaX: number, deltaY: number) {
+    const nextX = clamp(tile.x + deltaX, 0, plan.columns - 1);
+    const nextY = clamp(tile.y + deltaY, 0, plan.rows - 1);
+    const nextKey = tileKey(nextX, nextY);
+    if (plan.tilesByKey.has(nextKey)) {
+      focusTile(nextKey);
+    }
+  }
+
+  function handleTileKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, tile: MapTile) {
+    switch (event.key) {
+      case "ArrowUp":
+        event.preventDefault();
+        moveFocus(tile, 0, -1);
+        break;
+      case "ArrowRight":
+        event.preventDefault();
+        moveFocus(tile, 1, 0);
+        break;
+      case "ArrowDown":
+        event.preventDefault();
+        moveFocus(tile, 0, 1);
+        break;
+      case "ArrowLeft":
+        event.preventDefault();
+        moveFocus(tile, -1, 0);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusTile(tileKey(0, tile.y));
+        break;
+      case "End":
+        event.preventDefault();
+        focusTile(tileKey(plan.columns - 1, tile.y));
+        break;
+      default:
+        break;
+    }
   }
 
   return (
@@ -229,21 +295,42 @@ export function CityCanvasMap({
         aria-label="Top-down city tile map"
         data-renderer="procedural-roads"
       />
-      <div className="canvas-map-hit-grid" style={hitGridStyle} aria-label="City map tiles">
+      <div
+        className="canvas-map-hit-grid"
+        style={hitGridStyle}
+        role="grid"
+        aria-label="City map tiles"
+        aria-colcount={plan.columns}
+        aria-rowcount={plan.rows}
+      >
         {plan.tiles.map((tile) => {
           const building = tile.buildingId ? plan.buildingsById.get(tile.buildingId) ?? null : null;
           const selected = selectedBuildingId ? building?.id === selectedBuildingId : selectedKinds.has(tile.kind);
           const title = building ? `${building.label} (${tile.label})` : tile.label;
+          const key = tileKey(tile.x, tile.y);
 
           return (
             <button
-              key={`${tile.x}-${tile.y}`}
+              key={key}
+              ref={(button) => {
+                if (button) {
+                  tileButtonRefs.current.set(key, button);
+                } else {
+                  tileButtonRefs.current.delete(key);
+                }
+              }}
               className={`canvas-map-hit-button ${selected ? "is-selected" : ""}`}
               type="button"
+              role="gridcell"
               aria-label={title}
-              aria-pressed={showOverlay && selected}
+              aria-colindex={tile.x + 1}
+              aria-rowindex={tile.y + 1}
+              aria-selected={showOverlay && selected}
+              tabIndex={key === activeTileKey ? 0 : -1}
               title={title}
               onClick={() => selectTile(tile)}
+              onFocus={() => setActiveTileKey(key)}
+              onKeyDown={(event) => handleTileKeyDown(event, tile)}
             />
           );
         })}
@@ -252,37 +339,44 @@ export function CityCanvasMap({
   );
 }
 
-let canvasImageCache: Promise<CanvasImageMap> | null = null;
+const canvasImageCache: Partial<Record<CityCanvasAssetId, Promise<HTMLImageElement | null>>> = {};
 
-function loadCanvasImages() {
-  if (!canvasImageCache) {
-    canvasImageCache = Promise.all(
-      (Object.entries(CITY_CANVAS_ASSETS) as [CityCanvasAssetId, string][]).map(
-        ([id, src]) =>
-          new Promise<[CityCanvasAssetId, HTMLImageElement] | null>((resolve) => {
-            if (!src) {
-              resolve(null);
-              return;
-            }
-
-            const image = new Image();
-            image.onload = () => resolve([id, image]);
-            image.onerror = () => resolve(null);
-            image.src = src;
-          })
-      )
-    ).then((entries) => {
-      const images: CanvasImageMap = {};
-      entries.forEach((entry) => {
-        if (entry) {
-          images[entry[0]] = entry[1];
-        }
-      });
-      return images;
-    });
+function loadCanvasImage(id: CityCanvasAssetId): Promise<HTMLImageElement | null> {
+  const cached = canvasImageCache[id];
+  if (cached) {
+    return cached;
   }
 
-  return canvasImageCache;
+  const promise = new Promise<HTMLImageElement | null>((resolve) => {
+    const src = CITY_CANVAS_ASSETS[id];
+    if (!src) {
+      resolve(null);
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => {
+      const decode = image.decode?.() ?? Promise.resolve();
+      decode.then(() => resolve(image)).catch(() => resolve(image));
+    };
+    image.onerror = () => resolve(null);
+    image.src = src;
+  });
+
+  canvasImageCache[id] = promise;
+  return promise;
+}
+
+function loadCanvasImages(assetIds: readonly CityCanvasAssetId[]) {
+  return Promise.all(assetIds.map((id) => loadCanvasImage(id).then((image) => [id, image] as const))).then((entries) => {
+    const images: CanvasImageMap = {};
+    entries.forEach(([id, image]) => {
+      if (image) {
+        images[id] = image;
+      }
+    });
+    return images;
+  });
 }
 
 function buildCanvasMapState(plan: CityCanvasMapPlan): CanvasMapState {
@@ -767,6 +861,10 @@ function tileChance(tile: MapTile, salt: number, threshold: number) {
 function normalizedTileHash(tile: MapTile, salt: number) {
   const value = Math.imul(tile.x + 1, 73856093) ^ Math.imul(tile.y + 1, 19349663) ^ Math.imul(salt + 1, 83492791);
   return Math.abs(value % 1000) / 1000;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
 }
 
 function tileKey(x: number, y: number) {
