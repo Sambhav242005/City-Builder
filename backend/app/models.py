@@ -65,6 +65,11 @@ class Params(BaseModel):
     food_spoilage_rate: float = 0.15
     goods_decay_rate: float = 0.05
     tax_rate: float = 0.10
+    reset_treasury_variance: float = 0.10
+    external_market_shock_probability: float = 0.18
+    external_market_shock_min: float = -0.08
+    external_market_shock_max: float = 0.10
+    market_action_cooldown_ticks: int = 3
 
 
 class WorldState(BaseModel):
@@ -230,7 +235,13 @@ class OptimizerTrainingConfig(BaseModel):
     epsilon: float
     epsilon_decay: float = Field(alias="epsilonDecay")
     epsilon_min: float = Field(alias="epsilonMin")
+    external_market_shock_probability: float = Field(
+        alias="externalMarketShockProbability"
+    )
     gamma: float
+    happiness_floor: float = Field(alias="happinessFloor")
+    market_action_cooldown_ticks: int = Field(alias="marketActionCooldownTicks")
+    reset_treasury_variance: float = Field(alias="resetTreasuryVariance")
     rollout_horizon: int = Field(alias="rolloutHorizon")
     scenario_rollouts: int = Field(alias="scenarioRollouts")
     seed: int

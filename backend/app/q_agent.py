@@ -27,6 +27,14 @@ Q_TABLE_PATH = Path(__file__).resolve().parent.parent / "data" / "q_table.json"
 
 
 INITIAL_Q = 0.3
+HAPPINESS_FLOOR = 0.70
+
+
+def happiness_floor_penalty(happiness: float) -> float:
+    if happiness >= HAPPINESS_FLOOR:
+        return 0.0
+    deficit_points = (HAPPINESS_FLOOR - happiness) * 100
+    return (deficit_points * deficit_points) / 100
 
 
 @dataclass
@@ -96,6 +104,7 @@ def reward_components(state: WorldState, params: Params) -> dict[str, float]:
         "scarcityPenalty": max(
             0, (state.food_demand - state.food_supply) / demand
         ),
+        "happinessFloorPenalty": happiness_floor_penalty(state.happiness),
     }
 
 
@@ -139,6 +148,7 @@ def compute_reward(
         land_full_penalty = 0.0
 
     bankrupt_penalty = -0.3 if next_state.treasury < 100_000 else 0.0
+    happiness_integral_penalty = -happiness_floor_penalty(next_state.happiness)
 
     total = (
         next_comp["foodBalance"] * 0.20
@@ -153,6 +163,7 @@ def compute_reward(
         + pop_decline_penalty
         + land_full_penalty
         + bankrupt_penalty
+        + happiness_integral_penalty
     )
 
     return {
@@ -163,6 +174,7 @@ def compute_reward(
         "popDeclinePenalty": pop_decline_penalty,
         "landFullPenalty": land_full_penalty,
         "bankruptPenalty": bankrupt_penalty,
+        "happinessIntegralPenalty": round(happiness_integral_penalty, 4),
     }
 
 
@@ -219,13 +231,21 @@ class QLearningAgent:
         action: ActionName,
         reward: float,
         next_state_key: str,
+        next_legal_actions: list[ActionName] | None = None,
     ) -> None:
         if not self.training_enabled:
             return
         idx = self.action_index(action)
         self.visit_counts[state_key][idx] += 1
         current_q = self.q_table[state_key][idx]
-        max_next = max(self.q_table[next_state_key])
+        next_q_values = self.q_table[next_state_key]
+        if next_legal_actions:
+            max_next = max(
+                next_q_values[self.action_index(next_action)]
+                for next_action in next_legal_actions
+            )
+        else:
+            max_next = max(next_q_values)
         td_target = reward + self.config.gamma * max_next
         self.q_table[state_key][idx] = current_q + self.config.alpha * (
             td_target - current_q

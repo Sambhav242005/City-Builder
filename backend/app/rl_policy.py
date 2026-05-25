@@ -28,6 +28,7 @@ from .simulation import (
     build_power_plant,
     build_road,
     government_recommendation,
+    randomized_starting_state,
     subsidize,
     subsidy_cost,
     update_demand,
@@ -36,7 +37,12 @@ from .simulation import (
     update_supply,
 )
 
-from .q_agent import encode_state, QLearningAgent, reward_components
+from .q_agent import (
+    encode_state,
+    happiness_floor_penalty,
+    QLearningAgent,
+    reward_components,
+)
 
 POLICY_VERSION_QL = "q-learning-city-v1"
 
@@ -62,6 +68,9 @@ ACTION_TO_BUILDING: dict[ActionName, str] = {
     "build_housing": "housing",
     "build_road": "road",
 }
+
+INFRASTRUCTURE_ACTIONS = frozenset(ACTION_TO_BUILDING)
+POLICY_ACTIONS: frozenset[ActionName] = frozenset({"subsidize"})
 
 ACTION_APPLIERS = {
     "build_farm": build_farm,
@@ -92,6 +101,7 @@ class CityTrainingEnv:
         self.seed = seed
         self.params = params or Params()
         self.rng = random.Random(seed)
+        self.action_history: list[ActionName] = []
         self.state = self.reset()
 
     def reset(self) -> WorldState:
@@ -108,15 +118,45 @@ class CityTrainingEnv:
             price=self.rng.uniform(8, 24),
             happiness=self.rng.uniform(0.45, 0.9),
         )
+        self.state = randomized_starting_state(self.rng, self.params, self.state)
         self.state = update_demand(update_supply(self.state, self.params))
+        self.action_history = []
         return self.state
 
+    def legal_actions(self) -> list[ActionName]:
+        return masked_legal_actions(self.state, self.params, self.action_history)
+
     def step(self, action: ActionName) -> tuple[WorldState, float, bool]:
+        legal = self.legal_actions()
+        invalid_action_penalty = 0.0
+        if action not in legal:
+            action = "do_nothing"
+            invalid_action_penalty = -0.25
+        delayed_price_relief_penalty = (
+            -0.35
+            if "subsidize" in legal
+            and action != "subsidize"
+            and self.state.price > 18
+            and self.state.happiness < 0.70
+            else 0.0
+        )
         before = reward_total(reward_signals(self.state, self.params))
         self.state = project_action(self.state, action, self.params)
-        self.state = update_happiness(update_price(update_supply(update_demand(self.state), self.params), self.params))
+        self.state = update_happiness(
+            update_price(
+                update_supply(update_demand(self.state), self.params),
+                self.params,
+            )
+        )
         after_signals = reward_signals(self.state, self.params)
-        reward = reward_total(after_signals) - before
+        reward = (
+            reward_total(after_signals)
+            - before
+            - after_signals["happinessFloorPenalty"]
+            + invalid_action_penalty
+            + delayed_price_relief_penalty
+        )
+        self.action_history.append(action)
         done = self.state.land_used >= self.state.land_total or self.state.happiness <= 0.05
         return self.state, reward, done
 
@@ -127,7 +167,7 @@ def recommend_with_policy(
     params: Params,
     q_agent: QLearningAgent | None = None,
 ) -> tuple[GovernmentRecommendation, DecisionSystemStatus]:
-    legal = legal_actions(state, params)
+    legal = legal_actions_for_history(state, params, history)
     if not legal:
         fallback = government_recommendation(state, params)
         return fallback, DecisionSystemStatus(
@@ -331,6 +371,51 @@ def legal_actions(state: WorldState, params: Params) -> list[ActionName]:
     return legal
 
 
+def legal_actions_for_history(
+    state: WorldState, params: Params, history: list[TickSnapshot]
+) -> list[ActionName]:
+    return masked_legal_actions(
+        state,
+        params,
+        [snapshot.recommendation.action for snapshot in history],
+    )
+
+
+def masked_legal_actions(
+    state: WorldState, params: Params, recent_actions: list[ActionName]
+) -> list[ActionName]:
+    legal = legal_actions(state, params)
+    blocked: set[ActionName] = set()
+
+    recent_market_window = recent_actions[-params.market_action_cooldown_ticks :]
+    if any(action in POLICY_ACTIONS for action in recent_market_window):
+        blocked.update(POLICY_ACTIONS)
+
+    categories = (
+        category
+        for action in reversed(recent_actions)
+        if (category := _action_category(action))
+    )
+    last_category = next(categories, None)
+    if last_category == "infrastructure":
+        blocked.update(INFRASTRUCTURE_ACTIONS)
+    elif last_category == "policy":
+        blocked.update(POLICY_ACTIONS)
+
+    masked = [action for action in legal if action not in blocked]
+    if not masked and "do_nothing" in legal:
+        return ["do_nothing"]
+    return masked
+
+
+def _action_category(action: ActionName) -> str | None:
+    if action in INFRASTRUCTURE_ACTIONS:
+        return "infrastructure"
+    if action in POLICY_ACTIONS:
+        return "policy"
+    return None
+
+
 def evaluate_action(
     state: WorldState,
     action: ActionName,
@@ -380,6 +465,7 @@ def reward_signals(state: WorldState, params: Params) -> dict[str, float]:
     infrastructure = clamp((state.roads + state.power_plants * 2) / max(state.factories + state.housing + state.markets, 1), 0, 1)
     oversupply_penalty = clamp((state.food_supply - state.food_demand * 1.35) / demand, 0, 1)
     scarcity_penalty = clamp((state.food_demand - state.food_supply) / demand, 0, 1)
+    happiness_floor = happiness_floor_penalty(state.happiness)
 
     return {
         "foodBalance": food_balance,
@@ -389,6 +475,7 @@ def reward_signals(state: WorldState, params: Params) -> dict[str, float]:
         "infrastructure": infrastructure,
         "oversupplyPenalty": oversupply_penalty,
         "scarcityPenalty": scarcity_penalty,
+        "happinessFloorPenalty": happiness_floor,
     }
 
 
@@ -401,6 +488,7 @@ def reward_total(signals: dict[str, float]) -> float:
         + signals["infrastructure"] * 0.08
         - signals["oversupplyPenalty"] * 0.14
         - signals["scarcityPenalty"] * 0.18
+        - signals["happinessFloorPenalty"]
     )
 
 
@@ -490,6 +578,8 @@ def policy_risk_flags(
 ) -> list[str]:
     risks: list[str] = []
     recent_actions = [snapshot.recommendation.action for snapshot in history[-6:]]
+    if action not in masked_legal_actions(state, params, recent_actions):
+        risks.append("action_masked_by_context")
     if action == "subsidize" and recent_actions.count("subsidize") >= 2:
         risks.append("subsidy_spam_risk")
     if action in ACTION_TO_BUILDING and state.land_total - state.land_used <= 12:
@@ -614,6 +704,7 @@ def policy_node_trace(
         "infrastructure": "Infrastructure",
         "oversupplyPenalty": "Oversupply",
         "scarcityPenalty": "Scarcity",
+        "happinessFloorPenalty": "Happiness Floor",
     }
     notes = {
         "foodBalance": "Supply and demand alignment.",
@@ -623,6 +714,7 @@ def policy_node_trace(
         "infrastructure": "Road and power support for the city.",
         "oversupplyPenalty": "Penalty when farms overproduce too much food.",
         "scarcityPenalty": "Penalty when demand is above food supply.",
+        "happinessFloorPenalty": "Compounding penalty below 70 percent happiness.",
     }
 
     nodes: list[PolicyNodeTrace] = []

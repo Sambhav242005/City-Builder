@@ -22,12 +22,13 @@ from .simulation import (
     BUILD_FUNCTIONS,
     BUILDING_COSTS,
     mayor_direction_score,
+    randomized_starting_state,
     step,
     subsidize,
     subsidy_cost,
     update_supply,
 )
-from .rl_policy import ACTION_TO_BUILDING, recommend_with_policy
+from .rl_policy import ACTION_TO_BUILDING, legal_actions_for_history, recommend_with_policy
 
 
 class CitySimulationService:
@@ -44,7 +45,7 @@ class CitySimulationService:
         self.params = params or Params()
         self.persist_online_learning = persist_online_learning
         self.rng = random.Random(seed)
-        self.state = WorldState()
+        self.state = self._new_episode_state()
         self.live_running = False
         self.q_agent = QLearningAgent()
         self.recommendation, self.decision_system = recommend_with_policy(
@@ -74,8 +75,7 @@ class CitySimulationService:
         )
 
     def reset(self) -> StateResponse:
-        self.rng = random.Random(self.seed)
-        self.state = WorldState()
+        self.state = self._new_episode_state()
         self.live_running = False
         self.events = [
             CityEvent(tick=0, message="Simulation reset.", severity="info")
@@ -101,7 +101,16 @@ class CitySimulationService:
 
         new_state_key = encode_state(self.state, self.params)
         reward_result = compute_reward(state_before, self.state, self.params)
-        self.q_agent.learn(state_key_before, action_taken, reward_result["total"], new_state_key)
+        next_legal_actions = legal_actions_for_history(
+            self.state, self.params, self.history
+        )
+        self.q_agent.learn(
+            state_key_before,
+            action_taken,
+            reward_result["total"],
+            new_state_key,
+            next_legal_actions=next_legal_actions,
+        )
         self._last_state_key = new_state_key
 
         terminal = (
@@ -118,7 +127,7 @@ class CitySimulationService:
                     severity="danger",
                 )
             )
-            self.state = WorldState()
+            self.state = self._new_episode_state()
             self._last_state_key = encode_state(self.state, self.params)
             self._refresh_policy_recommendation()
             self._record_snapshot()
@@ -346,6 +355,9 @@ class CitySimulationService:
             liveTickIntervalSeconds=self.LIVE_TICK_INTERVAL_SECONDS,
             fastForwardTicks=self.FAST_FORWARD_TICKS,
         )
+
+    def _new_episode_state(self) -> WorldState:
+        return randomized_starting_state(self.rng, self.params)
 
     def _apply_action(self, action: ActionName) -> None:
         if action == "do_nothing":

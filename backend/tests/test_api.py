@@ -108,13 +108,25 @@ def test_city_map_reflects_simulation_counts():
 
 def test_manual_build_spends_treasury():
     client = TestClient(app)
-    client.post("/reset")
+    reset_payload = client.post("/reset").json()
+    starting_treasury = reset_payload["state"]["treasury"]
 
     payload = client.post("/build", json={"buildingType": "road"}).json()
 
     assert payload["state"]["roads"] == 5
-    assert payload["state"]["treasury"] == 990_000
+    assert payload["state"]["treasury"] == round(starting_treasury - 10_000, 2)
     assert payload["events"][-1]["message"] == "Built a new Road for $10,000."
+
+
+def test_reset_randomizes_starting_treasury_within_configured_bounds():
+    client = TestClient(app)
+
+    first = client.post("/reset").json()["state"]["treasury"]
+    second = client.post("/reset").json()["state"]["treasury"]
+
+    assert 900_000 <= first <= 1_100_000
+    assert 900_000 <= second <= 1_100_000
+    assert first != second
 
 
 def test_government_approve_and_reject_flow():

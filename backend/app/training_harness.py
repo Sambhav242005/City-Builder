@@ -11,6 +11,7 @@ from typing import Any
 from .models import ActionName, Params, WorldState
 from .q_agent import (
     ALL_ACTIONS,
+    HAPPINESS_FLOOR,
     INITIAL_Q,
     Q_TABLE_PATH,
     QLearningAgent,
@@ -20,7 +21,7 @@ from .q_agent import (
 from .rl_policy import (
     CityTrainingEnv,
     evaluate_action,
-    legal_actions,
+    masked_legal_actions,
     recommend_with_policy,
 )
 from .simulation import update_demand, update_supply
@@ -209,11 +210,17 @@ def _train_random_episodes(
 
         for _step in range(config.steps_per_episode):
             state_key = encode_state(state, params)
-            legal = legal_actions(state, params)
+            legal = env.legal_actions()
             action = agent.choose_action(state_key, legal)
             next_state, reward, done = env.step(action)
             next_state_key = encode_state(next_state, params)
-            agent.learn(state_key, action, reward, next_state_key)
+            agent.learn(
+                state_key,
+                action,
+                reward,
+                next_state_key,
+                next_legal_actions=env.legal_actions(),
+            )
             total_reward += reward
             state = next_state
             if done:
@@ -235,7 +242,7 @@ def _fit_validation_scenario_scores(
         state_key = encode_state(scenario.state, params)
         q_values = [INITIAL_Q] * len(ALL_ACTIONS)
         visit_counts = [0] * len(ALL_ACTIONS)
-        legal = legal_actions(scenario.state, params)
+        legal = masked_legal_actions(scenario.state, params, [])
         fitted_scores[scenario.name] = {}
 
         for action in legal:
@@ -277,7 +284,7 @@ def _rollout_action_value(
     for _step in range(1, config.rollout_horizon):
         if done:
             break
-        follow_up = _best_local_validation_action(env.state, params)
+        follow_up = _best_local_validation_action(env)
         _next_state, reward, done = env.step(follow_up)
         total += discount * reward
         discount *= config.gamma
@@ -285,13 +292,15 @@ def _rollout_action_value(
     return total
 
 
-def _best_local_validation_action(state: WorldState, params: Params) -> ActionName:
-    legal = legal_actions(state, params)
+def _best_local_validation_action(env: CityTrainingEnv) -> ActionName:
+    legal = env.legal_actions()
     if not legal:
         return "do_nothing"
     return max(
         legal,
-        key=lambda action: evaluate_action(state, action, [], params).optimizer_score,
+        key=lambda action: evaluate_action(
+            env.state, action, [], env.params
+        ).optimizer_score,
     )
 
 
@@ -323,6 +332,10 @@ def _build_report(
             "epsilon": config.epsilon,
             "epsilonMin": config.epsilon_min,
             "epsilonDecay": config.epsilon_decay,
+            "happinessFloor": HAPPINESS_FLOOR,
+            "marketActionCooldownTicks": params.market_action_cooldown_ticks,
+            "resetTreasuryVariance": params.reset_treasury_variance,
+            "externalMarketShockProbability": params.external_market_shock_probability,
         },
         "summary": {
             "statesLearned": len(agent.q_table),
@@ -342,7 +355,7 @@ def _evaluate_scenario(
     fitted_scores: dict[str, float],
 ) -> dict[str, Any]:
     state_key = encode_state(scenario.state, params)
-    legal = legal_actions(scenario.state, params)
+    legal = masked_legal_actions(scenario.state, params, [])
     recommendation, decision = recommend_with_policy(
         scenario.state, [], params, q_agent=agent
     )

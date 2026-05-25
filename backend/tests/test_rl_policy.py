@@ -1,5 +1,12 @@
 from app.models import Params, WorldState
-from app.rl_policy import legal_actions, policy_risk_flags, recommend_with_policy, reward_signals
+from app.rl_policy import (
+    legal_actions,
+    masked_legal_actions,
+    policy_risk_flags,
+    recommend_with_policy,
+    reward_signals,
+    reward_total,
+)
 
 
 def test_policy_exposes_action_mask_and_diagnostics():
@@ -37,6 +44,29 @@ def test_reward_penalizes_oversupply_and_scarcity():
     assert balanced["foodBalance"] > scarce["foodBalance"]
     assert oversupplied["oversupplyPenalty"] > 0
     assert scarce["scarcityPenalty"] > 0
+
+
+def test_reward_applies_integral_happiness_floor_penalty():
+    stable = reward_signals(WorldState(happiness=0.72), Params())
+    collapsing = reward_signals(WorldState(happiness=0.64), Params())
+
+    assert stable["happinessFloorPenalty"] == 0
+    assert collapsing["happinessFloorPenalty"] > 0
+    assert reward_total(collapsing) < reward_total(stable)
+
+
+def test_context_mask_locks_market_action_and_alternates_categories():
+    params = Params()
+    state = WorldState(price=24, treasury=900_000)
+
+    after_subsidy = masked_legal_actions(state, params, ["subsidize"])
+    assert "subsidize" not in after_subsidy
+    assert any(action.startswith("build_") for action in after_subsidy)
+    assert "do_nothing" in after_subsidy
+
+    after_build = masked_legal_actions(state, params, ["build_farm"])
+    assert "subsidize" in after_build
+    assert all(not action.startswith("build_") for action in after_build)
 
 
 def test_optimizer_trace_replaces_external_inspection():

@@ -22,6 +22,27 @@ def clamp(value: float, minimum: float, maximum: float) -> float:
     return max(minimum, min(maximum, value))
 
 
+def randomized_starting_state(
+    rng: random.Random, params: Params = PARAMS, base_state: WorldState | None = None
+) -> WorldState:
+    state = base_state or WorldState()
+    treasury_scale = rng.uniform(
+        1 - params.reset_treasury_variance, 1 + params.reset_treasury_variance
+    )
+    price_scale = rng.uniform(
+        1 + params.external_market_shock_min, 1 + params.external_market_shock_max
+    )
+    return state.model_copy(
+        update={
+            "treasury": round(state.treasury * treasury_scale, 2),
+            "price": round(
+                clamp(state.price * price_scale, params.min_price, params.max_price),
+                2,
+            ),
+        }
+    )
+
+
 def update_demand(state: WorldState) -> WorldState:
     return state.model_copy(update={"food_demand": float(state.population)})
 
@@ -44,7 +65,7 @@ def update_price(state: WorldState, params: Params = PARAMS) -> WorldState:
 
 def update_happiness(state: WorldState) -> WorldState:
     delta = -0.02 if state.price > 15 else 0.01
-    
+
     # Apply shortage penalty if food supply is severely below demand, or if markets are zero
     if state.markets == 0:
         delta -= 0.05
@@ -54,6 +75,32 @@ def update_happiness(state: WorldState) -> WorldState:
 
     happiness = clamp(state.happiness + delta, 0.0, 1.0)
     return state.model_copy(update={"happiness": happiness})
+
+
+def apply_external_market_shock(
+    state: WorldState, rng: random.Random, params: Params = PARAMS
+) -> tuple[WorldState, list[CityEvent]]:
+    if rng.random() >= params.external_market_shock_probability:
+        return state, []
+
+    price_scale = rng.uniform(
+        1 + params.external_market_shock_min, 1 + params.external_market_shock_max
+    )
+    shocked_price = round(
+        clamp(state.price * price_scale, params.min_price, params.max_price), 2
+    )
+    if shocked_price == round(state.price, 2):
+        return state, []
+
+    direction = "raised" if shocked_price > state.price else "softened"
+    next_state = state.model_copy(update={"price": shocked_price})
+    return next_state, [
+        CityEvent(
+            tick=state.tick,
+            message=f"External food supply shock {direction} market prices.",
+            severity="warning",
+        )
+    ]
 
 
 def can_build_farm(state: WorldState, params: Params = PARAMS) -> bool:
@@ -508,6 +555,8 @@ def step(
 
     # 4. Update food prices based on the actual supplied food vs demand
     next_state = update_price(next_state, params)
+    next_state, shock_events = apply_external_market_shock(next_state, rng, params)
+    events.extend(shock_events)
 
     # 5. Price alerts
     if next_state.price > 15:

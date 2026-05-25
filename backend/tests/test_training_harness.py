@@ -43,6 +43,9 @@ def test_checked_in_optimizer_training_report_documents_validation():
     scenarios = {scenario["name"]: scenario for scenario in report["scenarios"]}
 
     assert report["training"]["environment"] == "CityTrainingEnv"
+    assert report["training"]["happinessFloor"] == 0.7
+    assert report["training"]["marketActionCooldownTicks"] == 3
+    assert report["training"]["resetTreasuryVariance"] == 0.1
     assert report["summary"]["allScenariosPassed"] is True
     assert set(scenarios) == {"shortage", "oversupply", "high_price", "low_land"}
     assert scenarios["shortage"]["selectedAction"] == "build_farm"
