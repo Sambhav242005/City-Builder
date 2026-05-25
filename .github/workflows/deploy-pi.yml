@@ -64,7 +64,7 @@ jobs:
 
     env:
       DEPLOY_DIR: /home/sambhav/CityBuilder
-      FRONTEND_API_BASE: http://192.168.1.5:8000
+      FRONTEND_API_BASE: http://192.168.1.5:8010
 
     steps:
       - name: Check out tested commit
@@ -132,6 +132,6 @@ jobs:
         run: |
           set -euo pipefail
           sleep 3
-          curl -fsS http://127.0.0.1:8000/state >/dev/null
+          curl -fsS http://127.0.0.1:8010/state >/dev/null
           curl -fsS http://127.0.0.1:5173 >/dev/null
           sudo systemctl --no-pager --full status citybuilder-backend.service citybuilder-frontend.service
