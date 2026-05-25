@@ -1,0 +1,18 @@
+[Unit]
+Description=CityBuilder FastAPI backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sambhav
+Group=sambhav
+WorkingDirectory=/home/sambhav/CityBuilder/backend
+Environment=PYTHONUNBUFFERED=1
+Environment=CITYBUILDER_CORS_ORIGINS=http://192.168.1.5:5173
+ExecStart=/home/sambhav/CityBuilder/backend/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

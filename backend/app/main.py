@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -14,18 +15,36 @@ from .service import CitySimulationService
 app = FastAPI(title="CityBuilder MVP API", version="0.1.0")
 service = CitySimulationService(seed=42)
 state_lock = asyncio.Lock()
+DEFAULT_CORS_ORIGINS = (
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174",
+)
 OPTIMIZER_TRAINING_REPORT_PATH = (
     Path(__file__).resolve().parent.parent / "data" / "optimizer_training_report.json"
 )
 
+
+def build_cors_origins(extra_origins: str | None = None) -> list[str]:
+    raw_origins = (
+        os.getenv("CITYBUILDER_CORS_ORIGINS", "")
+        if extra_origins is None
+        else extra_origins
+    )
+    origins = list(DEFAULT_CORS_ORIGINS)
+
+    for origin in raw_origins.split(","):
+        origin = origin.strip()
+        if origin and origin not in origins:
+            origins.append(origin)
+
+    return origins
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-        "http://127.0.0.1:5174",
-        "http://localhost:5174",
-    ],
+    allow_origins=build_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

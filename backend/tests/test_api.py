@@ -2,7 +2,7 @@ from collections import Counter
 
 from fastapi.testclient import TestClient
 
-from app.main import app, service
+from app.main import app, build_cors_origins, service
 
 
 RECOMMENDATION_ACTIONS = {
@@ -75,6 +75,17 @@ def test_optimizer_training_report_endpoint_exposes_checked_in_validation():
     assert first_scenario["baselineAction"] in RECOMMENDATION_ACTIONS
     assert 0 <= first_scenario["confidence"] <= 1
     assert first_scenario["candidateScores"]
+
+
+def test_cors_origins_include_extra_deploy_origins_once():
+    origins = build_cors_origins(
+        "http://192.168.1.5:5173, http://localhost:5173, http://example.test"
+    )
+
+    assert "http://127.0.0.1:5173" in origins
+    assert origins.count("http://localhost:5173") == 1
+    assert "http://192.168.1.5:5173" in origins
+    assert "http://example.test" in origins
 
 
 def test_city_map_reflects_simulation_counts():
