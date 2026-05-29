@@ -57,6 +57,7 @@ import {
   buildStructure,
   fetchOptimizerTrainingReport,
   fetchState,
+  liveConnectionErrorMessage,
   liveUrl,
   pauseLive,
   playLive,
@@ -334,7 +335,7 @@ function App() {
       setError(null);
     };
     socket.onerror = () => {
-      setError("Live connection failed. Check that the backend is running.");
+      setError(liveConnectionErrorMessage());
     };
 
     return () => socket.close();

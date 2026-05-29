@@ -1,6 +1,8 @@
 import type { BuildingType, OptimizerTrainingReport, StateResponse } from "./types";
 
 const API_BASE = normalizeApiBase(import.meta.env.VITE_API_BASE ?? "/api");
+const LIVE_CONNECTION_ERROR =
+  "Live connection failed through the same-origin proxy. Check that the backend is running.";
 
 function normalizeApiBase(base: string): string {
   const trimmed = base.trim();
@@ -11,7 +13,11 @@ function normalizeApiBase(base: string): string {
 }
 
 function apiPath(path: string): string {
-  return `${API_BASE}${path}`;
+    return `${API_BASE}${path}`;
+}
+
+export function liveConnectionErrorMessage(): string {
+  return LIVE_CONNECTION_ERROR;
 }
 
 function apiUrl(path: string): URL {
