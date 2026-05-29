@@ -378,6 +378,7 @@ class SimulationControls(BaseModel):
     running: bool = False
     terminal_reached: bool = Field(default=False, alias="terminalReached")
     pause_reason: str | None = Field(default=None, alias="pauseReason")
+    max_days: int = Field(default=100, ge=1, alias="maxDays")
     live_tick_interval_seconds: float = Field(
         default=0.35,
         gt=0,

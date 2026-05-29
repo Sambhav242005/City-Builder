@@ -28,6 +28,7 @@ def test_state_tick_reset_flow():
     assert reset.status_code == 200
     assert reset.json()["state"]["tick"] == 0
     assert reset.json()["simulation"]["running"] is False
+    assert reset.json()["simulation"]["maxDays"] == 100
     assert reset.json()["simulation"]["fastForwardTicks"] == 5
 
     tick = client.post("/tick")
@@ -279,6 +280,38 @@ def test_terminal_state_does_not_pause_the_dashboard_simulation():
     assert payload.simulation.pause_reason is None
     assert before_positions == after_positions
     assert not any("Terminal state reached" in event.message for event in payload.events)
+
+
+def test_simulation_stops_at_100_day_limit():
+    simulation = CitySimulationService(
+        seed=17,
+        params=Params(
+            company_expand_probability=0.0,
+            external_market_shock_probability=0.0,
+        ),
+    )
+    simulation.recommendation = GovernmentRecommendation(
+        action="do_nothing",
+        reason="Test keeps optimizer from changing the city near the day limit.",
+    )
+    simulation.state = WorldState(tick=98, treasury=5_000_000)
+    simulation.city_map = PersistentCityMap.from_state(simulation.state)
+    simulation.live_running = True
+
+    payload = simulation.advance(5)
+
+    assert payload.state.tick == 100
+    assert payload.simulation.running is False
+    assert payload.simulation.terminal_reached is True
+    assert payload.simulation.pause_reason == simulation.DAY_LIMIT_PAUSE_REASON
+    assert payload.simulation.max_days == 100
+    assert payload.events[-1].message == simulation.DAY_LIMIT_PAUSE_REASON
+
+    replay = simulation.tick()
+
+    assert replay.state.tick == 100
+    assert replay.simulation.running is False
+    assert replay.simulation.terminal_reached is True
 
 
 def test_reset_randomizes_starting_treasury_within_configured_bounds():

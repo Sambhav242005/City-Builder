@@ -294,6 +294,7 @@ function App() {
   const [showMapOverlay, setShowMapOverlay] = useState(true);
   const running = data?.simulation.running ?? false;
   const terminalReached = data?.simulation.terminalReached ?? false;
+  const maxDays = data?.simulation.maxDays ?? 100;
   const terminalPauseReason = terminalReached
     ? data?.simulation.pauseReason ?? "Terminal state reached. Reset to start a new episode."
     : null;
@@ -544,7 +545,7 @@ function App() {
         <section className="time-card">
           <div>
             <span>Day / Time</span>
-            <strong>Day {state.tick}</strong>
+            <strong>Day {state.tick} / {maxDays}</strong>
           </div>
           <b>{formatTime(state.tick)}</b>
           <div className="control-row">

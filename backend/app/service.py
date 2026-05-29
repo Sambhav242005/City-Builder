@@ -41,7 +41,9 @@ from .rl_policy import ACTION_TO_BUILDING, legal_actions_for_history, recommend_
 class CitySimulationService:
     LIVE_TICK_INTERVAL_SECONDS = 0.35
     FAST_FORWARD_TICKS = 5
+    MAX_SIMULATION_DAYS = 100
     TERMINAL_PAUSE_REASON = "Terminal state reached. Reset to start a new episode."
+    DAY_LIMIT_PAUSE_REASON = "100-day limit reached. Reset to start a new episode."
 
     def __init__(
         self,
@@ -58,6 +60,7 @@ class CitySimulationService:
         self._sync_land_budget_to_map()
         self.live_running = False
         self.terminal_reached = False
+        self.pause_reason: str | None = None
         self.q_agent = QLearningAgent()
         self.q_agent.training_enabled = persist_online_learning
         self.events: list[CityEvent] = [
@@ -91,6 +94,7 @@ class CitySimulationService:
         self._sync_land_budget_to_map()
         self.live_running = False
         self.terminal_reached = False
+        self.pause_reason = None
         self.events = [
             CityEvent(tick=0, message="Simulation reset.", severity="info")
         ]
@@ -103,12 +107,17 @@ class CitySimulationService:
         return self.snapshot()
 
     def tick(self) -> StateResponse:
+        if self.state.tick >= self.MAX_SIMULATION_DAYS and not self.terminal_reached:
+            self._mark_day_limit_reached()
+
         if self.terminal_reached:
             self.live_running = False
             self.events.append(
                 CityEvent(
                     tick=self.state.tick,
-                    message="Simulation is paused at the terminal state. Reset to start a new episode.",
+                    message=(
+                        f"Simulation is paused: {self._terminal_pause_reason()}"
+                    ),
                     severity="warning",
                 )
             )
@@ -147,6 +156,14 @@ class CitySimulationService:
         )
         self._last_state_key = new_state_key
 
+        if self.state.tick >= self.MAX_SIMULATION_DAYS:
+            self._mark_day_limit_reached()
+            self._resolve_pending_decision_impacts()
+            self._refresh_policy_recommendation()
+            self._record_snapshot()
+            self._persist_q_agent()
+            return self.snapshot()
+
         terminal = (
             self.state.population < 50
             or self.state.land_used >= self.state.land_total * 0.9
@@ -155,6 +172,7 @@ class CitySimulationService:
         if terminal and self.state.tick > 20 and self.persist_online_learning:
             self.live_running = False
             self.terminal_reached = True
+            self.pause_reason = self.TERMINAL_PAUSE_REASON
             self.events.append(
                 CityEvent(
                     tick=self.state.tick,
@@ -207,12 +225,15 @@ class CitySimulationService:
         return response or self.snapshot()
 
     def play_live(self) -> StateResponse:
+        if self.state.tick >= self.MAX_SIMULATION_DAYS and not self.terminal_reached:
+            self._mark_day_limit_reached()
+
         if self.terminal_reached:
             self.live_running = False
             self.events.append(
                 CityEvent(
                     tick=self.state.tick,
-                    message="Cannot resume: terminal state reached. Reset to start a new episode.",
+                    message=f"Cannot resume: {self._terminal_pause_reason()}",
                     severity="warning",
                 )
             )
@@ -444,13 +465,39 @@ class CitySimulationService:
         )
 
     def _simulation_controls(self) -> SimulationControls:
+        terminal_reached = (
+            self.terminal_reached or self.state.tick >= self.MAX_SIMULATION_DAYS
+        )
         return SimulationControls(
-            running=self.live_running and not self.terminal_reached,
-            terminalReached=self.terminal_reached,
-            pauseReason=self.TERMINAL_PAUSE_REASON if self.terminal_reached else None,
+            running=self.live_running and not terminal_reached,
+            terminalReached=terminal_reached,
+            pauseReason=self._terminal_pause_reason() if terminal_reached else None,
+            maxDays=self.MAX_SIMULATION_DAYS,
             liveTickIntervalSeconds=self.LIVE_TICK_INTERVAL_SECONDS,
             fastForwardTicks=self.FAST_FORWARD_TICKS,
         )
+
+    def _mark_day_limit_reached(self) -> None:
+        self.live_running = False
+        self.terminal_reached = True
+        self.pause_reason = self.DAY_LIMIT_PAUSE_REASON
+        if not any(
+            event.message == self.DAY_LIMIT_PAUSE_REASON for event in self.events[-5:]
+        ):
+            self.events.append(
+                CityEvent(
+                    tick=self.state.tick,
+                    message=self.DAY_LIMIT_PAUSE_REASON,
+                    severity="warning",
+                )
+            )
+
+    def _terminal_pause_reason(self) -> str:
+        if self.pause_reason:
+            return self.pause_reason
+        if self.state.tick >= self.MAX_SIMULATION_DAYS:
+            return self.DAY_LIMIT_PAUSE_REASON
+        return self.TERMINAL_PAUSE_REASON
 
     def _mayor_score(self) -> MayorScore:
         open_cells = len(self.city_map.available_building_cells())

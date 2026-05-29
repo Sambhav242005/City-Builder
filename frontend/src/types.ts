@@ -317,6 +317,7 @@ export interface SimulationControls {
   running: boolean;
   terminalReached: boolean;
   pauseReason: string | null;
+  maxDays: number;
   liveTickIntervalSeconds: number;
   fastForwardTicks: number;
 }
