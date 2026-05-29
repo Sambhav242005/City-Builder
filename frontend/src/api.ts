@@ -1,6 +1,24 @@
 import type { BuildingType, OptimizerTrainingReport, StateResponse } from "./types";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000";
+const API_BASE = normalizeApiBase(import.meta.env.VITE_API_BASE ?? "/api");
+
+function normalizeApiBase(base: string): string {
+  const trimmed = base.trim();
+  if (trimmed === "/") {
+    return "";
+  }
+  return trimmed.replace(/\/+$/, "");
+}
+
+function apiPath(path: string): string {
+  return `${API_BASE}${path}`;
+}
+
+function apiUrl(path: string): URL {
+  const browserOrigin =
+    typeof window === "undefined" ? "http://localhost" : window.location.origin;
+  return new URL(apiPath(path), browserOrigin);
+}
 
 export class ApiRequestError extends Error {
   retryAfterSeconds?: number;
@@ -15,7 +33,7 @@ export class ApiRequestError extends Error {
 }
 
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, init);
+  const response = await fetch(apiPath(path), init);
 
   if (!response.ok) {
     let detail = `API request failed: ${response.status}`;
@@ -92,8 +110,7 @@ export function buildStructure(buildingType: BuildingType): Promise<StateRespons
 }
 
 export function liveUrl(): string {
-  const url = new URL(API_BASE);
+  const url = apiUrl("/live");
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-  url.pathname = "/live";
   return url.toString();
 }

@@ -4,6 +4,14 @@ export default defineConfig({
     plugins: [react()],
     server: {
         port: 5173,
-        strictPort: false
+        strictPort: false,
+        proxy: {
+            "/api": {
+                target: "http://127.0.0.1:8000",
+                changeOrigin: true,
+                rewrite: function (path) { return path.replace(/^\/api/, ""); },
+                ws: true
+            }
+        }
     }
 });

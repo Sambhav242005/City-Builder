@@ -64,7 +64,7 @@ jobs:
 
     env:
       DEPLOY_DIR: /home/sambhav/CityBuilder
-      FRONTEND_API_BASE: http://192.168.1.5:8010
+      REPO_URL: https://github.com/Sambhav242005/City-Builder.git
 
     steps:
       - name: Check out tested commit
@@ -72,18 +72,28 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Sync app files
+      - name: Sync tested commit
         shell: bash
         run: |
           set -euo pipefail
           runner_user="$(id -un)"
           runner_group="$(id -gn)"
-          sudo install -d -o "$runner_user" -g "$runner_group" "$DEPLOY_DIR"
-          rsync -a --delete \
-            --exclude '.git/' \
-            --exclude 'backend/.venv/' \
-            --exclude 'frontend/node_modules/' \
-            "$GITHUB_WORKSPACE"/ "$DEPLOY_DIR"/
+          deploy_parent="$(dirname "$DEPLOY_DIR")"
+          sudo install -d -o "$runner_user" -g "$runner_group" "$deploy_parent"
+
+          if [ -e "$DEPLOY_DIR" ] && [ ! -d "$DEPLOY_DIR/.git" ]; then
+            backup_dir="${DEPLOY_DIR}.pre-docker.$(date +%Y%m%d%H%M%S)"
+            mv "$DEPLOY_DIR" "$backup_dir"
+          fi
+
+          if [ ! -d "$DEPLOY_DIR/.git" ]; then
+            git clone "$REPO_URL" "$DEPLOY_DIR"
+          fi
+
+          git -C "$DEPLOY_DIR" fetch --force origin main
+          git -C "$DEPLOY_DIR" checkout -B main "$GITHUB_SHA"
+          git -C "$DEPLOY_DIR" reset --hard "$GITHUB_SHA"
+          git -C "$DEPLOY_DIR" clean -fdx
 
       - name: Install system packages
         shell: bash
@@ -103,35 +113,34 @@ jobs:
             sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y "${packages[@]}"
           fi
 
-      - name: Install app dependencies and build
+      - name: Retire legacy host services
         shell: bash
         working-directory: ${{ env.DEPLOY_DIR }}
         run: |
           set -euo pipefail
-          python3 -m venv backend/.venv
-          backend/.venv/bin/python -m pip install --upgrade pip
-          backend/.venv/bin/python -m pip install -r backend/requirements.txt
+          sudo systemctl disable --now citybuilder-backend.service citybuilder-frontend.service 2>/dev/null || true
 
-          cd frontend
-          npm ci
-          VITE_API_BASE="$FRONTEND_API_BASE" npm run build
-
-      - name: Install and restart services
+      - name: Build and restart Docker stack
         shell: bash
         working-directory: ${{ env.DEPLOY_DIR }}
         run: |
           set -euo pipefail
-          sudo install -m 0644 deploy/systemd/citybuilder-backend.service /etc/systemd/system/citybuilder-backend.service
-          sudo install -m 0644 deploy/systemd/citybuilder-frontend.service /etc/systemd/system/citybuilder-frontend.service
-          sudo systemctl daemon-reload
-          sudo systemctl enable citybuilder-backend.service citybuilder-frontend.service
-          sudo systemctl restart citybuilder-backend.service citybuilder-frontend.service
+          sudo docker compose -f deploy/docker-compose.yml --project-name citybuilder up -d --build --remove-orphans
+          sudo docker compose -f deploy/docker-compose.yml --project-name citybuilder ps
 
-      - name: Verify deployed services
+      - name: Verify deployed Docker stack
         shell: bash
+        working-directory: ${{ env.DEPLOY_DIR }}
         run: |
           set -euo pipefail
-          sleep 3
-          curl -fsS http://127.0.0.1:8010/state >/dev/null
-          curl -fsS http://127.0.0.1:5173 >/dev/null
-          sudo systemctl --no-pager --full status citybuilder-backend.service citybuilder-frontend.service
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:5173/ >/dev/null \
+              && curl -fsS http://127.0.0.1:5173/api/state >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          curl -fsS http://127.0.0.1:5173/ >/dev/null
+          curl -fsS http://127.0.0.1:5173/api/state >/dev/null
+          sudo docker compose -f deploy/docker-compose.yml --project-name citybuilder ps

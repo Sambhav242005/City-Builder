@@ -1,7 +1,6 @@
 # Debian packages the Pi deploy needs. Add one package per line when the app
 # starts depending on a new OS-level package.
 curl
-nodejs
-npm
-python3-venv
-rsync
+docker-ce
+docker-compose-plugin
+git
