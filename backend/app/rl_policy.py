@@ -27,10 +27,14 @@ from .simulation import (
     build_market,
     build_power_plant,
     build_road,
+    can_spend_treasury,
     government_recommendation,
+    needs_more_farm_capacity,
     randomized_starting_state,
     subsidize,
     subsidy_cost,
+    treasury_emergency_floor,
+    treasury_reserve,
     update_demand,
     update_happiness,
     update_price,
@@ -166,8 +170,13 @@ def recommend_with_policy(
     history: list[TickSnapshot],
     params: Params,
     q_agent: QLearningAgent | None = None,
+    legal_override: list[ActionName] | None = None,
 ) -> tuple[GovernmentRecommendation, DecisionSystemStatus]:
-    legal = legal_actions_for_history(state, params, history)
+    legal = (
+        legal_override
+        if legal_override is not None
+        else legal_actions_for_history(state, params, history)
+    )
     if not legal:
         fallback = government_recommendation(state, params)
         return fallback, DecisionSystemStatus(
@@ -278,19 +287,54 @@ def _recommend_with_q_agent(
     best_action, best_q = ranked[0]
     second_best_q = ranked[1][1] if len(ranked) > 1 else best_q - 1
     margin = best_q - second_best_q
-    confidence = clamp(0.55 + margin * 0.25 + max(margin, 0) * 0.20, 0.05, 0.97)
+    validation_ranked = sorted(
+        [evaluate_action(state, action, history, params) for action in legal],
+        key=lambda item: item.optimizer_score,
+        reverse=True,
+    )
+    validation_choice = validation_ranked[0]
+    q_original_action = best_action
+    override_applied = False
+    validation_gap = 0.0
+    if validation_choice.action != best_action:
+        selected_validation_score = next(
+            (
+                item.optimizer_score
+                for item in validation_ranked
+                if item.action == best_action
+            ),
+            validation_choice.optimizer_score,
+        )
+        validation_gap = validation_choice.optimizer_score - selected_validation_score
+        if validation_gap >= OPTIMIZER_OVERRIDE_THRESHOLD:
+            best_action = validation_choice.action
+            best_q = q_values[agent.action_index(best_action)]
+            override_applied = True
+
+    confidence = clamp(
+        0.55 + margin * 0.25 + max(margin, 0) * 0.20 + max(validation_gap, 0) * 0.12,
+        0.05,
+        0.97,
+    )
 
     projected = project_action(state, best_action, params)
     projected = update_happiness(update_price(update_supply(update_demand(projected), params), params))
     signals = reward_components(projected, params)
 
     risks = []
-    reason = (
-        f"Q-learning agent selected {best_action.replace('_', ' ')} "
-        f"(Q={best_q:.3f}, margin={margin:.3f}, "
-        f"exploration={agent.epsilon:.2f})."
-    )
-    if agent.epsilon > 0.3:
+    if override_applied:
+        reason = (
+            f"Local validator overrode stalled Q action {q_original_action.replace('_', ' ')} "
+            f"with {best_action.replace('_', ' ')} "
+            f"(validation gap={validation_gap:.3f})."
+        )
+        risks.append("validator_override")
+    else:
+        reason = (
+            f"Q-learning agent selected {best_action.replace('_', ' ')} "
+            f"(Q={best_q:.3f}, margin={margin:.3f})."
+        )
+    if agent.training_enabled and agent.epsilon > 0.3:
         risks.append("exploring")
     if projected.population < 30:
         risks.append("population_collapse_risk")
@@ -299,32 +343,33 @@ def _recommend_with_q_agent(
         risks.append("idle_treasury")
 
     optimizer = OptimizerInspection(
-        verdict="right" if confidence >= 0.7 else "watch",
+        verdict="watch" if override_applied else "right" if confidence >= 0.7 else "watch",
         reason=reason,
         riskFlags=risks,
         suggestedAction=best_action,
-        overrideApplied=False,
-        originalAction=best_action,
+        overrideApplied=override_applied,
+        originalAction=q_original_action,
         finalAction=best_action,
-        fitnessDelta=round(margin, 4),
+        fitnessDelta=round(validation_gap if override_applied else margin, 4),
     )
 
+    q_score_by_action = {action: q_val for action, q_val in ranked}
     candidates: list[CandidateActionTrace] = []
-    for i, (action, q_val) in enumerate(ranked):
-        proj = project_action(state, action, params)
-        proj = update_happiness(update_price(update_supply(update_demand(proj), params), params))
+    for i, evaluation in enumerate(validation_ranked):
+        action = evaluation.action
         candidates.append(
             CandidateActionTrace(
                 action=action,
                 rank=i + 1,
                 selected=action == best_action,
-                policyScore=round(q_val, 4),
-                optimizerScore=round(q_val, 4),
-                expectedHappinessDelta=round(proj.happiness - state.happiness, 4),
-                expectedFoodSupplyDelta=round(proj.food_supply - state.food_supply, 2),
-                expectedPriceDelta=round(proj.price - state.price, 2),
-                rewardSignals={k: round(v, 4) for k, v in reward_components(proj, params).items()},
-                riskFlags=risks if action == best_action else [],
+                policyScore=round(q_score_by_action.get(action, 0.0), 4),
+                optimizerScore=round(evaluation.optimizer_score, 4),
+                expectedHappinessDelta=round(evaluation.projected_state.happiness - state.happiness, 4),
+                expectedFoodSupplyDelta=round(evaluation.projected_state.food_supply - state.food_supply, 2),
+                expectedPriceDelta=round(evaluation.projected_state.price - state.price, 2),
+                rewardSignals={k: round(v, 4) for k, v in evaluation.reward_signals.items()},
+                riskFlags=evaluation.risk_flags,
+                note="Final output" if action == best_action else "Validated candidate",
             )
         )
 
@@ -361,10 +406,13 @@ def legal_actions(state: WorldState, params: Params) -> list[ActionName]:
             building_type = ACTION_TO_BUILDING[action]
             build_fn = BUILD_FUNCTIONS[building_type]  # type: ignore[index]
             cost = BUILDING_COSTS[building_type]  # type: ignore[index]
-            if state.treasury >= cost and build_fn(state, params) != state:  # type: ignore[operator]
+            if building_type == "farm" and not needs_more_farm_capacity(state, params):
+                continue
+            if can_spend_treasury(state, cost, params) and build_fn(state, params) != state:  # type: ignore[operator]
                 legal.append(action)
         elif action == "subsidize":
-            if state.price > params.min_price and state.treasury >= subsidy_cost(state, params):
+            cost = subsidy_cost(state, params)
+            if state.price > params.min_price and can_spend_treasury(state, cost, params):
                 legal.append(action)
         else:
             legal.append(action)
@@ -391,12 +439,7 @@ def masked_legal_actions(
     if any(action in POLICY_ACTIONS for action in recent_market_window):
         blocked.update(POLICY_ACTIONS)
 
-    categories = (
-        category
-        for action in reversed(recent_actions)
-        if (category := _action_category(action))
-    )
-    last_category = next(categories, None)
+    last_category = _action_category(recent_actions[-1]) if recent_actions else None
     if last_category == "infrastructure":
         blocked.update(INFRASTRUCTURE_ACTIONS)
     elif last_category == "policy":
@@ -503,6 +546,20 @@ def optimizer_fitness(
     shortage = max(0.0, state.food_demand - state.food_supply)
     land_free = state.land_total - state.land_used
     recent_actions = [snapshot.recommendation.action for snapshot in history[-6:]]
+    reserve_target = treasury_reserve(params)
+    spendable_surplus = max(0.0, state.treasury - treasury_emergency_floor(params))
+    stable_and_funded = (
+        shortage <= 0
+        and state.price <= 15
+        and state.happiness >= 0.72
+        and land_free >= params.build_cost_land
+        and spendable_surplus >= BUILDING_COSTS["housing"]
+    )
+    growth_bonus = (
+        clamp(spendable_surplus / max(reserve_target * 4, 1), 0, 0.14)
+        if stable_and_funded
+        else 0.0
+    )
     score = reward_total(signals)
 
     if action == "build_farm":
@@ -514,16 +571,31 @@ def optimizer_fitness(
         score -= 0.05 * recent_actions.count("subsidize")
     elif action == "build_road":
         score += 0.08 if state.roads < max(5, state.factories + state.markets) else 0.0
+        if stable_and_funded and state.roads < max(6, state.factories + state.markets + 1):
+            score += 0.04
     elif action == "build_power_plant":
         score += 0.07 if state.factories > state.power_plants * 4 else 0.0
+        if stable_and_funded and state.factories >= state.power_plants * 3:
+            score += 0.03
     elif action == "build_housing":
         score += 0.06 if state.housing * 18 < state.population else 0.0
+        if stable_and_funded:
+            score += growth_bonus
     elif action == "build_market":
-        score += 0.06 if state.markets * 70 < state.population else 0.0
+        market_bottleneck = not needs_more_farm_capacity(state, params) and state.food_supply < state.food_demand
+        score += 0.14 if market_bottleneck else 0.06 if state.markets * 70 < state.population else 0.0
+        if stable_and_funded and state.markets * 70 < state.population + 100:
+            score += min(growth_bonus, 0.10)
     elif action == "build_factory":
         score += 0.04 if state.food_supply >= state.food_demand and state.happiness >= 0.65 else -0.04
+        if stable_and_funded:
+            score += min(growth_bonus, 0.11)
     elif action == "do_nothing":
         score += 0.08 if shortage <= 0 and state.price <= 15 and state.happiness >= 0.65 else -0.18
+        if stable_and_funded:
+            idle_pressure = clamp(spendable_surplus / max(reserve_target * 4, 1), 0, 0.22)
+            land_pressure = 0.08 if land_free > 20 else 0.04
+            score -= idle_pressure + land_pressure
 
     if action in ACTION_TO_BUILDING and land_free <= 12:
         score -= 0.12
@@ -540,25 +612,54 @@ def action_prior(
     shortage = state.food_demand - state.food_supply
     land_free = state.land_total - state.land_used
     recent_actions = [snapshot.recommendation.action for snapshot in history[-6:]]
+    reserve_target = treasury_reserve(params)
+    spendable_surplus = max(0.0, state.treasury - treasury_emergency_floor(params))
+    stable_and_funded = (
+        shortage <= 0
+        and state.price <= 15
+        and state.happiness >= 0.72
+        and land_free >= params.build_cost_land
+        and spendable_surplus >= BUILDING_COSTS["housing"]
+    )
+    growth_prior = (
+        clamp(spendable_surplus / max(reserve_target * 4, 1), 0, 0.16)
+        if stable_and_funded
+        else 0.0
+    )
 
     prior = 0.0
     if action == "build_farm":
         prior += clamp(shortage / max(params.farm_output * 4, 1), -0.15, 0.35)
+        if not needs_more_farm_capacity(state, params):
+            prior -= 0.35
     elif action == "subsidize":
         prior += 0.24 if state.price > 18 else -0.08
         prior -= 0.08 * recent_actions.count("subsidize")
     elif action == "build_housing":
         prior += 0.06 if state.housing * 18 < state.population else -0.05
+        prior += growth_prior
     elif action == "build_road":
         prior += 0.08 if state.roads < max(5, state.factories + state.markets) else -0.03
+        if stable_and_funded and state.roads < max(6, state.factories + state.markets + 1):
+            prior += 0.04
     elif action == "build_power_plant":
         prior += 0.08 if state.factories > state.power_plants * 4 else -0.04
+        if stable_and_funded and state.factories >= state.power_plants * 3:
+            prior += 0.03
     elif action == "build_market":
-        prior += 0.07 if state.markets * 70 < state.population else -0.03
+        market_bottleneck = not needs_more_farm_capacity(state, params) and state.food_supply < state.food_demand
+        prior += 0.18 if market_bottleneck else 0.07 if state.markets * 70 < state.population else -0.03
+        if stable_and_funded and state.markets * 70 < state.population + 100:
+            prior += min(growth_prior, 0.11)
     elif action == "build_factory":
         prior += 0.04 if state.food_supply >= state.food_demand and state.happiness >= 0.65 else -0.08
+        if stable_and_funded:
+            prior += min(growth_prior, 0.12)
     elif action == "do_nothing":
         prior += 0.11 if abs(shortage) <= params.farm_output and state.price <= 15 and state.happiness >= 0.65 else -0.12
+        if stable_and_funded:
+            prior -= clamp(spendable_surplus / max(reserve_target * 4, 1), 0, 0.22)
+            prior -= 0.08 if land_free > 20 else 0.04
 
     if action in ACTION_TO_BUILDING:
         building_type = ACTION_TO_BUILDING[action]
@@ -586,6 +687,8 @@ def policy_risk_flags(
         risks.append("land_pressure")
     if action == "build_farm" and state.food_supply > state.food_demand * 1.25:
         risks.append("oversupply_risk")
+    if action == "build_farm" and not needs_more_farm_capacity(state, params):
+        risks.append("market_bottleneck")
     if action == "do_nothing" and (
         state.food_supply < state.food_demand or state.price > 16 or state.happiness < 0.6
     ):

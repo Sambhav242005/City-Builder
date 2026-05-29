@@ -69,6 +69,7 @@ import { attachExperimentDebugTools, resolveExperimentAssignment, trackExperimen
 
 import type {
   ActionName,
+  BuildAvailability,
   BuildingType,
   CandidateActionTrace,
   CityMapLayout,
@@ -191,13 +192,46 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-function computeTrend(current: number, history: { state: WorldState }[]): string {
+function computeTrend(
+  current: number,
+  history: { state: WorldState }[],
+  params: Params
+): string {
   if (history.length < 2) return "--";
   const prev = history[Math.max(0, history.length - 6)];
-  const prevVal = prev.state.population * prev.state.price * prev.state.happiness * 1200;
+  const prevVal = cityOutput(prev.state, params);
   if (prevVal === 0) return "+0%";
   const pct = ((current - prevVal) / Math.abs(prevVal)) * 100;
   return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
+}
+
+function cityOutput(state: WorldState, params: Params): number {
+  const foodThroughput =
+    Math.min(state.food_supply, state.food_demand + state.markets * params.export_food_limit) *
+    params.base_price *
+    260;
+  const goodsThroughput =
+    (state.factories * params.factory_output + state.market_goods_inventory) * 20 * 220;
+  const serviceOutput = state.population * 900 + state.markets * 18_000 + state.housing * 7_500;
+  const reliability = 0.75 + state.happiness * 0.25;
+  return Math.max(0, (foodThroughput + goodsThroughput + serviceOutput) * reliability);
+}
+
+function chartPercent(value: number, maxValue: number): number {
+  if (maxValue <= 0) return 0;
+  return Number(clamp((value / maxValue) * 100, 0, 100).toFixed(1));
+}
+
+function percentTick(value: number | string): string {
+  return `${value}%`;
+}
+
+function economyTooltipFormatter(value: unknown, name: unknown): [string, string] {
+  const numericValue =
+    typeof value === "number"
+      ? `${value.toFixed(value % 1 === 0 ? 0 : 1)}%`
+      : `${value ?? "--"}%`;
+  return [numericValue, String(name ?? "")];
 }
 
 function getZoneData(zone: string, state: WorldState) {
@@ -258,6 +292,10 @@ function App() {
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [showMapOverlay, setShowMapOverlay] = useState(true);
   const running = data?.simulation.running ?? false;
+  const terminalReached = data?.simulation.terminalReached ?? false;
+  const terminalPauseReason = terminalReached
+    ? data?.simulation.pauseReason ?? "Terminal state reached. Reset to start a new episode."
+    : null;
 
   useEffect(() => {
     attachExperimentDebugTools(experiment);
@@ -307,13 +345,21 @@ function App() {
   const recommendation = data?.recommendation;
   const decisionSystem = data?.decisionSystem;
 
-  const chartData = useMemo(
-    () =>
-      data?.history.map((snapshot) => {
+  const chartData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    const rawRows = data.history.map((snapshot) => {
         const current = snapshot.state;
+        const output = Math.round(cityOutput(current, data.params));
+        const treasuryValue = Math.round(current.treasury);
+        const taxFlow = Math.round(current.tax_revenue_last_tick * 30);
         return {
           tick: current.tick,
-          gdp: Math.round(current.population * current.price * current.happiness * 1200),
+          output,
+          treasury: treasuryValue,
+          taxFlow,
           happiness: Number((current.happiness * 100).toFixed(1)),
           inflation: Number(Math.max(0, current.price - 8).toFixed(2)),
           price: Number(current.price.toFixed(2)),
@@ -321,9 +367,19 @@ function App() {
           demand: current.food_demand,
           farms: current.farms
         };
-      }) ?? [],
-    [data]
-  );
+      });
+
+    const outputMax = Math.max(1, ...rawRows.map((row) => row.output));
+    const treasuryMax = Math.max(BUILDING_COSTS.farm, ...rawRows.map((row) => row.treasury));
+    const taxFlowMax = Math.max(1, ...rawRows.map((row) => row.taxFlow));
+
+    return rawRows.map((row) => ({
+      ...row,
+      outputIndex: chartPercent(row.output, outputMax),
+      treasuryIndex: chartPercent(row.treasury, treasuryMax),
+      taxFlowIndex: chartPercent(row.taxFlow, taxFlowMax)
+    }));
+  }, [data]);
 
   if (!state || !data || !recommendation || !decisionSystem) {
     return (
@@ -341,21 +397,29 @@ function App() {
   const shortage = Math.max(0, state.food_demand - state.food_supply);
   const landRemaining = state.land_total - state.land_used;
   const treasury = state.treasury;
-  const gdp = state.population * state.price * state.happiness * 1200;
+  const gdp = cityOutput(state, data.params);
   const actionIsAvailable =
     recommendation.action !== "do_nothing" &&
-    canAffordAction(recommendation.action, state, data.params);
+    canAffordAction(recommendation.action, state, data.params, data.buildAvailability);
   const optimizer = decisionSystem.optimizer;
+  const optimizerFinalAction = optimizer.finalAction ?? recommendation.action;
+  const optimizerOriginalAction = optimizer.originalAction;
+  const optimizerFinalActionLabel = ACTION_LABELS[optimizerFinalAction];
   const inputSummary = decisionSystem.inputSummary;
   const topCandidates = decisionSystem.candidates.slice(0, 5);
-  const optimizerReasonText = optimizer.overrideApplied && optimizer.originalAction
-    ? `Overrode ${ACTION_LABELS[optimizer.originalAction]} after local validation.`
-    : "Validated selected action against local candidates.";
+  const fundedActionCount = decisionSystem.legalActions.filter((action) => action !== "do_nothing").length;
+  const mayorTrendLabel = data.mayorScore.status === "strong" ? "Strong" : data.mayorScore.label;
+  const optimizerReasonText =
+    fundedActionCount === 0
+      ? "Waiting because no funded action clears the emergency cash floor."
+      : optimizer.overrideApplied && optimizerOriginalAction
+        ? `Changed ${ACTION_LABELS[optimizerOriginalAction]} to ${optimizerFinalActionLabel} after local validation.`
+        : `Selected ${optimizerFinalActionLabel} after validating funded local candidates.`;
   const recentEvents = [...data.events].reverse().slice(0, 6);
   const popTrend = data.history.length >= 2
     ? (() => { const prev = data.history[Math.max(0, data.history.length - 6)].state.population; return prev === 0 ? "--" : `${((state.population - prev) / prev * 100) >= 0 ? "+" : ""}${((state.population - prev) / prev * 100).toFixed(1)}%`; })()
     : "--";
-  const gdpTrend = computeTrend(gdp, data.history);
+  const gdpTrend = computeTrend(gdp, data.history, data.params);
   const treasuryTrend = data.history.length >= 2
     ? (() => { const prev = data.history[Math.max(0, data.history.length - 6)].state.treasury; return prev === 0 ? "--" : `${((treasury - prev) / Math.abs(prev) * 100) >= 0 ? "+" : ""}${((treasury - prev) / Math.abs(prev) * 100).toFixed(1)}%`; })()
     : "--";
@@ -368,6 +432,19 @@ function App() {
   const selectedMapLabel = selectedBuilding?.label ?? selectedZone;
   const selectedZoneData = selectedBuilding ? getBuildingData(selectedBuilding) : getZoneData(selectedZone, state);
   const mapTileCounts = countMapTiles(data.cityMap.tiles);
+  const openBuildCells = Math.max(
+    data.buildAvailability.farm.openCells,
+    data.buildAvailability.factory.openCells,
+    data.buildAvailability.market.openCells,
+    data.buildAvailability.power_plant.openCells,
+    data.buildAvailability.housing.openCells
+  );
+  const openRoadCells = data.buildAvailability.road.openCells;
+  const outputBaseline =
+    data.history.length >= 6
+      ? cityOutput(data.history[Math.max(0, data.history.length - 6)].state, data.params)
+      : gdp;
+  const outputDeclining = gdp < outputBaseline * 0.98;
 
   async function handleUpdate(action: () => Promise<StateResponse>) {
     try {
@@ -459,8 +536,8 @@ function App() {
           icon={<Smile />}
           tone={happinessTone}
         />
-        <StatCard label="Mayor Direction" value={`${data.mayorScore.score}/100`} trend={data.mayorScore.label} icon={<TrendingUp />} tone={mayorTone} />
-        <StatCard label="GDP" value={formatMoney(gdp)} trend={gdpTrend} icon={<TrendingUp />} />
+        <StatCard label="Mayor Direction" value={`${data.mayorScore.score}/100`} trend={mayorTrendLabel} icon={<TrendingUp />} tone={mayorTone} />
+        <StatCard label="Output" value={formatMoney(gdp)} trend={gdpTrend} icon={<TrendingUp />} />
         <StatCard label="Treasury" value={formatMoney(treasury)} trend={treasuryTrend} icon={<CircleDollarSign />} tone={treasuryTone} />
 
         <section className="time-card">
@@ -472,18 +549,37 @@ function App() {
           <div className="control-row">
             <IconButton
               label={
-                running
-                  ? "Pause simulation"
-                  : "Resume simulation"
+                terminalReached
+                  ? "Reset required before resuming"
+                  : running
+                    ? "Pause simulation"
+                    : "Resume simulation"
               }
+              disabled={terminalReached}
               onClick={handlePlayPause}
             >
               {running ? <Pause size={18} /> : <Play size={18} />}
             </IconButton>
-            <IconButton label="Advance one tick" onClick={handleAdvanceOneTick}>
+            <IconButton
+              label={
+                terminalReached
+                  ? "Reset required before advancing"
+                  : "Advance one tick"
+              }
+              disabled={terminalReached}
+              onClick={handleAdvanceOneTick}
+            >
               <Play size={18} />
             </IconButton>
-            <IconButton label="Advance faster" onClick={handleAdvanceFaster}>
+            <IconButton
+              label={
+                terminalReached
+                  ? "Reset required before advancing"
+                  : "Advance faster"
+              }
+              disabled={terminalReached}
+              onClick={handleAdvanceFaster}
+            >
               <FastForward size={18} />
             </IconButton>
             <IconButton label="Reset simulation" onClick={handleResetSimulation}>
@@ -494,6 +590,15 @@ function App() {
       </header>
 
       {error ? <div className="error-banner">{error}</div> : null}
+      {terminalPauseReason ? (
+        <div className="terminal-banner" role="status">
+          <span>{terminalPauseReason}</span>
+          <button type="button" onClick={handleResetSimulation}>
+            <RotateCcw size={16} />
+            Reset simulation
+          </button>
+        </div>
+      ) : null}
 
       <section className="sim-grid">
         <aside className="left-column">
@@ -502,25 +607,44 @@ function App() {
               <LineChart data={chartData}>
                 <CartesianGrid stroke="#263841" strokeDasharray="4 4" />
                 <XAxis dataKey="tick" stroke="#8fa2ad" tick={{ fontSize: 11 }} />
-                <YAxis stroke="#8fa2ad" tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={tooltipStyle} />
+                <YAxis
+                  stroke="#8fa2ad"
+                  tick={{ fontSize: 11 }}
+                  domain={[0, 100]}
+                  tickFormatter={percentTick}
+                  width={38}
+                />
+                <Tooltip contentStyle={tooltipStyle} formatter={economyTooltipFormatter} />
                 <Legend />
-                <Line type="monotone" dataKey="gdp" name="GDP" stroke="#77db4f" dot={false} strokeWidth={2} />
                 <Line
-                  type="monotone"
-                  dataKey="happiness"
-                  name="Happiness"
-                  stroke="#4ba6ff"
+                  type="linear"
+                  dataKey="outputIndex"
+                  name="Output"
+                  stroke="#77db4f"
                   dot={false}
-                  strokeWidth={2}
+                  strokeWidth={2.4}
+                  connectNulls
+                  isAnimationActive={false}
                 />
                 <Line
-                  type="monotone"
-                  dataKey="inflation"
-                  name="Inflation"
+                  type="linear"
+                  dataKey="treasuryIndex"
+                  name="Treasury"
+                  stroke="#4ba6ff"
+                  dot={false}
+                  strokeWidth={2.4}
+                  connectNulls
+                  isAnimationActive={false}
+                />
+                <Line
+                  type="linear"
+                  dataKey="taxFlowIndex"
+                  name="Tax flow"
                   stroke="#ff943c"
                   dot={false}
-                  strokeWidth={2}
+                  strokeWidth={2.4}
+                  connectNulls
+                  isAnimationActive={false}
                 />
               </LineChart>
             </ChartBox>
@@ -533,7 +657,7 @@ function App() {
           <Panel title="Resources">
             <div className="resource-list">
               <ResourceRow icon={<DollarSign />} label="Money" value={formatMoney(treasury)} />
-              <ResourceRow icon={<Map />} label="Land" value={`${state.land_used} / ${state.land_total}`} />
+              <ResourceRow icon={<Map />} label="Build Cells" value={`${openBuildCells}`} />
               <ResourceRow icon={<Users />} label="Labor" value={formatNumber(state.population * 50)} />
               <ResourceRow icon={<Zap />} label="Power" value={`${Math.max(58, 96 - state.factories * 4)}%`} />
               <ResourceRow icon={<Droplets />} label="Water" value={`${Math.max(55, 82 - state.farms)}%`} />
@@ -597,9 +721,9 @@ function App() {
                       ))}
                     </aside>
                     <aside className="map-status-card" aria-label="Land status">
-                      <span>Open Land</span>
-                      <strong>{landRemaining}</strong>
-                      <em>{state.land_total} total tiles</em>
+                      <span>Build Cells</span>
+                      <strong>{openBuildCells}</strong>
+                      <em>{openRoadCells} road slots</em>
                     </aside>
                     <MapInspector label={selectedMapLabel} zoneData={selectedZoneData} building={selectedBuilding} />
                   </>
@@ -611,12 +735,12 @@ function App() {
           <section className="build-panel">
             <Panel title="Build Menu">
               <div className="build-menu">
-                <BuildCard icon={<Wheat />} assetSrc={BUILD_MENU_ASSETS.farm} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" disabled={!canBuildType("farm", state)} onBuild={() => handleBuild("farm")} />
-                <BuildCard icon={<Factory />} assetSrc={BUILD_MENU_ASSETS.factory} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" disabled={!canBuildType("factory", state)} onBuild={() => handleBuild("factory")} />
-                <BuildCard icon={<Store />} assetSrc={BUILD_MENU_ASSETS.market} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" disabled={!canBuildType("market", state)} onBuild={() => handleBuild("market")} />
-                <BuildCard icon={<Zap />} assetSrc={BUILD_MENU_ASSETS.power_plant} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" disabled={!canBuildType("power_plant", state)} onBuild={() => handleBuild("power_plant")} />
-                <BuildCard icon={<House />} assetSrc={BUILD_MENU_ASSETS.housing} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" disabled={!canBuildType("housing", state)} onBuild={() => handleBuild("housing")} />
-                <BuildCard icon={<Hammer />} assetSrc={BUILD_MENU_ASSETS.road} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" disabled={!canBuildType("road", state)} onBuild={() => handleBuild("road")} />
+                <BuildCard icon={<Wheat />} assetSrc={BUILD_MENU_ASSETS.farm} name="Farm" cost={formatCost(BUILDING_COSTS.farm)} land={`${BUILDING_LAND_COSTS.farm}`} tone="green" availability={data.buildAvailability.farm} disabled={!canBuildType("farm", state, data.buildAvailability)} onBuild={() => handleBuild("farm")} />
+                <BuildCard icon={<Factory />} assetSrc={BUILD_MENU_ASSETS.factory} name="Factory" cost={formatCost(BUILDING_COSTS.factory)} land={`${BUILDING_LAND_COSTS.factory}`} tone="purple" availability={data.buildAvailability.factory} disabled={!canBuildType("factory", state, data.buildAvailability)} onBuild={() => handleBuild("factory")} />
+                <BuildCard icon={<Store />} assetSrc={BUILD_MENU_ASSETS.market} name="Market" cost={formatCost(BUILDING_COSTS.market)} land={`${BUILDING_LAND_COSTS.market}`} tone="gold" availability={data.buildAvailability.market} disabled={!canBuildType("market", state, data.buildAvailability)} onBuild={() => handleBuild("market")} />
+                <BuildCard icon={<Zap />} assetSrc={BUILD_MENU_ASSETS.power_plant} name="Power Plant" cost={formatCost(BUILDING_COSTS.power_plant)} land={`${BUILDING_LAND_COSTS.power_plant}`} tone="steel" availability={data.buildAvailability.power_plant} disabled={!canBuildType("power_plant", state, data.buildAvailability)} onBuild={() => handleBuild("power_plant")} />
+                <BuildCard icon={<House />} assetSrc={BUILD_MENU_ASSETS.housing} name="Housing" cost={formatCost(BUILDING_COSTS.housing)} land={`${BUILDING_LAND_COSTS.housing}`} tone="blue" availability={data.buildAvailability.housing} disabled={!canBuildType("housing", state, data.buildAvailability)} onBuild={() => handleBuild("housing")} />
+                <BuildCard icon={<Hammer />} assetSrc={BUILD_MENU_ASSETS.road} name="Road" cost={formatCost(BUILDING_COSTS.road)} land={`${BUILDING_LAND_COSTS.road}`} tone="road" availability={data.buildAvailability.road} disabled={!canBuildType("road", state, data.buildAvailability)} onBuild={() => handleBuild("road")} />
               </div>
             </Panel>
           </section>
@@ -648,9 +772,9 @@ function App() {
               <span>Local Validator</span>
               <strong>{optimizer.verdict}</strong>
               <em>
-                {optimizer.overrideApplied && optimizer.originalAction
-                  ? `Overrode ${ACTION_LABELS[optimizer.originalAction]}`
-                  : "Validated policy output"}
+                {optimizer.overrideApplied && optimizerOriginalAction
+                  ? `Selected ${optimizerFinalActionLabel}`
+                  : `Validated ${optimizerFinalActionLabel}`}
               </em>
             </div>
             <div className="optimizer-reason">
@@ -661,7 +785,7 @@ function App() {
               <TraceMetric label="Food" value={`${formatNumber(inputSummary.foodSupply)} / ${formatNumber(inputSummary.foodDemand)}`} />
               <TraceMetric label="Price" value={formatMoney(inputSummary.price)} />
               <TraceMetric label="Happy" value={`${Math.round(inputSummary.happiness * 100)}%`} />
-              <TraceMetric label="Land" value={`${inputSummary.landUsed}/${inputSummary.landTotal}`} />
+              <TraceMetric label="Actions" value={`${fundedActionCount} funded`} />
             </div>
             <TraceNodeList nodes={decisionSystem.nodes} />
             <CandidateScoreList candidates={topCandidates} />
@@ -727,7 +851,11 @@ function App() {
             <div className="alert-list">
               {state.price > 15 ? <AlertRow level="danger" text="Food price is too high" /> : null}
               {shortage > 0 ? <AlertRow level="warning" text="Food supply below demand" /> : null}
-              {landRemaining < 10 ? <AlertRow level="warning" text="Low land available" /> : null}
+              {openBuildCells === 0 ? <AlertRow level="danger" text="No serviceable build cells" /> : null}
+              {openBuildCells > 0 && openBuildCells < 6 ? <AlertRow level="warning" text="Build cells are nearly exhausted" /> : null}
+              {openRoadCells === 0 && openBuildCells < 6 ? <AlertRow level="warning" text="Road grid has no expansion slots" /> : null}
+              {treasury < BUILDING_COSTS.farm ? <AlertRow level="warning" text="Treasury is below farm build cost" /> : null}
+              {outputDeclining ? <AlertRow level="warning" text="City output is trending down" /> : null}
               {state.happiness < 0.55 ? <AlertRow level="danger" text="Happiness is falling" /> : null}
               {state.markets === 0 && state.population > 0 ? <AlertRow level="danger" text="No markets! Citizens can't buy food" /> : null}
               {state.market_food_inventory < 5 && state.markets > 0 ? <AlertRow level="warning" text="Market food inventory critically low" /> : null}
@@ -1645,6 +1773,7 @@ function BuildCard({
   cost,
   land,
   tone,
+  availability,
   onBuild,
   disabled = false
 }: {
@@ -1654,11 +1783,25 @@ function BuildCard({
   cost: string;
   land: string;
   tone: string;
+  availability: BuildAvailability;
   onBuild?: () => void;
   disabled?: boolean;
 }) {
+  const status = availability.canBuild
+    ? availability.reason === "Ready."
+      ? `${availability.openCells} open cell${availability.openCells === 1 ? "" : "s"}`
+      : `${availability.openCells} cells, ${availability.reason}`
+    : availability.reason;
+
   return (
-    <button className={`build-card build-${tone}`} type="button" disabled={disabled} onClick={onBuild}>
+    <button
+      className={`build-card build-${tone}`}
+      type="button"
+      disabled={disabled}
+      title={status}
+      aria-label={`${name}: ${status}`}
+      onClick={onBuild}
+    >
       <div className="build-card-head">
         <span className="build-card-icon">
           {assetSrc ? <img src={assetSrc} alt="" aria-hidden="true" /> : icon}
@@ -1674,7 +1817,14 @@ function BuildCard({
           <em>Land</em>
           <b>{land}</b>
         </span>
+        <span>
+          <em>Cells</em>
+          <b>{availability.openCells}</b>
+        </span>
       </div>
+      <p className={`build-card-status ${availability.canBuild ? "is-ready" : "is-blocked"}`}>
+        {status}
+      </p>
     </button>
   );
 }
@@ -1700,10 +1850,15 @@ function actionCost(action: ActionName, state: WorldState, params: Params) {
   return "$0";
 }
 
-function canAffordAction(action: ActionName, state: WorldState, params: Params) {
+function canAffordAction(
+  action: ActionName,
+  state: WorldState,
+  params: Params,
+  availability: Record<BuildingType, BuildAvailability>
+) {
   const buildingType = ACTION_BUILDING_TYPES[action];
   if (buildingType) {
-    return canBuildType(buildingType, state);
+    return canBuildType(buildingType, state, availability);
   }
   if (action === "subsidize") {
     return state.price > params.min_price && state.treasury >= subsidyCost(state, params);
@@ -1711,7 +1866,15 @@ function canAffordAction(action: ActionName, state: WorldState, params: Params) 
   return true;
 }
 
-function canBuildType(type: BuildingType, state: WorldState) {
+function canBuildType(
+  type: BuildingType,
+  state: WorldState,
+  availability?: Record<BuildingType, BuildAvailability>
+) {
+  const backendAvailability = availability?.[type];
+  if (backendAvailability) {
+    return backendAvailability.canBuild;
+  }
   const landRemaining = state.land_total - state.land_used;
   return state.treasury >= BUILDING_COSTS[type] && landRemaining >= BUILDING_LAND_COSTS[type];
 }

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, field
 
 from .models import (
+    BuildingType,
     CityMapLayout,
     MapBuilding,
     MapTile,
@@ -15,6 +17,7 @@ from .models import (
 
 MAP_WIDTH = 14
 MAP_HEIGHT = 9
+BUILDING_ROAD_ACCESS_DISTANCE = 3
 
 GridPoint = tuple[int, int]
 
@@ -33,6 +36,54 @@ ROAD_EXPANSION_ROUTES: list[list[GridPoint]] = [
     [(x, 7) for x in range(1, 5)],
     [(13, y) for y in range(2, 6)],
 ]
+ROAD_EXPANSION_CELLS: list[GridPoint] = [
+    point for route in ROAD_EXPANSION_ROUTES for point in route
+]
+
+BUILDING_TYPE_TO_KIND: dict[BuildingType, MapTileKind] = {
+    "farm": "farm",
+    "factory": "factory",
+    "housing": "residential",
+    "market": "market",
+    "power_plant": "power_plant",
+}
+
+STATE_COUNT_FIELDS: dict[MapTileKind, str] = {
+    "farm": "farms",
+    "factory": "factories",
+    "residential": "housing",
+    "market": "markets",
+    "park": "parks",
+    "power_plant": "power_plants",
+}
+
+PLACEMENT_PRIORITY: dict[MapTileKind, list[GridPoint]] = {
+    "residential": [(x, y) for y in range(0, 2) for x in range(0, 4)]
+    + [(x, y) for y in range(3, 5) for x in range(0, 4)]
+    + [(x, y) for y in range(6, 8) for x in range(1, 4)],
+    "market": [(x, y) for y in range(0, 2) for x in range(5, 9)]
+    + [(x, y) for y in range(3, 5) for x in range(5, 9)],
+    "factory": [(x, y) for y in range(0, 2) for x in range(10, 14)]
+    + [(x, y) for y in range(3, 5) for x in range(10, 14)],
+    "park": [(x, y) for y in range(3, 5) for x in range(0, 4)]
+    + [(x, y) for y in range(6, 8) for x in range(1, 4)],
+    "government": [(x, y) for y in range(3, 5) for x in range(5, 9)],
+    "farm": [(x, y) for y in range(6, 8) for x in range(5, 9)]
+    + [(x, y) for y in range(6, 8) for x in range(1, 4)]
+    + [(x, y) for y in range(0, 2) for x in range(0, 4)],
+    "power_plant": [(x, y) for y in range(6, 8) for x in range(10, 14)]
+    + [(x, y) for y in range(3, 5) for x in range(10, 14)],
+}
+
+BUILDING_LABELS: dict[MapTileKind, str] = {
+    "residential": "Residence",
+    "market": "Market",
+    "factory": "Factory",
+    "farm": "Farm",
+    "park": "Park",
+    "government": "Civic Campus",
+    "power_plant": "Power Plant",
+}
 
 
 @dataclass(frozen=True)
@@ -51,7 +102,218 @@ class DistrictSpec:
     status: str = "Operating"
 
 
+@dataclass
+class MapPlacement:
+    id: str
+    kind: MapTileKind
+    x: int
+    y: int
+    units: int = 1
+
+    @property
+    def point(self) -> GridPoint:
+        return (self.x, self.y)
+
+
+@dataclass
+class PersistentCityMap:
+    """Backend-owned map state with stable placements and occupied-cell checks."""
+
+    roads: set[GridPoint] = field(default_factory=set)
+    placements: list[MapPlacement] = field(default_factory=list)
+    next_sequence: Counter[MapTileKind] = field(default_factory=Counter)
+
+    @classmethod
+    def from_state(cls, state: WorldState) -> "PersistentCityMap":
+        city_map = cls(roads=initial_road_cells(state.roads))
+        city_map.place_fixed("government", units=1)
+
+        for kind in (
+            "residential",
+            "market",
+            "factory",
+            "park",
+            "farm",
+            "power_plant",
+        ):
+            field_name = STATE_COUNT_FIELDS[kind]
+            for _ in range(max(0, int(getattr(state, field_name)))):
+                city_map.place_kind(kind)
+
+        return city_map
+
+    def to_layout(self, state: WorldState | None = None) -> CityMapLayout:
+        road_metadata = build_road_metadata(self.roads)
+        tile_buildings = {placement.point: placement for placement in self.placements}
+
+        tiles: list[MapTile] = []
+        for y in range(MAP_HEIGHT):
+            for x in range(MAP_WIDTH):
+                position = (x, y)
+                placement = tile_buildings.get(position)
+                road_connections = road_metadata.get(position, [])
+                road_type = road_type_for(road_connections) if position in self.roads else None
+
+                if position in WATER_TILES:
+                    kind: MapTileKind = "water"
+                    label = "Waterfront"
+                    active = True
+                elif position in self.roads:
+                    kind = "road"
+                    label = road_label(road_type)
+                    active = True
+                elif placement is not None:
+                    kind = placement.kind
+                    label = building_label(placement)
+                    active = True
+                else:
+                    kind = "empty"
+                    label = "Available Land"
+                    active = False
+
+                tiles.append(
+                    MapTile(
+                        x=x,
+                        y=y,
+                        kind=kind,
+                        label=label,
+                        active=active,
+                        zone=kind if kind != "empty" else None,
+                        roadType=road_type,
+                        roadConnections=road_connections,
+                        buildingId=placement.id if placement else None,
+                        lotId=lot_id(position, self.roads),
+                        isAnchor=placement is not None,
+                    )
+                )
+
+        return CityMapLayout(
+            width=MAP_WIDTH,
+            height=MAP_HEIGHT,
+            tiles=tiles,
+            buildings=[
+                make_placed_building(placement, state)
+                for placement in self.placements
+            ],
+        )
+
+    def can_place_building_type(self, building_type: BuildingType) -> bool:
+        return self.available_cells_for_building_type(building_type) > 0
+
+    def available_cells_for_building_type(self, building_type: BuildingType) -> int:
+        if building_type == "road":
+            return len(self.available_road_cells())
+        kind = BUILDING_TYPE_TO_KIND[building_type]
+        return len(self.available_cells(kind))
+
+    def available_building_cells(self) -> list[GridPoint]:
+        return [
+            (x, y)
+            for y in range(MAP_HEIGHT)
+            for x in range(MAP_WIDTH)
+            if self.is_empty_buildable_cell((x, y))
+        ]
+
+    def place_building_type(self, building_type: BuildingType) -> bool:
+        if building_type == "road":
+            return self.place_road()
+        return self.place_kind(BUILDING_TYPE_TO_KIND[building_type])
+
+    def place_fixed(self, kind: MapTileKind, units: int = 1) -> bool:
+        cell = self.next_empty_cell(kind)
+        if cell is None:
+            return False
+        self.next_sequence[kind] += 1
+        self.placements.append(
+            MapPlacement(
+                id=f"{kind}-{self.next_sequence[kind]}",
+                kind=kind,
+                x=cell[0],
+                y=cell[1],
+                units=units,
+            )
+        )
+        return True
+
+    def place_kind(self, kind: MapTileKind) -> bool:
+        return self.place_fixed(kind, units=1)
+
+    def place_road(self) -> bool:
+        cell = self.next_road_cell()
+        if cell is None:
+            return False
+        self.roads.add(cell)
+        return True
+
+    def remove_latest(self, kind: MapTileKind) -> bool:
+        for index in range(len(self.placements) - 1, -1, -1):
+            if self.placements[index].kind == kind:
+                del self.placements[index]
+                return True
+        return False
+
+    def sync_to_state(self, previous: WorldState, current: WorldState) -> None:
+        for kind, field_name in STATE_COUNT_FIELDS.items():
+            before = int(getattr(previous, field_name))
+            after = int(getattr(current, field_name))
+            diff = after - before
+            if diff > 0:
+                for _ in range(diff):
+                    self.place_kind(kind)
+            elif diff < 0:
+                for _ in range(abs(diff)):
+                    self.remove_latest(kind)
+
+        road_diff = int(current.roads) - int(previous.roads)
+        if road_diff > 0:
+            for _ in range(road_diff):
+                self.place_road()
+
+    def next_empty_cell(self, kind: MapTileKind) -> GridPoint | None:
+        cells = self.available_cells(kind)
+        return cells[0] if cells else None
+
+    def available_cells(self, kind: MapTileKind) -> list[GridPoint]:
+        return [
+            cell
+            for cell in placement_cells_for(kind)
+            if self.is_empty_buildable_cell(cell)
+        ]
+
+    def next_road_cell(self) -> GridPoint | None:
+        cells = self.available_road_cells()
+        return cells[0] if cells else None
+
+    def available_road_cells(self) -> list[GridPoint]:
+        return [
+            cell
+            for cell in ROAD_EXPANSION_CELLS
+            if (
+                in_bounds(cell)
+                and cell not in WATER_TILES
+                and cell not in self.roads
+                and cell not in self.occupied_cells()
+            )
+        ]
+
+    def is_empty_buildable_cell(self, cell: GridPoint) -> bool:
+        return (
+            in_bounds(cell)
+            and cell not in WATER_TILES
+            and cell not in self.roads
+            and cell not in self.occupied_cells()
+            and has_road_access(cell, self.roads)
+        )
+
+    def occupied_cells(self) -> set[GridPoint]:
+        return {placement.point for placement in self.placements}
+
+
 def build_city_map(state: WorldState) -> CityMapLayout:
+    return PersistentCityMap.from_state(state).to_layout(state)
+
+
+def build_district_summary_city_map(state: WorldState) -> CityMapLayout:
     roads = build_road_network(state)
     road_metadata = build_road_metadata(roads)
     blocked = set(roads) | set(WATER_TILES)
@@ -113,6 +375,88 @@ def build_city_map(state: WorldState) -> CityMapLayout:
             )
 
     return CityMapLayout(width=MAP_WIDTH, height=MAP_HEIGHT, tiles=tiles, buildings=buildings)
+
+
+def initial_road_cells(roads: int) -> set[GridPoint]:
+    base = set()
+    for row in BASE_ROAD_ROWS:
+        base.update((x, row) for x in range(MAP_WIDTH))
+
+    for column in BASE_ROAD_COLUMNS:
+        base.update((column, y) for y in range(MAP_HEIGHT))
+
+    extra_count = max(0, roads - 4)
+    base.update(ROAD_EXPANSION_CELLS[:extra_count])
+    return {point for point in base if in_bounds(point) and point not in WATER_TILES}
+
+
+def placement_cells_for(kind: MapTileKind) -> list[GridPoint]:
+    seen: set[GridPoint] = set()
+    cells: list[GridPoint] = []
+    for cell in PLACEMENT_PRIORITY.get(kind, []):
+        if cell not in seen:
+            cells.append(cell)
+            seen.add(cell)
+
+    for y in range(MAP_HEIGHT):
+        for x in range(MAP_WIDTH):
+            cell = (x, y)
+            if cell not in seen:
+                cells.append(cell)
+                seen.add(cell)
+
+    return cells
+
+
+def building_label(placement: MapPlacement) -> str:
+    base = BUILDING_LABELS.get(placement.kind, placement.kind.replace("_", " ").title())
+    if placement.kind == "government":
+        return base
+    return f"{base} {placement.id.rsplit('-', 1)[-1]}"
+
+
+def make_placed_building(placement: MapPlacement, state: WorldState | None = None) -> MapBuilding:
+    metrics = placed_building_metrics(placement, state)
+    scale = "landmark" if placement.kind == "government" else "single"
+    return MapBuilding(
+        id=placement.id,
+        kind=placement.kind,
+        label=building_label(placement),
+        x=placement.x,
+        y=placement.y,
+        width=1,
+        height=1,
+        units=placement.units,
+        maxUnits=placement.units,
+        level=1,
+        scale=scale,
+        workers=metrics["workers"],
+        output=metrics["output"],
+        income=metrics["income"],
+        pollution=metrics["pollution"],
+        status=metrics["status"],
+        assetKey=asset_key_for(placement.kind, scale),
+    )
+
+
+def placed_building_metrics(
+    placement: MapPlacement, state: WorldState | None = None
+) -> dict[str, object]:
+    if placement.kind == "residential":
+        return {"workers": 12, "output": 0.0, "income": 14.0, "pollution": 0.0, "status": "Occupied"}
+    if placement.kind == "market":
+        return {"workers": 5, "output": 20.0, "income": 26.0, "pollution": 0.0, "status": "Trading"}
+    if placement.kind == "factory":
+        return {"workers": 8, "output": 15.0, "income": 22.0, "pollution": 8.0, "status": "Operating"}
+    if placement.kind == "farm":
+        return {"workers": 4, "output": 10.0, "income": 10.0, "pollution": 0.0, "status": "Operating"}
+    if placement.kind == "park":
+        return {"workers": 2, "output": 0.0, "income": 3.0, "pollution": 0.0, "status": "Maintained"}
+    if placement.kind == "power_plant":
+        return {"workers": 3, "output": 28.0, "income": 12.0, "pollution": 7.0, "status": "Supplying"}
+
+    workers = max(6, round((state.population if state else 100) * 0.05))
+    return {"workers": workers, "output": 0.0, "income": 8.0, "pollution": 0.0, "status": "Active"}
 
 
 def build_road_network(state: WorldState) -> set[GridPoint]:
@@ -254,6 +598,18 @@ def touches_road(point: GridPoint, blocked: set[GridPoint]) -> bool:
         if neighbor in blocked and neighbor not in WATER_TILES:
             return True
     return False
+
+
+def has_road_access(
+    point: GridPoint,
+    roads: set[GridPoint],
+    max_distance: int = BUILDING_ROAD_ACCESS_DISTANCE,
+) -> bool:
+    x, y = point
+    return any(
+        abs(x - road_x) + abs(y - road_y) <= max_distance
+        for road_x, road_y in roads
+    )
 
 
 def rectangle(anchor: GridPoint, width: int, height: int) -> list[GridPoint]:

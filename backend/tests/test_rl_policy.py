@@ -69,6 +69,15 @@ def test_context_mask_locks_market_action_and_alternates_categories():
     assert all(not action.startswith("build_") for action in after_build)
 
 
+def test_do_nothing_clears_infrastructure_cooldown():
+    params = Params()
+    state = WorldState(price=12, treasury=900_000)
+
+    after_wait = masked_legal_actions(state, params, ["build_farm", "do_nothing"])
+
+    assert any(action.startswith("build_") for action in after_wait)
+
+
 def test_optimizer_trace_replaces_external_inspection():
     _recommendation, decision = recommend_with_policy(WorldState(), [], Params())
 

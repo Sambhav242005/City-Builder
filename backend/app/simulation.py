@@ -230,6 +230,79 @@ BUILDING_COSTS: dict[BuildingType, int] = {
     "road": 10_000,
 }
 
+TREASURY_RESERVE_MULTIPLIER = 1.5
+TREASURY_EMERGENCY_FLOOR_MULTIPLIER = 2 / 3
+
+
+def treasury_reserve(params: Params = PARAMS) -> float:
+    return BUILDING_COSTS["farm"] * TREASURY_RESERVE_MULTIPLIER
+
+
+def treasury_emergency_floor(params: Params = PARAMS) -> float:
+    return BUILDING_COSTS["farm"] * TREASURY_EMERGENCY_FLOOR_MULTIPLIER
+
+
+def can_spend_treasury(
+    state: WorldState,
+    cost: float,
+    params: Params = PARAMS,
+    protect_reserve: bool = True,
+) -> bool:
+    if cost <= 0:
+        return True
+    if state.treasury < cost:
+        return False
+    if not protect_reserve:
+        return True
+    return state.treasury - cost >= treasury_emergency_floor(params)
+
+
+def municipal_revenue(state: WorldState, params: Params = PARAMS) -> float:
+    civic_base = (
+        state.population * 75
+        + state.housing * 650
+        + state.factories * 1_300
+        + state.markets * 1_000
+        + state.farms * 250
+        + state.power_plants * 400
+    )
+    operating_cost = (
+        state.roads * 150
+        + state.farms * 120
+        + state.factories * 300
+        + state.markets * 180
+        + state.power_plants * 500
+    )
+    return round(max(0.0, civic_base - operating_cost), 2)
+
+
+def farm_market_capacity(state: WorldState, params: Params = PARAMS) -> float:
+    return state.markets * params.market_buy_food_limit
+
+
+def farm_production_capacity(state: WorldState, params: Params = PARAMS) -> float:
+    return state.farms * params.farm_output
+
+
+def needs_more_farm_capacity(state: WorldState, params: Params = PARAMS) -> bool:
+    market_capacity = farm_market_capacity(state, params)
+    if market_capacity <= 0:
+        return False
+
+    useful_food_capacity = min(
+        market_capacity,
+        state.food_demand + state.markets * params.export_food_limit,
+    )
+    return farm_production_capacity(state, params) < useful_food_capacity * 0.95
+
+MAYOR_FACTOR_WEIGHTS = {
+    "Food balance": 0.22,
+    "Affordability": 0.18,
+    "Happiness": 0.20,
+    "Land buffer": 0.15,
+    "Treasury": 0.15,
+}
+
 
 def company_behavior(
     state: WorldState, rng: random.Random, params: Params = PARAMS
@@ -240,6 +313,7 @@ def company_behavior(
 
     if (
         profit_per_farm > 0
+        and needs_more_farm_capacity(state, params)
         and rng.random() < params.company_expand_probability
         and can_build_farm(state, params)
     ):
@@ -301,26 +375,23 @@ def mayor_direction_score(
     state: WorldState,
     history: list[TickSnapshot] | None = None,
     params: Params = PARAMS,
+    land_buffer_free: int | None = None,
+    land_buffer_capacity: int | None = None,
 ) -> MayorScore:
-    factors = build_mayor_score_factors(state, params)
-    base_score = round(
-        factors[0].score * 0.30
-        + factors[1].score * 0.25
-        + factors[2].score * 0.25
-        + factors[3].score * 0.10
+    factors = build_mayor_score_factors(
+        state,
+        params,
+        land_buffer_free=land_buffer_free,
+        land_buffer_capacity=land_buffer_capacity,
     )
+    base_score = mayor_base_score(factors)
 
     trend = "steady"
     trend_score = 50
     if history:
         previous = history[max(0, len(history) - 6)].state
         previous_factors = build_mayor_score_factors(previous, params)
-        previous_score = round(
-            previous_factors[0].score * 0.30
-            + previous_factors[1].score * 0.25
-            + previous_factors[2].score * 0.25
-            + previous_factors[3].score * 0.10
-        )
+        previous_score = mayor_base_score(previous_factors)
         delta = base_score - previous_score
         trend_score = round(clamp(50 + delta * 5, 0, 100))
         if delta >= 3:
@@ -343,8 +414,20 @@ def mayor_direction_score(
     )
 
 
+def mayor_base_score(factors: list[MayorScoreFactor]) -> int:
+    return round(
+        sum(
+            factor.score * MAYOR_FACTOR_WEIGHTS.get(factor.name, 0.0)
+            for factor in factors
+        )
+    )
+
+
 def build_mayor_score_factors(
-    state: WorldState, params: Params = PARAMS
+    state: WorldState,
+    params: Params = PARAMS,
+    land_buffer_free: int | None = None,
+    land_buffer_capacity: int | None = None,
 ) -> list[MayorScoreFactor]:
     demand = max(state.food_demand, 1.0)
     food_ratio = state.food_supply / demand
@@ -356,9 +439,36 @@ def build_mayor_score_factors(
 
     happiness_score = int(round(clamp(state.happiness, 0, 1) * 100))
 
-    land_remaining = max(state.land_total - state.land_used, 0)
-    land_buffer_ratio = land_remaining / max(state.land_total, 1)
+    reserve = treasury_reserve(params)
+    treasury_target = max(reserve * 2, 1)
+    treasury_score = int(round(clamp(state.treasury / treasury_target, 0, 1) * 100))
+
+    land_remaining = (
+        max(land_buffer_free, 0)
+        if land_buffer_free is not None
+        else max(state.land_total - state.land_used, 0)
+    )
+    land_total = (
+        max(land_buffer_capacity or 0, 1)
+        if land_buffer_free is not None
+        else max(state.land_total, 1)
+    )
+    land_buffer_ratio = land_remaining / land_total
     land_score = int(round(clamp(land_buffer_ratio / 0.20, 0, 1) * 100))
+    land_value = (
+        f"{land_remaining} cells"
+        if land_buffer_free is not None
+        else f"{land_remaining} free"
+    )
+    land_note = (
+        "Open map cells remain for placement."
+        if land_score >= 70 and land_buffer_free is not None
+        else "Enough land remains for policy moves."
+        if land_score >= 70
+        else "No open map placement cells remain."
+        if land_buffer_free is not None and land_remaining == 0
+        else "Limited land makes future fixes harder."
+    )
 
     return [
         MayorScoreFactor(
@@ -393,12 +503,18 @@ def build_mayor_score_factors(
         ),
         MayorScoreFactor(
             name="Land buffer",
-            value=f"{land_remaining} free",
+            value=land_value,
             score=land_score,
+            note=land_note,
+        ),
+        MayorScoreFactor(
+            name="Treasury",
+            value=f"${state.treasury:,.0f}",
+            score=treasury_score,
             note=(
-                "Enough land remains for policy moves."
-                if land_score >= 70
-                else "Limited land makes future fixes harder."
+                "Treasury can fund major construction."
+                if treasury_score >= 70
+                else "Treasury reserve is protected; major builds are paused."
             ),
         ),
     ]
@@ -470,10 +586,10 @@ def update_market_economy(
     final_food_inv = max(0.0, new_food_inv - food_spoiled)
     final_goods_inv = max(0.0, new_goods_inv - goods_decayed)
 
-    # 5. Treasury sales tax collection (dynamic treasury)
+    # 5. Treasury tax collection: market sales plus recurring municipal revenue.
     goods_price = 20.0
     sales_value = (food_sold_locally + food_exported) * state.price + (goods_sold_locally + goods_exported) * goods_price
-    tax_collected = sales_value * params.tax_rate
+    tax_collected = sales_value * params.tax_rate + municipal_revenue(state, params)
     new_treasury = state.treasury + tax_collected
 
     # 6. Citizen satisfaction and shortage warnings

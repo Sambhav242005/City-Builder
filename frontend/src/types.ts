@@ -300,6 +300,14 @@ export interface CityMapLayout {
   buildings: MapBuilding[];
 }
 
+export interface BuildAvailability {
+  canBuild: boolean;
+  reason: string;
+  openCells: number;
+  treasuryRequired: number;
+  landRequired: number;
+}
+
 export interface TickSnapshot {
   state: WorldState;
   recommendation: GovernmentRecommendation;
@@ -307,6 +315,8 @@ export interface TickSnapshot {
 
 export interface SimulationControls {
   running: boolean;
+  terminalReached: boolean;
+  pauseReason: string | null;
   liveTickIntervalSeconds: number;
   fastForwardTicks: number;
 }
@@ -319,6 +329,7 @@ export interface StateResponse {
   mayorScore: MayorScore;
   decisionScorecard: MayorDecisionScorecardEntry[];
   cityMap: CityMapLayout;
+  buildAvailability: Record<BuildingType, BuildAvailability>;
   history: TickSnapshot[];
   events: CityEvent[];
   simulation: SimulationControls;

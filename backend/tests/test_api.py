@@ -2,7 +2,11 @@ from collections import Counter
 
 from fastapi.testclient import TestClient
 
+from app.city_map import PersistentCityMap
 from app.main import app, build_cors_origins, service
+from app.models import GovernmentRecommendation, Params, WorldState
+from app.service import CitySimulationService
+from app.simulation import treasury_emergency_floor
 
 
 RECOMMENDATION_ACTIONS = {
@@ -38,7 +42,13 @@ def test_state_tick_reset_flow():
     assert len(payload["cityMap"]["tiles"]) == 126
     assert payload["mayorScore"]["score"] >= 0
     assert payload["mayorScore"]["label"]
-    assert len(payload["mayorScore"]["factors"]) == 4
+    assert [factor["name"] for factor in payload["mayorScore"]["factors"]] == [
+        "Food balance",
+        "Affordability",
+        "Happiness",
+        "Land buffer",
+        "Treasury",
+    ]
     assert "agent" not in payload
     assert "agentRateLimit" not in payload
     assert payload["recommendation"]["action"] in RECOMMENDATION_ACTIONS
@@ -116,6 +126,159 @@ def test_manual_build_spends_treasury():
     assert payload["state"]["roads"] == 5
     assert payload["state"]["treasury"] == round(starting_treasury - 10_000, 2)
     assert payload["events"][-1]["message"] == "Built a new Road for $10,000."
+
+
+def test_manual_build_adds_stable_map_placement_without_moving_existing_buildings():
+    client = TestClient(app)
+    reset_payload = client.post("/reset").json()
+    before_positions = {
+        building["id"]: (building["x"], building["y"])
+        for building in reset_payload["cityMap"]["buildings"]
+    }
+
+    payload = client.post("/build", json={"buildingType": "farm"}).json()
+    after_positions = {
+        building["id"]: (building["x"], building["y"])
+        for building in payload["cityMap"]["buildings"]
+    }
+
+    assert payload["state"]["farms"] == reset_payload["state"]["farms"] + 1
+    assert len(after_positions) == len(before_positions) + 1
+    for building_id, position in before_positions.items():
+        assert after_positions[building_id] == position
+    assert len(set(after_positions.values())) == len(after_positions)
+
+
+def test_manual_build_reports_no_open_cell_without_changing_state():
+    simulation = CitySimulationService(seed=7)
+    simulation.state = WorldState(
+        farms=0,
+        factories=0,
+        housing=0,
+        markets=0,
+        parks=0,
+        power_plants=0,
+        roads=4,
+        land_used=0,
+        land_total=200,
+        treasury=5_000_000,
+    )
+    simulation.city_map = PersistentCityMap.from_state(simulation.state)
+    while simulation.city_map.place_building_type("farm"):
+        pass
+
+    snapshot = simulation.snapshot()
+    assert snapshot.build_availability["farm"].can_build is False
+    assert snapshot.build_availability["farm"].reason == "No open map cell is available."
+
+    payload = simulation.build_structure("farm")
+
+    assert payload.state.farms == 0
+    assert payload.events[-1].message == "Cannot build Farm: no open map cell is available."
+
+
+def test_land_buffer_and_manual_build_use_open_map_cells_when_budget_is_full():
+    simulation = CitySimulationService(seed=13)
+    simulation.state = WorldState(
+        land_used=100,
+        land_total=100,
+        treasury=5_000_000,
+    )
+    simulation.city_map = PersistentCityMap.from_state(simulation.state)
+    before_farms = simulation.state.farms
+
+    snapshot = simulation.snapshot()
+    land_factor = next(
+        factor for factor in snapshot.mayor_score.factors if factor.name == "Land buffer"
+    )
+
+    assert snapshot.build_availability["farm"].open_cells > 0
+    assert snapshot.build_availability["farm"].can_build is True
+    assert land_factor.value != "0 free"
+    assert land_factor.value.endswith("cells")
+    assert land_factor.score > 0
+
+    payload = simulation.build_structure("farm")
+
+    assert payload.state.farms == before_farms + 1
+    assert payload.events[-1].message == "Built a new Farm for $120,000."
+
+
+def test_dashboard_optimizer_keeps_funded_actions_after_long_run():
+    simulation = CitySimulationService(seed=2)
+
+    assert simulation.q_agent.training_enabled is False
+
+    for _ in range(72):
+        simulation.tick()
+
+    assert simulation.state.treasury >= treasury_emergency_floor(simulation.params)
+    assert simulation.state.farms < 30
+    assert any(
+        action != "do_nothing"
+        for action in simulation.snapshot().decision_system.legal_actions
+    )
+    assert simulation.snapshot().recommendation.action != "do_nothing"
+
+
+def test_build_availability_blocks_emergency_floor_breaching_spend():
+    simulation = CitySimulationService(seed=5)
+    floor = treasury_emergency_floor(simulation.params)
+    simulation.state = WorldState(
+        treasury=floor + 5_000,
+        land_used=60,
+        land_total=200,
+    )
+    simulation.city_map = PersistentCityMap.from_state(simulation.state)
+
+    payload = simulation.snapshot()
+
+    assert payload.build_availability["road"].can_build is False
+    assert "emergency floor" in payload.build_availability["road"].reason.lower()
+
+
+def test_terminal_state_does_not_pause_the_dashboard_simulation():
+    simulation = CitySimulationService(
+        seed=11,
+        params=Params(
+            company_expand_probability=0.0,
+            external_market_shock_probability=0.0,
+        ),
+    )
+    simulation.q_agent.training_enabled = False
+    simulation.recommendation = GovernmentRecommendation(
+        action="do_nothing",
+        reason="Test keeps optimizer from adding a building during terminal check.",
+    )
+    simulation.state = WorldState(
+        tick=21,
+        population=120,
+        food_supply=150.0,
+        food_demand=120.0,
+        land_total=100,
+        land_used=90,
+        treasury=0,
+    )
+    simulation.city_map = PersistentCityMap.from_state(simulation.state)
+    simulation.live_running = True
+
+    before_positions = {
+        building.id: (building.kind, building.x, building.y, building.units)
+        for building in simulation.snapshot().city_map.buildings
+    }
+
+    payload = simulation.tick()
+
+    after_positions = {
+        building.id: (building.kind, building.x, building.y, building.units)
+        for building in payload.city_map.buildings
+    }
+    assert payload.state.tick == 22
+    assert payload.simulation.running is True
+    assert payload.simulation.terminal_reached is False
+    assert payload.simulation.pause_reason is None
+    assert before_positions == after_positions
+    assert not any("Terminal state reached" in event.message for event in payload.events)
 
 
 def test_reset_randomizes_starting_treasury_within_configured_bounds():

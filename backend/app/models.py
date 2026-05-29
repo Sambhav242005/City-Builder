@@ -357,6 +357,16 @@ class CityMapLayout(BaseModel):
     buildings: list[MapBuilding] = Field(default_factory=list)
 
 
+class BuildAvailability(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    can_build: bool = Field(alias="canBuild")
+    reason: str
+    open_cells: int = Field(default=0, alias="openCells")
+    treasury_required: int = Field(default=0, alias="treasuryRequired")
+    land_required: int = Field(default=0, alias="landRequired")
+
+
 class TickSnapshot(BaseModel):
     state: WorldState
     recommendation: GovernmentRecommendation
@@ -366,6 +376,8 @@ class SimulationControls(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     running: bool = False
+    terminal_reached: bool = Field(default=False, alias="terminalReached")
+    pause_reason: str | None = Field(default=None, alias="pauseReason")
     live_tick_interval_seconds: float = Field(
         default=0.35,
         gt=0,
@@ -384,6 +396,9 @@ class StateResponse(BaseModel):
         default_factory=list, alias="decisionScorecard"
     )
     city_map: CityMapLayout = Field(alias="cityMap")
+    build_availability: dict[BuildingType, BuildAvailability] = Field(
+        default_factory=dict, alias="buildAvailability"
+    )
     history: list[TickSnapshot] = Field(default_factory=list)
     events: list[CityEvent] = Field(default_factory=list)
     simulation: SimulationControls

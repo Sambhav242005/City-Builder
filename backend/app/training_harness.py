@@ -106,7 +106,7 @@ def training_scenarios(params: Params | None = None) -> list[ValidationScenario]
                 params,
             ),
             expected_actions=("do_nothing", "build_housing"),
-            baseline_action="build_farm",
+            baseline_action="subsidize",
         ),
         ValidationScenario(
             name="high_price",
