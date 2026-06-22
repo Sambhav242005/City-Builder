@@ -16,7 +16,7 @@ The workflow in `.github/workflows/deploy-pi.yml` is event-driven:
 The Pi exposes a single frontend/proxy entrypoint on `http://192.168.1.5:5173`.
 Cloudflare Tunnel should point at that port. The browser calls the public
 origin only, and Nginx proxies `/api/*` to the backend container internally.
-The backend container listens on `8010` inside the Docker network but is not
+The backend container listens on `8085` inside the Docker network but is not
 published directly to the LAN.
 
 Add Python packages to `backend/requirements.txt`, frontend packages through

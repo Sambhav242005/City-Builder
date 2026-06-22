@@ -7,7 +7,7 @@ services:
       PYTHONUNBUFFERED: "1"
       CITYBUILDER_CORS_ORIGINS: "http://citybuilder.sambhav-surana.online,https://citybuilder.sambhav-surana.online,http://192.168.1.5:5173"
     expose:
-      - "8010"
+      - "8085"
     restart: unless-stopped
     healthcheck:
       test:
@@ -15,7 +15,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/state', timeout=5).read()"
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8085/state', timeout=5).read()"
         ]
       interval: 30s
       timeout: 10s
