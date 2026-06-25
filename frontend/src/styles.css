@@ -2,8 +2,8 @@
 .build-card:disabled{cursor:not-allowed;opacity:.45;transform:none}.build-card:disabled:hover{border-color:rgba(114,146,158,.8);transform:none}
 
 .topbar .stat-value-row em {
-  max-width: none !important;
-  overflow: visible !important;
+  max-width: none;
+  overflow: visible;
 }
 
 .optimizer-verdict em,
@@ -61,17 +61,17 @@
 
 /* Asset-backed tile map: flat top-down cells using the v2 asset pack. */
 .city-map {
-  position: relative !important;
-  height: clamp(620px, calc(100vh - 172px), 820px) !important;
-  min-height: 600px !important;
-  border: 1px solid rgba(70, 105, 118, 0.5) !important;
-  border-radius: 8px !important;
-  overflow: hidden !important;
-  background: #7fa65f !important;
+  position: relative;
+  height: clamp(620px, calc(100vh - 172px), 820px);
+  min-height: 600px;
+  border: 1px solid rgba(70, 105, 118, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #7fa65f;
 }
 
 .city-map::before {
-  content: none !important;
+  content: none;
 }
 
 .canvas-map-stage {
@@ -136,7 +136,7 @@
 .build-card .build-card-icon {
   width: 64px;
   height: 58px;
-  background: transparent !important;
+  background: transparent;
   border-radius: 0;
 }
 
@@ -149,26 +149,26 @@
 }
 
 .build-card {
-  grid-template-rows: 58px auto minmax(26px, auto) !important;
+  grid-template-rows: 58px auto minmax(26px, auto);
 }
 
 .build-card .build-card-head {
-  grid-template-columns: 64px minmax(0, 1fr) !important;
+  grid-template-columns: 64px minmax(0, 1fr);
 }
 
 .build-card .build-card-meta {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  align-items: stretch !important;
-  gap: 6px !important;
-  padding: 7px 8px !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 6px;
+  padding: 7px 8px;
 }
 
 .build-card .build-card-meta span {
-  display: block !important;
-  width: auto !important;
-  height: auto !important;
-  min-width: 0 !important;
-  padding: 5px !important;
+  display: block;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  padding: 5px;
   text-align: center;
 }
 
@@ -195,12 +195,12 @@
 }
 
 .build-card-status {
-  margin: 0 !important;
+  margin: 0;
   padding: 0 8px 8px;
   color: #dce8ef;
-  font-size: 0.68rem !important;
-  line-height: 1.25 !important;
-  overflow: visible !important;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  overflow: visible;
   overflow-wrap: anywhere;
 }
 
@@ -210,19 +210,19 @@
 
 @media (max-width: 1180px) {
   .city-map {
-    height: 540px !important;
-    min-height: 500px !important;
+    height: 540px;
+    min-height: 500px;
   }
 }
 
 @media (max-width: 620px) {
   .city-map {
-    height: 480px !important;
-    min-height: 460px !important;
+    height: 480px;
+    min-height: 460px;
   }
 
   .canvas-map-stage {
-    width: min(980px, 154%) !important;
+    width: min(980px, 154%);
   }
 }
 
@@ -259,106 +259,106 @@
 /* Desktop workspace utilization fix: sidebars span rows, useful panels rise under the map. */
 @media (min-width: 1181px) {
   .topbar {
-    position: static !important;
-    display: grid !important;
-    grid-template-columns: minmax(260px, 1.24fr) repeat(5, minmax(104px, 0.7fr)) minmax(280px, 1.08fr) !important;
-    gap: 10px !important;
-    margin-bottom: 10px !important;
-    padding-bottom: 0 !important;
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(260px, 1.24fr) repeat(5, minmax(104px, 0.7fr)) minmax(280px, 1.08fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 0;
   }
 
   .brand-card,
   .stat-card,
   .time-card {
-    height: 70px !important;
+    height: 70px;
   }
 
   .brand-card {
-    padding: 10px 14px !important;
+    padding: 10px 14px;
   }
 
   .brand-card h1 {
-    font-size: 1rem !important;
-    line-height: 1.08 !important;
-    text-shadow: none !important;
+    font-size: 1rem;
+    line-height: 1.08;
+    text-shadow: none;
   }
 
   .brand-card p {
-    margin-top: 4px !important;
-    font-size: 0.82rem !important;
-    white-space: nowrap !important;
+    margin-top: 4px;
+    font-size: 0.82rem;
+    white-space: nowrap;
   }
 
   .time-card {
-    grid-template-columns: minmax(74px, auto) minmax(66px, 1fr) auto !important;
+    grid-template-columns: minmax(74px, auto) minmax(66px, 1fr) auto;
   }
 
   .sim-grid {
-    display: grid !important;
-    grid-template-columns: minmax(278px, 400px) minmax(0, 1fr) minmax(318px, 430px) !important;
+    display: grid;
+    grid-template-columns: minmax(278px, 400px) minmax(0, 1fr) minmax(318px, 430px);
     grid-template-areas:
       "left map right"
       "left build right"
-      "left demand right" !important;
-    grid-template-rows: auto auto auto !important;
-    align-items: start !important;
-    gap: 10px !important;
+      "left demand right";
+    grid-template-rows: auto auto auto;
+    align-items: start;
+    gap: 10px;
   }
 
   .left-column {
-    grid-area: left !important;
-    align-self: start !important;
+    grid-area: left;
+    align-self: start;
   }
 
   .map-column {
-    grid-area: map !important;
-    align-self: start !important;
+    grid-area: map;
+    align-self: start;
   }
 
   .right-column {
-    grid-area: right !important;
-    align-self: start !important;
+    grid-area: right;
+    align-self: start;
   }
 
   .build-panel {
-    grid-area: build !important;
+    grid-area: build;
   }
 
   .demand-panel {
-    grid-area: demand !important;
+    grid-area: demand;
   }
 
   .build-panel .panel,
   .demand-panel .panel {
-    height: auto !important;
+    height: auto;
   }
 
   .build-menu {
-    grid-template-columns: repeat(3, minmax(160px, 1fr)) !important;
-    min-height: 0 !important;
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    min-height: 0;
   }
 
   .build-card {
-    min-height: 96px !important;
-    padding: 10px !important;
+    min-height: 96px;
+    padding: 10px;
   }
 
   .demand-panel .chart-box {
-    height: 150px !important;
+    height: 150px;
   }
 }
 
 @media (min-width: 1181px) and (max-width: 1380px) {
   .topbar {
-    grid-template-columns: minmax(250px, 1.2fr) repeat(3, minmax(112px, 0.78fr)) !important;
+    grid-template-columns: minmax(250px, 1.2fr) repeat(3, minmax(112px, 0.78fr));
   }
 
   .time-card {
-    grid-column: span 2 !important;
+    grid-column: span 2;
   }
 
   .sim-grid {
-    grid-template-columns: minmax(278px, 350px) minmax(0, 1fr) minmax(300px, 360px) !important;
+    grid-template-columns: minmax(278px, 350px) minmax(0, 1fr) minmax(300px, 360px);
   }
 }
 
@@ -537,6 +537,9 @@ body {
 }
 
 .panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 20px;
   margin-bottom: 12px;
 }
@@ -545,10 +548,6 @@ body {
   color: var(--ui-text);
   font-size: 0.78rem;
   letter-spacing: 0;
-}
-
-.panel-title span {
-  color: var(--ui-soft);
 }
 
 .panel-flush {
@@ -893,259 +892,325 @@ body {
   }
 }
 
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, oklch(22% 0.03 210 / 0.6) 25%, oklch(28% 0.035 208 / 0.8) 50%, oklch(22% 0.03 210 / 0.6) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+.skeleton-text {
+  height: 12px;
+  width: 60%;
+  margin-bottom: 8px;
+}
+
+.skeleton-title {
+  height: 16px;
+  width: 40%;
+  margin-bottom: 16px;
+}
+
+.skeleton-card {
+  height: 70px;
+  width: 100%;
+}
+
+.skeleton-chart {
+  height: 120px;
+  width: 100%;
+}
+
+.skeleton-sm {
+  height: 10px;
+  width: 80px;
+  display: inline-block;
+}
+
+/* Keyboard shortcut hints */
+.kbd-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  opacity: 0.5;
+}
+
+.kbd-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  border: 1px solid oklch(60% 0.04 210 / 0.5);
+  border-radius: 3px;
+  padding: 0 4px;
+  font-family: inherit;
+  font-size: 0.6rem;
+  line-height: 1;
+  color: oklch(70% 0.04 215);
+  background: oklch(18% 0.03 210 / 0.6);
+}
+
 /* Guard against older duplicated rules later in this stylesheet. */
 body {
   background:
     linear-gradient(180deg, oklch(16% 0.025 214), var(--ui-bg-strong) 46%, oklch(12.5% 0.022 208)),
-    var(--ui-bg) !important;
+    var(--ui-bg);
 }
 
 .app-shell {
-  width: min(100%, 1728px) !important;
-  padding: var(--space-3) !important;
+  width: min(100%, 1728px);
+  padding: var(--space-3);
 }
 
 .topbar {
-  grid-template-columns: minmax(268px, 1.08fr) repeat(5, minmax(124px, 0.62fr)) minmax(320px, 1fr) !important;
-  gap: var(--space-3) !important;
+  grid-template-columns: minmax(268px, 1.08fr) repeat(5, minmax(124px, 0.62fr)) minmax(320px, 1fr);
+  gap: var(--space-3);
 }
 
 .brand-card,
 .stat-card,
 .time-card {
-  height: 76px !important;
+  height: 76px;
 }
 
 .brand-card {
-  padding: 12px 14px !important;
+  padding: 12px 14px;
 }
 
 .brand-card h1 {
-  font-size: 1.02rem !important;
-  line-height: 1.06 !important;
+  font-size: 1.02rem;
+  line-height: 1.06;
 }
 
 .brand-card p {
-  font-size: 0.82rem !important;
-  white-space: nowrap !important;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .stat-card {
-  display: grid !important;
-  align-content: center !important;
-  gap: 8px !important;
+  display: grid;
+  align-content: center;
+  gap: 8px;
 }
 
 .stat-value-row {
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 7px !important;
-  min-width: 0 !important;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
 }
 
 .stat-value-row strong {
-  flex: 0 0 auto !important;
-  max-width: none !important;
-  min-width: max-content !important;
-  overflow: visible !important;
-  font-size: 1.08rem !important;
+  flex: 0 0 auto;
+  max-width: none;
+  min-width: max-content;
+  overflow: visible;
+  font-size: 1.08rem;
 }
 
 .stat-value-row em {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  max-width: 96px !important;
-  margin-left: 0 !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 96px;
+  margin-left: 0;
 }
 
 .sim-grid {
-  grid-template-columns: minmax(284px, 330px) minmax(620px, 1fr) minmax(306px, 344px) !important;
-  gap: var(--space-3) !important;
+  grid-template-columns: minmax(284px, 330px) minmax(620px, 1fr) minmax(306px, 344px);
+  gap: var(--space-3);
 }
 
 .trace-input-grid,
 .right-column .trace-input-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .candidate-row {
-  grid-template-columns: 30px minmax(0, 1fr) 58px !important;
+  grid-template-columns: 30px minmax(0, 1fr) 58px;
 }
 
 .candidate-row b {
-  display: none !important;
+  display: none;
 }
 
 .build-menu {
-  grid-template-columns: repeat(6, minmax(124px, 1fr)) !important;
-  min-height: 0 !important;
+  grid-template-columns: repeat(6, minmax(124px, 1fr));
+  min-height: 0;
 }
 
 .build-card {
-  min-height: 112px !important;
-  padding: 10px !important;
+  min-height: 112px;
+  padding: 10px;
 }
 
 @media (max-width: 1280px) {
   .topbar {
-    grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(112px, 0.7fr)) !important;
+    grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(112px, 0.7fr));
   }
 
   .time-card {
-    grid-column: span 2 !important;
+    grid-column: span 2;
   }
 
   .sim-grid {
-    grid-template-columns: minmax(270px, 320px) minmax(0, 1fr) !important;
+    grid-template-columns: minmax(270px, 320px) minmax(0, 1fr);
     grid-template-areas:
       "left map"
       "right map"
       "build build"
-      "demand demand" !important;
+      "demand demand";
   }
 
   .build-menu {
-    grid-template-columns: repeat(3, minmax(150px, 1fr)) !important;
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
   }
 }
 
 @media (max-width: 920px) {
   .app-shell {
-    padding: 8px !important;
+    padding: 8px;
   }
 
   .topbar {
-    position: static !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .brand-card,
   .time-card {
-    grid-column: 1 / -1 !important;
+    grid-column: 1 / -1;
   }
 
   .sim-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
     grid-template-areas:
       "map"
       "right"
       "left"
       "demand"
-      "build" !important;
+      "build";
   }
 
   .trace-input-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 621px) and (max-width: 920px) {
   .topbar {
-    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-    align-items: stretch !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: stretch;
   }
 
   .brand-card,
   .time-card {
-    grid-column: 1 / -1 !important;
+    grid-column: 1 / -1;
   }
 
   .topbar > .stat-card {
-    grid-column: span 2 !important;
+    grid-column: span 2;
   }
 
   .topbar > .stat-card:nth-of-type(5),
   .topbar > .stat-card:nth-of-type(6) {
-    grid-column: span 3 !important;
+    grid-column: span 3;
   }
 
   .stat-card {
-    height: 72px !important;
-    min-height: 72px !important;
-    padding: 10px 10px 9px 32px !important;
+    height: 72px;
+    min-height: 72px;
+    padding: 10px 10px 9px 32px;
   }
 
   .stat-hidden-icon {
-    left: 8px !important;
-    bottom: 8px !important;
+    left: 8px;
+    bottom: 8px;
     transform: scale(0.9);
     transform-origin: left bottom;
   }
 
   .stat-card .stat-label-row span {
-    font-size: 0.66rem !important;
-    line-height: 1.1 !important;
+    font-size: 0.66rem;
+    line-height: 1.1;
   }
 
   .stat-value-row {
-    display: grid !important;
-    gap: 2px !important;
+    display: grid;
+    gap: 2px;
   }
 
   .stat-value-row strong {
-    margin-top: 0 !important;
-    font-size: 1.06rem !important;
+    margin-top: 0;
+    font-size: 1.06rem;
   }
 
   .stat-value-row em {
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    font-size: 0.72rem !important;
+    max-width: 100%;
+    margin-left: 0;
+    font-size: 0.72rem;
   }
 }
 
 @media (max-width: 620px) {
   .brand-card {
-    min-height: 86px !important;
+    min-height: 86px;
   }
 
   .topbar > .stat-card:nth-of-type(6) {
-    grid-column: 1 / -1 !important;
+    grid-column: 1 / -1;
   }
 
   .stat-card {
-    height: 82px !important;
+    height: 82px;
   }
 
   .stat-value-row {
-    display: grid !important;
-    gap: 3px !important;
+    display: grid;
+    gap: 3px;
   }
 
   .stat-value-row strong {
-    font-size: 1.05rem !important;
+    font-size: 1.05rem;
   }
 
   .stat-value-row em {
-    max-width: 100% !important;
+    max-width: 100%;
   }
 
   .time-card {
-    height: auto !important;
-    grid-template-columns: 1fr !important;
+    height: auto;
+    grid-template-columns: 1fr;
   }
 
   .time-card .control-row {
-    display: grid !important;
-    grid-template-columns: repeat(4, 44px) !important;
+    display: grid;
+    grid-template-columns: repeat(4, 44px);
   }
 
   .icon-button {
-    width: 44px !important;
-    height: 44px !important;
+    width: 44px;
+    height: 44px;
   }
 
   .trace-input-grid,
   .impact-grid,
   .decision-buttons,
   .build-menu {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 
   .node-trace,
   .candidate-row {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1153,30 +1218,30 @@ body {
   *,
   *::before,
   *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
   }
 }
 
 .experiment-map_focus .map-column .panel,
 .experiment-map_focus .build-panel .panel {
-  border-color: rgba(124, 228, 89, 0.52) !important;
-  box-shadow: inset 0 1px #ffffff12, 0 16px 34px #00000042, 0 0 0 1px rgba(124, 228, 89, 0.08) !important;
+  border-color: rgba(124, 228, 89, 0.52);
+  box-shadow: inset 0 1px #ffffff12, 0 16px 34px #00000042, 0 0 0 1px rgba(124, 228, 89, 0.08);
 }
 
 .experiment-map_focus .city-map {
-  border-color: rgba(124, 228, 89, 0.56) !important;
+  border-color: rgba(124, 228, 89, 0.56);
 }
 
 .experiment-map_focus .build-card:not(:disabled) {
-  box-shadow: inset 0 1px #ffffff14, 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: inset 0 1px #ffffff14, 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .experiment-map_focus .map-inspector,
 .experiment-map_focus .map-status-card {
-  border-color: rgba(124, 228, 89, 0.38) !important;
+  border-color: rgba(124, 228, 89, 0.38);
 }
 
 @media(max-width:620px){
@@ -1196,10 +1261,10 @@ body {
   .legend-card .legend-item{
     flex:0 0 auto;
     min-height:30px;
-    border:1px solid rgba(255,255,255,.18)!important;
+    border:1px solid rgba(255,255,255,.18);
     border-radius:6px;
-    padding:0 7px!important;
-    background:#0a191ad9!important;
+    padding:0 7px;
+    background:#0a191ad9;
   }
   .legend-card .legend-item span{max-width:86px}
   .legend-card .legend-item em{min-width:14px}

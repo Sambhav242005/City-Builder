@@ -514,6 +514,39 @@ function App() {
     setData(payload);
   }
 
+  const handlePlayPauseRef = useRef(handlePlayPause);
+  const handleAdvanceRef = useRef(handleAdvanceOneTick);
+  const handleDecisionRef = useRef(handleDecision);
+  const terminalReachedRef = useRef(terminalReached);
+  const runningRef = useRef(running);
+  const actionIsAvailableRef = useRef(actionIsAvailable);
+  handlePlayPauseRef.current = handlePlayPause;
+  handleAdvanceRef.current = handleAdvanceOneTick;
+  handleDecisionRef.current = handleDecision;
+  terminalReachedRef.current = terminalReached;
+  runningRef.current = running;
+  actionIsAvailableRef.current = actionIsAvailable;
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
+      if (e.key === " ") {
+        e.preventDefault();
+        if (!terminalReachedRef.current) handlePlayPauseRef.current();
+      } else if (e.key === "s" && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        if (!runningRef.current && !terminalReachedRef.current) handleAdvanceRef.current();
+      } else if (e.key === "a" || e.key === "A") {
+        if (actionIsAvailableRef.current && !terminalReachedRef.current) handleDecisionRef.current("approve");
+      } else if (e.key === "r" || e.key === "R") {
+        if (actionIsAvailableRef.current && !terminalReachedRef.current) handleDecisionRef.current("reject");
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
 
   return (
     <main
@@ -913,7 +946,6 @@ function Panel({ title, children, flush = false }: { title: string; children: Re
     <section className={`panel ${flush ? "panel-flush" : ""}`}>
       <div className="panel-title">
         <h2>{title}</h2>
-        <span>::</span>
       </div>
       {children}
     </section>
