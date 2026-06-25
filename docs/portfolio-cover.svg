@@ -1,0 +1,376 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1121"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#182230"/>
+    </linearGradient>
+    <filter id="glow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="760" fill="url(#bg)"/>
+
+  <!-- Background grid pattern -->
+  <g opacity="0.03" stroke="#fff" stroke-width="0.5">
+    <line x1="0" y1="40" x2="1200" y2="40"/>
+    <line x1="0" y1="80" x2="1200" y2="80"/>
+    <line x1="0" y1="120" x2="1200" y2="120"/>
+    <line x1="0" y1="160" x2="1200" y2="160"/>
+    <line x1="0" y1="200" x2="1200" y2="200"/>
+    <line x1="0" y1="240" x2="1200" y2="240"/>
+    <line x1="0" y1="280" x2="1200" y2="280"/>
+    <line x1="0" y1="320" x2="1200" y2="320"/>
+    <line x1="0" y1="360" x2="1200" y2="360"/>
+    <line x1="0" y1="400" x2="1200" y2="400"/>
+    <line x1="0" y1="440" x2="1200" y2="440"/>
+    <line x1="0" y1="480" x2="1200" y2="480"/>
+    <line x1="0" y1="520" x2="1200" y2="520"/>
+    <line x1="0" y1="560" x2="1200" y2="560"/>
+    <line x1="0" y1="600" x2="1200" y2="600"/>
+    <line x1="0" y1="640" x2="1200" y2="640"/>
+    <line x1="0" y1="680" x2="1200" y2="680"/>
+    <line x1="0" y1="720" x2="1200" y2="720"/>
+  </g>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="52" fill="url(#header)"/>
+  <text x="24" y="33" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="700" fill="#f8fafc">CityBuilder</text>
+  <text x="138" y="33" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#64748b">Micro-City Simulation</text>
+  <circle cx="312" cy="26" r="3" fill="#334155"/>
+  <text x="322" y="33" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b">FastAPI</text>
+  <circle cx="378" cy="26" r="3" fill="#334155"/>
+  <text x="388" y="33" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b">React</text>
+  <circle cx="442" cy="26" r="3" fill="#334155"/>
+  <text x="452" y="33" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b">Q-Learning</text>
+  <circle cx="540" cy="26" r="3" fill="#334155"/>
+  <text x="550" y="33" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b">Pi Deploy</text>
+
+  <!-- ============================================================ -->
+  <!-- LEFT PANEL: SIMULATION LOOP (compact) -->
+  <!-- ============================================================ -->
+  <rect x="16" y="68" width="200" height="620" rx="8" fill="url(#cardBg)" stroke="#1e293b" stroke-width="1" filter="url(#glow)"/>
+  <text x="24" y="86" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="700" fill="#64748b" letter-spacing="1.5">CORE LOOP</text>
+  <line x1="24" y1="92" x2="208" y2="92" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Step 1: Tick -->
+  <rect x="28" y="104" width="176" height="52" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="116" y="126" font-family="system-ui,-apple-system,sans-serif" font-size="24" text-anchor="middle">⏱</text>
+  <text x="116" y="146" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#e2e8f0" text-anchor="middle">Day Tick</text>
+
+  <polygon points="116,160 110,168 122,168" fill="#475569"/>
+  <line x1="116" y1="156" x2="116" y2="168" stroke="#475569" stroke-width="2"/>
+
+  <!-- Step 2: Simulate -->
+  <rect x="28" y="172" width="176" height="64" rx="6" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+  <text x="116" y="194" font-family="system-ui,-apple-system,sans-serif" font-size="22" text-anchor="middle">⚙</text>
+  <text x="116" y="214" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#93c5fd" text-anchor="middle">Simulate</text>
+  <text x="116" y="228" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b" text-anchor="middle">Supply → Demand → Price</text>
+
+  <polygon points="116,240 110,248 122,248" fill="#475569"/>
+  <line x1="116" y1="236" x2="116" y2="248" stroke="#475569" stroke-width="2"/>
+
+  <!-- Step 3: Q-Learn -->
+  <rect x="28" y="252" width="176" height="52" rx="6" fill="#0f172a" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="116" y="274" font-family="system-ui,-apple-system,sans-serif" font-size="22" text-anchor="middle">🧠</text>
+  <text x="116" y="294" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#c4b5fd" text-anchor="middle">Q-Learning</text>
+
+  <polygon points="116,308 110,316 122,316" fill="#475569"/>
+  <line x1="116" y1="304" x2="116" y2="316" stroke="#475569" stroke-width="2"/>
+
+  <!-- Step 4: Policy -->
+  <rect x="28" y="320" width="176" height="52" rx="6" fill="#0f172a" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="116" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="22" text-anchor="middle">📋</text>
+  <text x="116" y="362" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#c4b5fd" text-anchor="middle">Policy Recommend</text>
+
+  <polygon points="116,376 110,384 122,384" fill="#475569"/>
+  <line x1="116" y1="372" x2="116" y2="384" stroke="#475569" stroke-width="2"/>
+
+  <!-- Step 5: Mayor -->
+  <rect x="28" y="388" width="176" height="70" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1"/>
+  <text x="116" y="410" font-family="system-ui,-apple-system,sans-serif" font-size="22" text-anchor="middle">👤</text>
+  <text x="116" y="430" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fcd34d" text-anchor="middle">Mayor Decision</text>
+  <rect x="46" y="440" width="68" height="12" rx="3" fill="#166534"/>
+  <text x="80" y="449" font-family="system-ui,-apple-system,sans-serif" font-size="7" font-weight="700" fill="#86efac" text-anchor="middle">Approve</text>
+  <rect x="118" y="440" width="68" height="12" rx="3" fill="#7f1d1d"/>
+  <text x="152" y="449" font-family="system-ui,-apple-system,sans-serif" font-size="7" font-weight="700" fill="#fca5a5" text-anchor="middle">Reject</text>
+
+  <!-- Loop back arrow -->
+  <path d="M28,423 Q8,423 8,300 Q8,170 28,130" stroke="#475569" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+  <polygon points="28,128 22,132 28,136" fill="#475569"/>
+  <text x="4" y="300" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#475569" text-anchor="middle" transform="rotate(-90,4,300)">FEEDBACK</text>
+
+  <!-- Info boxes at bottom of left panel -->
+  <rect x="28" y="478" width="176" height="55" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="38" y="496" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#64748b">REWARDS</text>
+  <text x="38" y="510" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Food balance</text>
+  <text x="38" y="522" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Happiness score</text>
+
+  <rect x="28" y="541" width="176" height="55" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="38" y="559" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#64748b">ACTIONS</text>
+  <text x="38" y="573" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Build · Subsidize · Zone · Tax</text>
+  <text x="38" y="585" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Regulate · Do Nothing</text>
+
+  <rect x="28" y="604" width="176" height="72" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="38" y="622" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#64748b">STATE</text>
+  <text x="38" y="636" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Population · Food Δ · Happiness</text>
+  <text x="38" y="648" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Treasury · Avg price · Events</text>
+  <text x="38" y="660" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569">Day count · Zone availability</text>
+
+  <!-- ============================================================ -->
+  <!-- CENTER PANEL: CITY MAP (hero) -->
+  <!-- ============================================================ -->
+  <rect x="228" y="68" width="730" height="620" rx="8" fill="url(#cardBg)" stroke="#1e293b" stroke-width="1" filter="url(#glow)"/>
+  <text x="236" y="86" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="700" fill="#64748b" letter-spacing="1.5">CITY MAP · 14×9</text>
+  <line x1="236" y1="92" x2="950" y2="92" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Large city map -->
+  <g transform="translate(240, 108)">
+    <!-- Roads -->
+    <g fill="#475569">
+      <rect x="0" y="56" width="48" height="28" rx="3"/><rect x="50" y="56" width="48" height="28" rx="3"/><rect x="100" y="56" width="48" height="28" rx="3"/>
+      <rect x="150" y="56" width="48" height="28" rx="3"/><rect x="200" y="56" width="48" height="28" rx="3"/><rect x="250" y="56" width="48" height="28" rx="3"/>
+      <rect x="300" y="56" width="48" height="28" rx="3"/><rect x="350" y="56" width="48" height="28" rx="3"/><rect x="400" y="56" width="48" height="28" rx="3"/>
+      <rect x="450" y="56" width="48" height="28" rx="3"/>
+      <rect x="0" y="142" width="48" height="28" rx="3"/><rect x="50" y="142" width="48" height="28" rx="3"/><rect x="100" y="142" width="48" height="28" rx="3"/>
+      <rect x="150" y="142" width="48" height="28" rx="3"/><rect x="200" y="142" width="48" height="28" rx="3"/><rect x="250" y="142" width="48" height="28" rx="3"/>
+      <rect x="300" y="142" width="48" height="28" rx="3"/><rect x="350" y="142" width="48" height="28" rx="3"/><rect x="400" y="142" width="48" height="28" rx="3"/>
+      <rect x="450" y="142" width="48" height="28" rx="3"/>
+      <rect x="150" y="0" width="48" height="28" rx="3"/><rect x="150" y="28" width="48" height="28" rx="3"/><rect x="150" y="84" width="48" height="28" rx="3"/>
+      <rect x="150" y="112" width="48" height="28" rx="3"/><rect x="150" y="170" width="48" height="28" rx="3"/><rect x="150" y="198" width="48" height="28" rx="3"/>
+      <rect x="150" y="226" width="48" height="28" rx="3"/>
+      <rect x="350" y="0" width="48" height="28" rx="3"/><rect x="350" y="28" width="48" height="28" rx="3"/><rect x="350" y="84" width="48" height="28" rx="3"/>
+      <rect x="350" y="112" width="48" height="28" rx="3"/><rect x="350" y="170" width="48" height="28" rx="3"/><rect x="350" y="198" width="48" height="28" rx="3"/>
+      <rect x="350" y="226" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Empty tiles (brownish) -->
+    <g fill="#1e293b">
+      <rect x="0" y="0" width="48" height="28" rx="3"/><rect x="50" y="0" width="48" height="28" rx="3"/><rect x="100" y="0" width="48" height="28" rx="3"/>
+      <rect x="250" y="0" width="48" height="28" rx="3"/><rect x="300" y="0" width="48" height="28" rx="3"/><rect x="400" y="0" width="48" height="28" rx="3"/>
+      <rect x="450" y="0" width="48" height="28" rx="3"/>
+      <rect x="0" y="28" width="48" height="28" rx="3"/><rect x="50" y="28" width="48" height="28" rx="3"/><rect x="100" y="28" width="48" height="28" rx="3"/>
+      <rect x="250" y="28" width="48" height="28" rx="3"/><rect x="300" y="28" width="48" height="28" rx="3"/><rect x="400" y="28" width="48" height="28" rx="3"/>
+      <rect x="450" y="28" width="48" height="28" rx="3"/>
+      <rect x="0" y="84" width="48" height="28" rx="3"/><rect x="50" y="84" width="48" height="28" rx="3"/><rect x="100" y="84" width="48" height="28" rx="3"/>
+      <rect x="250" y="84" width="48" height="28" rx="3"/><rect x="300" y="84" width="48" height="28" rx="3"/><rect x="400" y="84" width="48" height="28" rx="3"/>
+      <rect x="450" y="84" width="48" height="28" rx="3"/>
+      <rect x="0" y="112" width="48" height="28" rx="3"/><rect x="50" y="112" width="48" height="28" rx="3"/><rect x="100" y="112" width="48" height="28" rx="3"/>
+      <rect x="250" y="112" width="48" height="28" rx="3"/><rect x="300" y="112" width="48" height="28" rx="3"/><rect x="400" y="112" width="48" height="28" rx="3"/>
+      <rect x="450" y="112" width="48" height="28" rx="3"/>
+      <rect x="250" y="142" width="48" height="28" rx="3"/><rect x="300" y="142" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Farms -->
+    <g fill="#16a34a">
+      <rect x="200" y="0" width="48" height="28" rx="3"/>
+      <rect x="0" y="170" width="48" height="28" rx="3"/><rect x="50" y="170" width="48" height="28" rx="3"/>
+      <rect x="100" y="170" width="48" height="28" rx="3"/>
+      <rect x="0" y="198" width="48" height="28" rx="3"/><rect x="50" y="198" width="48" height="28" rx="3"/>
+      <rect x="100" y="198" width="48" height="28" rx="3"/>
+      <rect x="0" y="226" width="48" height="28" rx="3"/><rect x="50" y="226" width="48" height="28" rx="3"/>
+      <rect x="100" y="226" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Housing -->
+    <g fill="#d97706">
+      <rect x="400" y="0" width="48" height="28" rx="3"/>
+      <rect x="450" y="0" width="48" height="28" rx="3"/>
+      <rect x="400" y="28" width="48" height="28" rx="3"/>
+      <rect x="450" y="28" width="48" height="28" rx="3"/>
+      <rect x="200" y="84" width="48" height="28" rx="3"/>
+      <rect x="250" y="84" width="48" height="28" rx="3"/>
+      <rect x="200" y="112" width="48" height="28" rx="3"/>
+      <rect x="250" y="112" width="48" height="28" rx="3"/>
+      <rect x="250" y="170" width="48" height="28" rx="3"/>
+      <rect x="450" y="170" width="48" height="28" rx="3"/>
+      <rect x="450" y="198" width="48" height="28" rx="3"/>
+      <rect x="250" y="226" width="48" height="28" rx="3"/>
+      <rect x="300" y="226" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Park -->
+    <g fill="#84cc16">
+      <rect x="200" y="28" width="48" height="28" rx="3"/>
+      <rect x="250" y="56" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Market -->
+    <g fill="#0891b2">
+      <rect x="300" y="28" width="48" height="28" rx="3"/>
+      <rect x="200" y="226" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Factory -->
+    <rect x="300" y="112" width="48" height="28" rx="3" fill="#dc2626"/>
+
+    <!-- Government -->
+    <rect x="450" y="112" width="48" height="28" rx="3" fill="#7c3aed"/>
+
+    <!-- Power plant -->
+    <rect x="450" y="84" width="48" height="28" rx="3" fill="#ea580c"/>
+
+    <!-- Water -->
+    <g fill="#1e40af">
+      <rect x="0" y="142" width="48" height="28" rx="3"/>
+      <rect x="400" y="198" width="48" height="28" rx="3"/>
+      <rect x="400" y="226" width="48" height="28" rx="3"/>
+      <rect x="450" y="226" width="48" height="28" rx="3"/>
+    </g>
+
+    <!-- Grid border -->
+    <rect x="0" y="0" width="500" height="256" rx="4" fill="none" stroke="#334155" stroke-width="1"/>
+  </g>
+
+  <!-- Map legend -->
+  <g transform="translate(240, 376)">
+    <rect x="0" y="0" width="12" height="12" rx="2" fill="#16a34a"/>
+    <text x="16" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Farm</text>
+    <rect x="60" y="0" width="12" height="12" rx="2" fill="#d97706"/>
+    <text x="76" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Housing</text>
+    <rect x="140" y="0" width="12" height="12" rx="2" fill="#0891b2"/>
+    <text x="156" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Market</text>
+    <rect x="220" y="0" width="12" height="12" rx="2" fill="#475569"/>
+    <text x="236" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Road</text>
+    <rect x="280" y="0" width="12" height="12" rx="2" fill="#dc2626"/>
+    <text x="296" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Factory</text>
+    <rect x="350" y="0" width="12" height="12" rx="2" fill="#7c3aed"/>
+    <text x="366" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Gov</text>
+    <rect x="410" y="0" width="12" height="12" rx="2" fill="#ea580c"/>
+    <text x="426" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Power</text>
+    <rect x="470" y="0" width="12" height="12" rx="2" fill="#84cc16"/>
+    <text x="486" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Park</text>
+    <rect x="530" y="0" width="12" height="12" rx="2" fill="#1e40af"/>
+    <text x="546" y="10" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Water</text>
+  </g>
+
+  <!-- Map description -->
+  <text x="593" y="470" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#475569" text-anchor="middle">14×9 tile grid · Roads · Zones · Buildings · HTML5 Canvas</text>
+
+  <!-- Economy chart under map -->
+  <rect x="240" y="482" width="706" height="120" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="256" y="504" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#64748b">Economy</text>
+  <circle cx="342" cy="504" r="3" fill="#3b82f6"/>
+  <text x="350" y="507" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Food Supply</text>
+  <circle cx="420" cy="504" r="3" fill="#22c55e"/>
+  <text x="428" y="507" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Treasury</text>
+  <circle cx="498" cy="504" r="3" fill="#f59e0b"/>
+  <text x="506" y="507" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Happiness</text>
+  <!-- Chart lines -->
+  <polyline points="256,580 290,570 324,575 358,560 392,565 426,550 460,555 494,540 528,545 562,530 596,535 630,520 664,525 698,515 732,518 766,510 800,512 834,505 868,508 902,500 936,502" stroke="#3b82f6" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <polyline points="256,585 290,582 324,578 358,576 392,572 426,568 460,564 494,560 528,556 562,552 596,548 630,544 664,540 698,536 732,532 766,528 800,524 834,520 868,516 902,512 936,508" stroke="#22c55e" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <polyline points="256,575 290,572 324,568 358,565 392,562 426,558 460,555 494,551 528,548 562,544 596,541 630,537 664,534 698,530 732,527 766,523 800,520 834,516 868,513 902,509 936,506" stroke="#f59e0b" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <line x1="256" y1="590" x2="936" y2="590" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Current state summary under chart -->
+  <g transform="translate(240, 614)">
+    <rect x="0" y="0" width="164" height="62" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="10" y="20" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Population</text>
+    <text x="10" y="48" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#e2e8f0">1,842</text>
+
+    <rect x="176" y="0" width="164" height="62" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="186" y="20" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Food</text>
+    <text x="186" y="48" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#e2e8f0">+12</text>
+    <text x="330" y="48" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e" text-anchor="end">per day</text>
+
+    <rect x="352" y="0" width="164" height="62" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="362" y="20" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Happiness</text>
+    <text x="362" y="48" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#e2e8f0">78%</text>
+    <rect x="470" y="38" width="36" height="10" rx="4" fill="#166534"/>
+    <text x="488" y="46" font-family="system-ui,-apple-system,sans-serif" font-size="7" font-weight="700" fill="#86efac" text-anchor="middle">Good</text>
+
+    <rect x="528" y="0" width="164" height="62" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="538" y="20" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b">Treasury</text>
+    <text x="538" y="48" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#e2e8f0">$1.4M</text>
+    <text x="682" y="48" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#fca5a5" text-anchor="end">-$2.5K/d</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT PANEL: action card only -->
+  <!-- ============================================================ -->
+  <rect x="970" y="68" width="214" height="620" rx="8" fill="url(#cardBg)" stroke="#1e293b" stroke-width="1" filter="url(#glow)"/>
+  <text x="978" y="86" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="700" fill="#64748b" letter-spacing="1.5">ACTION PANEL</text>
+  <line x1="978" y1="92" x2="1176" y2="92" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Action card -->
+  <rect x="978" y="104" width="198" height="120" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1"/>
+  <text x="1077" y="124" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#fcd34d" text-anchor="middle">Recommended</text>
+  <rect x="1008" y="134" width="138" height="28" rx="5" fill="#78350f"/>
+  <text x="1077" y="152" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700" fill="#fcd34d" text-anchor="middle">Build Farm</text>
+  <text x="1077" y="176" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Cost: $120K</text>
+  <text x="1077" y="190" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Est. +8 food/day</text>
+  <text x="1077" y="211" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569" text-anchor="middle">Confidence: 0.82</text>
+  <rect x="978" y="224" width="198" height="1" fill="#1e293b"/>
+
+  <!-- Approve / Reject buttons -->
+  <rect x="1000" y="236" width="80" height="26" rx="5" fill="#166534"/>
+  <text x="1040" y="253" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#86efac" text-anchor="middle">✓ Approve</text>
+  <rect x="1090" y="236" width="80" height="26" rx="5" fill="#7f1d1d"/>
+  <text x="1130" y="253" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fca5a5" text-anchor="middle">✗ Reject</text>
+
+  <rect x="978" y="274" width="198" height="1" fill="#1e293b"/>
+
+  <!-- Scorecard mini -->
+  <text x="1077" y="296" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">Scorecard</text>
+  <text x="1077" y="312" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569" text-anchor="middle">Mayor Direction: 72/100</text>
+  <rect x="1008" y="322" width="140" height="4" rx="2" fill="#1e293b"/>
+  <rect x="1008" y="322" width="100" height="4" rx="2" fill="#22c55e" opacity="0.7"/>
+  <text x="1077" y="336" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569" text-anchor="middle">Last 10: 7 approved, 3 rejected</text>
+
+  <rect x="978" y="348" width="198" height="1" fill="#1e293b"/>
+
+  <!-- Candidate actions -->
+  <text x="1077" y="368" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">Candidates</text>
+  <text x="990" y="388" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b">Build Farm</text>
+  <rect x="1060" y="382" width="80" height="6" rx="3" fill="#22c55e"/>
+  <text x="1146" y="388" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#22c55e" font-weight="600">0.82</text>
+  <text x="990" y="406" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b">Subsidize</text>
+  <rect x="1060" y="400" width="60" height="6" rx="3" fill="#3b82f6"/>
+  <text x="1126" y="406" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#3b82f6" font-weight="600">0.65</text>
+  <text x="990" y="424" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b">Do Nothing</text>
+  <rect x="1060" y="418" width="36" height="6" rx="3" fill="#64748b"/>
+  <text x="1102" y="424" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b" font-weight="600">0.41</text>
+
+  <rect x="978" y="436" width="198" height="1" fill="#1e293b"/>
+
+  <!-- Sim controls mini -->
+  <text x="1077" y="456" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">Controls</text>
+  <text x="1077" y="474" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#e2e8f0" text-anchor="middle">Day 47 / 100</text>
+  <rect x="1008" y="484" width="140" height="4" rx="2" fill="#1e293b"/>
+  <rect x="1008" y="484" width="66" height="4" rx="2" fill="#3b82f6"/>
+  <!-- Buttons -->
+  <rect x="1000" y="498" width="48" height="20" rx="4" fill="#166534"/>
+  <text x="1024" y="512" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#86efac" text-anchor="middle">▶ Play</text>
+  <rect x="1054" y="498" width="48" height="20" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="1078" y="512" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" text-anchor="middle">⏸ Pause</text>
+  <rect x="1108" y="498" width="48" height="20" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="1132" y="512" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" text-anchor="middle">↺ Step</text>
+
+  <rect x="978" y="530" width="198" height="1" fill="#1e293b"/>
+
+  <!-- Event log -->
+  <text x="1077" y="550" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">Events</text>
+  <rect x="988" y="560" width="178" height="24" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="990" y="576" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#475569">Food surplus · Market stable</text>
+  <rect x="988" y="588" width="178" height="24" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="990" y="604" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#475569">New farm operational</text>
+  <rect x="988" y="616" width="178" height="24" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="990" y="632" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#475569">Pop growth: +3/day</text>
+
+  <rect x="978" y="650" width="198" height="26" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="1077" y="667" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#475569" text-anchor="middle">Q-table persisted to disk</text>
+
+  <!-- Footer -->
+  <rect x="0" y="732" width="1200" height="28" fill="#0f172a"/>
+  <text x="24" y="750" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#475569">Simulate → Q-Learn → Policy → Mayor → Action → (loop)</text>
+  <text x="1176" y="750" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#334155" text-anchor="end">CityBuilder MVP</text>
+</svg>
